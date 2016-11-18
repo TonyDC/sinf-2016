@@ -2,176 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="735aa70c-72c0-43dd-ae50-05cd036e2a0b" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/pages/img/profile-pic.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/sinf-2016.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/pages/vendor/raphael/raphael.min.js" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/.gitignore" afterPath="$PROJECT_DIR$/server/pages/.gitignore" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/LICENSE" afterPath="$PROJECT_DIR$/server/pages/LICENSE" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/README.md" afterPath="$PROJECT_DIR$/server/pages/README.md" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/bower.json" afterPath="$PROJECT_DIR$/server/pages/bower.json" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/data/flot-data.js" afterPath="$PROJECT_DIR$/server/pages/data/flot-data.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/data/morris-data.js" afterPath="$PROJECT_DIR$/server/pages/data/morris-data.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/dist/css/sb-admin-2.css" afterPath="$PROJECT_DIR$/server/pages/dist/css/sb-admin-2.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/dist/css/sb-admin-2.min.css" afterPath="$PROJECT_DIR$/server/pages/dist/css/sb-admin-2.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/dist/js/sb-admin-2.js" afterPath="$PROJECT_DIR$/server/pages/dist/js/sb-admin-2.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/dist/js/sb-admin-2.min.js" afterPath="$PROJECT_DIR$/server/pages/dist/js/sb-admin-2.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/gulpfile.js" afterPath="$PROJECT_DIR$/server/pages/gulpfile.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/index.html" afterPath="$PROJECT_DIR$/server/pages/index.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/js/sb-admin-2.js" afterPath="$PROJECT_DIR$/server/pages/js/sb-admin-2.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/less/mixins.less" afterPath="$PROJECT_DIR$/server/pages/less/mixins.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/less/sb-admin-2.less" afterPath="$PROJECT_DIR$/server/pages/less/sb-admin-2.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/less/variables.less" afterPath="$PROJECT_DIR$/server/pages/less/variables.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/package.json" afterPath="$PROJECT_DIR$/server/pages/package.json" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/pages/blank.html" afterPath="$PROJECT_DIR$/server/pages/pages/blank.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/pages/buttons.html" afterPath="$PROJECT_DIR$/server/pages/pages/buttons.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/pages/flot.html" afterPath="$PROJECT_DIR$/server/pages/pages/flot.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/pages/forms.html" afterPath="$PROJECT_DIR$/server/pages/pages/forms.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/pages/grid.html" afterPath="$PROJECT_DIR$/server/pages/pages/grid.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/pages/icons.html" afterPath="$PROJECT_DIR$/server/pages/pages/icons.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/pages/index.html" afterPath="$PROJECT_DIR$/server/pages/pages/index.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/pages/login.html" afterPath="$PROJECT_DIR$/server/pages/pages/login.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/pages/morris.html" afterPath="$PROJECT_DIR$/server/pages/pages/morris.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/pages/notifications.html" afterPath="$PROJECT_DIR$/server/pages/pages/notifications.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/pages/panels-wells.html" afterPath="$PROJECT_DIR$/server/pages/pages/panels-wells.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/pages/tables.html" afterPath="$PROJECT_DIR$/server/pages/pages/tables.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/pages/typography.html" afterPath="$PROJECT_DIR$/server/pages/pages/typography.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/bootstrap-social/bootstrap-social.css" afterPath="$PROJECT_DIR$/server/pages/vendor/bootstrap-social/bootstrap-social.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/bootstrap-social/bootstrap-social.less" afterPath="$PROJECT_DIR$/server/pages/vendor/bootstrap-social/bootstrap-social.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/bootstrap-social/bootstrap-social.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/bootstrap-social/bootstrap-social.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/bootstrap/css/bootstrap.css" afterPath="$PROJECT_DIR$/server/pages/vendor/bootstrap/css/bootstrap.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/bootstrap/css/bootstrap.min.css" afterPath="$PROJECT_DIR$/server/pages/vendor/bootstrap/css/bootstrap.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/bootstrap/fonts/glyphicons-halflings-regular.eot" afterPath="$PROJECT_DIR$/server/pages/vendor/bootstrap/fonts/glyphicons-halflings-regular.eot" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/bootstrap/fonts/glyphicons-halflings-regular.svg" afterPath="$PROJECT_DIR$/server/pages/vendor/bootstrap/fonts/glyphicons-halflings-regular.svg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/bootstrap/fonts/glyphicons-halflings-regular.ttf" afterPath="$PROJECT_DIR$/server/pages/vendor/bootstrap/fonts/glyphicons-halflings-regular.ttf" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/bootstrap/fonts/glyphicons-halflings-regular.woff" afterPath="$PROJECT_DIR$/server/pages/vendor/bootstrap/fonts/glyphicons-halflings-regular.woff" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/bootstrap/fonts/glyphicons-halflings-regular.woff2" afterPath="$PROJECT_DIR$/server/pages/vendor/bootstrap/fonts/glyphicons-halflings-regular.woff2" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/bootstrap/js/bootstrap.js" afterPath="$PROJECT_DIR$/server/pages/vendor/bootstrap/js/bootstrap.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/bootstrap/js/bootstrap.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/bootstrap/js/bootstrap.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables-plugins/dataTables.bootstrap.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables-plugins/dataTables.bootstrap.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables-plugins/dataTables.bootstrap.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables-plugins/dataTables.bootstrap.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables-plugins/dataTables.bootstrap.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables-plugins/dataTables.bootstrap.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables-plugins/index.html" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables-plugins/index.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables-responsive/dataTables.responsive.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables-responsive/dataTables.responsive.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables-responsive/dataTables.responsive.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables-responsive/dataTables.responsive.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables-responsive/dataTables.responsive.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables-responsive/dataTables.responsive.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.bootstrap.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.bootstrap.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.bootstrap.min.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.bootstrap.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.bootstrap4.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.bootstrap4.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.bootstrap4.min.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.bootstrap4.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.foundation.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.foundation.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.foundation.min.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.foundation.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.jqueryui.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.jqueryui.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.jqueryui.min.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.jqueryui.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.material.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.material.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.material.min.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.material.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.semanticui.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.semanticui.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.semanticui.min.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.semanticui.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.uikit.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.uikit.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/dataTables.uikit.min.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/dataTables.uikit.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/jquery.dataTables.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/jquery.dataTables.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/jquery.dataTables.min.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/jquery.dataTables.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/css/jquery.dataTables_themeroller.css" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/css/jquery.dataTables_themeroller.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/images/Sorting icons.psd" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/images/Sorting icons.psd" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/images/favicon.ico" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/images/favicon.ico" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/images/sort_asc.png" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/images/sort_asc.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/images/sort_asc_disabled.png" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/images/sort_asc_disabled.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/images/sort_both.png" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/images/sort_both.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/images/sort_desc.png" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/images/sort_desc.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/images/sort_desc_disabled.png" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/images/sort_desc_disabled.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.bootstrap.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.bootstrap.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.bootstrap.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.bootstrap.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.bootstrap4.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.bootstrap4.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.bootstrap4.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.bootstrap4.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.foundation.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.foundation.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.foundation.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.foundation.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.jqueryui.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.jqueryui.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.jqueryui.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.jqueryui.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.material.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.material.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.material.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.material.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.semanticui.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.semanticui.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.semanticui.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.semanticui.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.uikit.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.uikit.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/dataTables.uikit.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/dataTables.uikit.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/jquery.dataTables.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/jquery.dataTables.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/jquery.dataTables.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/jquery.dataTables.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/datatables/js/jquery.js" afterPath="$PROJECT_DIR$/server/pages/vendor/datatables/js/jquery.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot-tooltip/jquery.flot.tooltip.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot-tooltip/jquery.flot.tooltip.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot-tooltip/jquery.flot.tooltip.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot-tooltip/jquery.flot.tooltip.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot-tooltip/jquery.flot.tooltip.source.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot-tooltip/jquery.flot.tooltip.source.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/excanvas.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/excanvas.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/excanvas.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/excanvas.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.colorhelpers.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.colorhelpers.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.canvas.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.canvas.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.categories.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.categories.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.crosshair.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.crosshair.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.errorbars.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.errorbars.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.fillbetween.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.fillbetween.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.image.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.image.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.navigate.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.navigate.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.pie.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.pie.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.resize.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.resize.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.selection.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.selection.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.stack.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.stack.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.symbol.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.symbol.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.threshold.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.threshold.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.flot.time.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.flot.time.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/flot/jquery.js" afterPath="$PROJECT_DIR$/server/pages/vendor/flot/jquery.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/HELP-US-OUT.txt" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/HELP-US-OUT.txt" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/css/font-awesome.css" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/css/font-awesome.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/css/font-awesome.css.map" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/css/font-awesome.css.map" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/css/font-awesome.min.css" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/css/font-awesome.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/fonts/FontAwesome.otf" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/fonts/FontAwesome.otf" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/fonts/fontawesome-webfont.eot" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/fonts/fontawesome-webfont.eot" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/fonts/fontawesome-webfont.svg" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/fonts/fontawesome-webfont.svg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/fonts/fontawesome-webfont.ttf" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/fonts/fontawesome-webfont.ttf" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/fonts/fontawesome-webfont.woff" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/fonts/fontawesome-webfont.woff" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/fonts/fontawesome-webfont.woff2" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/fonts/fontawesome-webfont.woff2" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/animated.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/animated.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/bordered-pulled.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/bordered-pulled.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/core.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/core.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/extras.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/extras.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/fixed-width.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/fixed-width.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/font-awesome.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/font-awesome.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/icons.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/icons.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/larger.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/larger.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/list.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/list.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/mixins.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/mixins.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/path.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/path.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/rotated-flipped.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/rotated-flipped.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/screen-reader.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/screen-reader.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/spinning.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/spinning.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/stacked.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/stacked.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/less/variables.less" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/less/variables.less" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_animated.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_animated.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_bordered-pulled.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_bordered-pulled.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_core.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_core.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_extras.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_extras.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_fixed-width.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_fixed-width.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_icons.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_icons.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_larger.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_larger.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_list.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_list.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_mixins.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_mixins.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_path.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_path.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_rotated-flipped.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_rotated-flipped.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_screen-reader.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_screen-reader.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_spinning.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_spinning.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_stacked.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_stacked.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/_variables.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/_variables.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/font-awesome/scss/font-awesome.scss" afterPath="$PROJECT_DIR$/server/pages/vendor/font-awesome/scss/font-awesome.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/jquery/jquery.js" afterPath="$PROJECT_DIR$/server/pages/vendor/jquery/jquery.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/jquery/jquery.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/jquery/jquery.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/metisMenu/metisMenu.css" afterPath="$PROJECT_DIR$/server/pages/vendor/metisMenu/metisMenu.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/metisMenu/metisMenu.js" afterPath="$PROJECT_DIR$/server/pages/vendor/metisMenu/metisMenu.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/metisMenu/metisMenu.min.css" afterPath="$PROJECT_DIR$/server/pages/vendor/metisMenu/metisMenu.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/metisMenu/metisMenu.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/metisMenu/metisMenu.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/morrisjs/morris.css" afterPath="$PROJECT_DIR$/server/pages/vendor/morrisjs/morris.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/morrisjs/morris.js" afterPath="$PROJECT_DIR$/server/pages/vendor/morrisjs/morris.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/morrisjs/morris.min.js" afterPath="$PROJECT_DIR$/server/pages/vendor/morrisjs/morris.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pages/vendor/raphael/raphael.js" afterPath="$PROJECT_DIR$/server/pages/vendor/raphael/raphael.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/pages/sass/style.scss" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/sinf-2016.iml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -191,7 +27,18 @@
     <favorites_list name="sinf-2016" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="style.scss" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/server/pages/sass/style.scss">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -242,6 +89,46 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sinf-2016" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sinf-2016" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="server" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pages" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sinf-2016" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sinf-2016" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="server" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pages" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sass" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
@@ -250,11 +137,12 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/server/pages/sass/style.scss" />
     <property name="HbShouldOpenHtmlAsHb" value="" />
     <property name="nodejs_interpreter_path" value="C:/Program Files/nodejs/node" />
     <property name="js.eslint.eslintPackage" value="" />
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files\nodejs\node.exe" />
+    <property name="settings.editor.selected.configurable" value="watcher.settings" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
@@ -321,20 +209,21 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1479469629941</updated>
-      <workItem from="1479469631381" duration="712000" />
+      <workItem from="1479469631381" duration="1340000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="712000" />
+    <option name="totallyTimeSpent" value="1340000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="7" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -345,7 +234,6 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
@@ -373,6 +261,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
           <caret line="58" column="31" lean-forward="false" selection-start-line="58" selection-start-column="31" selection-end-line="58" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/pages/sass/style.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
