@@ -35,8 +35,12 @@ namespace SalesOrderPicking.Controllers
         }
 
         // POST: api/Armazem
-        public void Post([FromBody]string value)
-        {
+        public IHttpActionResult Post(TransferenciaArmazem transferencia) {
+
+            if (PriIntegration.GerarTransferenciaArmazem(transferencia))
+                return Ok();
+            else
+                return BadRequest();
         }
 
         // PUT: api/Armazem/5

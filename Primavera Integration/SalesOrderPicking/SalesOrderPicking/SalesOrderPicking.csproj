@@ -284,19 +284,17 @@
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\EncomendaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\RemessaController.cs" />
-    <Compile Include="Controllers\TestController.cs" />
-    <Compile Include="Controllers\TransferenciaController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Lib_Primavera\GeneralConstants.cs" />
     <Compile Include="Lib_Primavera\Model\Armazem.cs" />
     <Compile Include="Lib_Primavera\Model\Artigo.cs" />
     <Compile Include="Lib_Primavera\Model\Cliente.cs" />
     <Compile Include="Lib_Primavera\Model\EncomendaCliente.cs" />
     <Compile Include="Lib_Primavera\Model\LinhaEncomendaCliente.cs" />
     <Compile Include="Lib_Primavera\Model\LocalizacaoArmazem.cs" />
+    <Compile Include="Lib_Primavera\Model\PedidoTransformacaoECL.cs" />
     <Compile Include="Lib_Primavera\Model\StockArtigo.cs" />
     <Compile Include="Lib_Primavera\Model\TransferenciaArmazem.cs" />
     <Compile Include="Lib_Primavera\Model\TransferenciaArtigo.cs" />

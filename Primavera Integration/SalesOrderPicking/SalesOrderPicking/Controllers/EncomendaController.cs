@@ -29,8 +29,13 @@ namespace SalesOrderPicking.Controllers
         }
 
         // POST: api/Encomenda
-        public void Post([FromBody]string value)
-        {
+        public IHttpActionResult Post(PedidoTransformacaoECL encomenda) {
+
+            if (PriIntegration.GerarGuiaRemessa(encomenda))
+                return Ok();
+            else
+                return BadRequest();
+
         }
 
         // PUT: api/Encomenda/5
