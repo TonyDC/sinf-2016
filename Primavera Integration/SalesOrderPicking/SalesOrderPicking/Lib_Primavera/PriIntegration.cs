@@ -227,133 +227,105 @@ namespace SalesOrderPicking.Lib_Primavera {
 
         #region Testes
 
-        public static bool GerarGuiaRemessa(EncomendaCliente encomenda) {
+        public static bool GerarGuiaRemessa(PedidoTransformacaoECL encomenda) {
 
             if (PriEngine.IniciaTransaccao()) {
 
-                System.Diagnostics.Debug.WriteLine("Documento: {0}   Filial: {1}    Serie: {2}", encomenda.NumeroDocumento, encomenda.Filial, encomenda.Serie);
-
-                // Carregar encomenda
-                GcpBEDocumentoVenda objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, "ECL", encomenda.Serie, Int16.Parse(encomenda.NumeroDocumento));
+                // Carregar encomenda de cliente
+                GcpBEDocumentoVenda objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, Int16.Parse(encomenda.NumeroDocumento));
 
                 if (objEncomenda == null) {
                     PriEngine.TerminaTransaccao();
-                    return false;
+                    throw new InvalidOperationException("Não existe uma encomenda de cliente com os dados fornecidos.");
                 }
 
                 GcpBEDocumentoVenda objGuiaRemessa = new GcpBEDocumentoVenda();
 
                 objGuiaRemessa.set_TipoEntidade(objEncomenda.get_TipoEntidade());
                 objGuiaRemessa.set_Entidade(objEncomenda.get_Entidade());
-                objGuiaRemessa.set_Tipodoc("GR");
+                objGuiaRemessa.set_Tipodoc(GeneralConstants.GUIA_REMESSA_DOCUMENTO);
                 objGuiaRemessa.set_Serie(objEncomenda.get_Serie());
+
                 PriEngine.Engine.Comercial.Vendas.PreencheDadosRelacionados(objGuiaRemessa);
-                //objGuiaRemessa.set_Linhas(new GcpBELinhasDocumentoVenda());
-                //GcpBELinhasDocumentoVenda linhasDocVenda = new GcpBELinhasDocumentoVenda();
-
-                /*
-                foreach (var artigo in encomenda.Artigos) {
-                    /*
-                    GcpBELinhaDocumentoVenda linhaDoc = new GcpBELinhaDocumentoVenda();
-
-                    linhaDoc.set_Artigo(artigo.ArtigoID);
-                    linhaDoc.set_Quantidade(Double.Parse(artigo.Quantidade));
-                    linhaDoc.set_Armazem("EXPED");
-                    linhaDoc.set_Localizacao("EXPED");
-                    linhaDoc.set_DataStock(DateTime.Today);
-
-                    System.Diagnostics.Debug.WriteLine("Artigo: {0}     Quantidade: {1}", artigo.ArtigoID, artigo.Quantidade);
-                    linhasDocVenda.Insere(linhaDoc);
-                     * */
-                /*
-                    PriEngine.Engine.Comercial.Vendas.AdicionaLinha(objGuiaRemessa, artigo.ArtigoID, Int32.Parse(artigo.Quantidade), "EXPED", "EXPED");
-                }
-            
-                */
-                //objGuiaRemessa.set_Linhas(linhasDocVenda);
-
-                //PriEngine.Engine.Comercial.Vendas.PreencheDadosRelacionados(objGuiaRemessa);
 
                 Array arrayDocs = new GcpBEDocumentoVenda[] { objEncomenda };
 
-                //try {
+                // Limitação da API do Primavera: a encomenda de cliente tem de ser transformada na sua totalidade
                 PriEngine.Engine.Comercial.Vendas.TransformaDocumentoEX2(ref arrayDocs, ref objGuiaRemessa, false);
-                /*
-                } catch (System.Runtime.InteropServices.COMException e) {
-                    System.Diagnostics.Debug.WriteLine(e.HResult);
-                    System.Diagnostics.Debug.WriteLine(e.Message);
-                    System.Diagnostics.Debug.WriteLine(e.ErrorCode);
-                    System.Diagnostics.Debug.WriteLine(e.StackTrace);
-                    System.Diagnostics.Debug.WriteLine(e.ToString());
 
-                    return false;
-                }*/
                 PriEngine.TerminaTransaccao();
                 return true;
 
             } else {
                 return false;
             }
-
         }
 
-       /**
-        * Artigos:
-        *   - ID
-        *   - quantidade
-        *   - armazem origem
-        *   - localizacao origem
-        *   - armazem destino
-        *   - localizacao destino
-        * serie
-        * */
-       public static bool GerarTransferenciaArmazem(TransferenciaArmazem lista) {
 
-           if (PriEngine.IniciaTransaccao()) {
+        /**
+         * Request body: 
+         * 
+         * {
+	            armazemOrigem: "A1",
+	            serie: "2016",
+	            artigos: [
+		                    {
+			                    artigo: "A0004",
+			                    localizacaoOrigem: "A1.A.1.001",
+			                    armazemDestino: "A1",
+			                    localizacaoDestino: "A1.A.1.003",
+			                    quantidade: "9"
+		                    }
+		                ]
+            }
+         * */
+        public static bool GerarTransferenciaArmazem(TransferenciaArmazem lista) {
 
-               System.Diagnostics.Debug.WriteLine(lista);
+            if (PriEngine.IniciaTransaccao()) {
 
-               GcpBEDocumentoStock docStock = new GcpBEDocumentoStock();
-           
-               docStock.set_Tipodoc("TRA");
-               docStock.set_Serie(lista.Serie);
-               docStock.set_ArmazemOrigem(lista.ArmazemOrigem);
+                System.Diagnostics.Debug.WriteLine(lista);
 
-               PriEngine.Engine.Comercial.Stocks.PreencheDadosRelacionados(docStock);
+                GcpBEDocumentoStock docStock = new GcpBEDocumentoStock();
 
-               foreach (var item in lista.Artigos) {
+                docStock.set_Tipodoc(GeneralConstants.TRANSFERENCIA_ARMAZEM_DOCUMENTO);
+                docStock.set_Serie(lista.Serie);
+                docStock.set_ArmazemOrigem(lista.ArmazemOrigem);
+
+                PriEngine.Engine.Comercial.Stocks.PreencheDadosRelacionados(docStock);
+
+                /*
+                 * Forma alternativa
+                 * 
+                foreach (var item in lista.Artigos) {
                    
-                   PriEngine.Engine.Comercial.Stocks.AdicionaLinha(docStock, item.ArtigoID, "", Double.Parse(item.Quantidade), item.ArmazemDestino);
-               }
+                    PriEngine.Engine.Comercial.Stocks.AdicionaLinha(docStock, item.ArtigoID, "", Double.Parse(item.Quantidade), item.ArmazemDestino);
+                }*/
 
-               /*
-               GcpBELinhasDocumentoStock linhasDocStock = new GcpBELinhasDocumentoStock();
+                GcpBELinhasDocumentoStock linhasDocStock = new GcpBELinhasDocumentoStock();
 
-               foreach (var item in lista.Artigos) {
+                foreach (var item in lista.Artigos) {
 
-                   GcpBELinhaDocumentoStock linhaDocStock = new GcpBELinhaDocumentoStock();
+                    GcpBELinhaDocumentoStock linhaDocStock = new GcpBELinhaDocumentoStock();
 
-                   linhaDocStock.set_Artigo(item.ArtigoID);
-                   linhaDocStock.set_LocalizacaoOrigem(item.LocalizacaoOrigem);
-                   linhaDocStock.set_Localizacao(item.LocalizacaoDestino);
-                   linhaDocStock.set_Armazem(item.ArmazemDestino);
-                   linhaDocStock.set_Quantidade(Double.Parse(item.Quantidade));
+                    linhaDocStock.set_Artigo(item.ArtigoID);
+                    linhaDocStock.set_LocalizacaoOrigem(item.LocalizacaoOrigem);
+                    linhaDocStock.set_Localizacao(item.LocalizacaoDestino);
+                    linhaDocStock.set_Armazem(item.ArmazemDestino);
+                    linhaDocStock.set_Quantidade(Double.Parse(item.Quantidade));
+                    linhaDocStock.set_DataStock(DateTime.Today);
 
-                   linhasDocStock.Insere(linhaDocStock);
-                   
-                   
-               }
+                    linhasDocStock.Insere(linhaDocStock);
+                }
 
-               docStock.set_Linhas(linhasDocStock);
-                * */
+                docStock.set_Linhas(linhasDocStock);
 
-               PriEngine.Engine.Comercial.Stocks.Actualiza(docStock);
-               PriEngine.TerminaTransaccao();
+                PriEngine.Engine.Comercial.Stocks.Actualiza(docStock);
+                PriEngine.TerminaTransaccao();
 
-               return true;
+                return true;
 
-           } else
-               return false;
+            } else
+                return false;
         }
 
         #endregion Testes

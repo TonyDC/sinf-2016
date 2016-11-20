@@ -30,6 +30,7 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
 
         public override string ToString() {
             StringBuilder str = new StringBuilder();
+
             str.Append("Artigo: ").AppendLine(artigoID);
             str.Append("Localização Origem: ").AppendLine(localizacaoOrigem);
             str.Append("Armazém Destino: ").AppendLine(armazemDestino);
