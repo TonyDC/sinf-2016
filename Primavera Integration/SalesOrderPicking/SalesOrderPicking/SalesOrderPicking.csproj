@@ -286,6 +286,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RemessaController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\TransferenciaController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -297,6 +298,8 @@
     <Compile Include="Lib_Primavera\Model\LinhaEncomendaCliente.cs" />
     <Compile Include="Lib_Primavera\Model\LocalizacaoArmazem.cs" />
     <Compile Include="Lib_Primavera\Model\StockArtigo.cs" />
+    <Compile Include="Lib_Primavera\Model\TransferenciaArmazem.cs" />
+    <Compile Include="Lib_Primavera\Model\TransferenciaArtigo.cs" />
     <Compile Include="Lib_Primavera\PriEngine.cs" />
     <Compile Include="Lib_Primavera\PriIntegration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
