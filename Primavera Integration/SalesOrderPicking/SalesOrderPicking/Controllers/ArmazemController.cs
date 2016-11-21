@@ -8,13 +8,12 @@ using System.Web.Http;
 using SalesOrderPicking.Lib_Primavera;
 using SalesOrderPicking.Lib_Primavera.Model;
 
-namespace SalesOrderPicking.Controllers
-{
-    public class ArmazemController : ApiController
-    {
-        // GET: api/Armazem
-        public IHttpActionResult Get()
-        {
+namespace SalesOrderPicking.Controllers {
+
+    public class ArmazemController : ApiController {
+
+        // GET: api/armazem
+        public IHttpActionResult Get() {
             List<Armazem> listaArmazens = PriIntegration.GetArmazens();
 
             if (listaArmazens == null)
@@ -23,9 +22,8 @@ namespace SalesOrderPicking.Controllers
                 return Ok(listaArmazens);
         }
 
-        // GET: api/Armazem/5
-        public IHttpActionResult Get(string id)
-        {
+        // GET: api/armazem/{armazem-id}
+        public IHttpActionResult Get(string id) {
             List<LocalizacaoArmazem> listaLocalizacoes = PriIntegration.GetLocalizacoesArmazens(id);
 
             if (listaLocalizacoes == null)
@@ -34,23 +32,24 @@ namespace SalesOrderPicking.Controllers
                 return Ok(listaLocalizacoes);
         }
 
-        // POST: api/Armazem
+        // POST: api/armazem
+        /*
+         * Body: Object
+         *          armazemOrigem: string,
+         *          serie: string,
+         *          artigos: Array
+         *              artigo: string,
+         *              localizacaoOrigem: string,
+         *              localizacaoDestino: string,
+         *              armazemDestino: string,
+         *              quantidade: string
+         */              
         public IHttpActionResult Post(TransferenciaArmazem transferencia) {
 
             if (PriIntegration.GerarTransferenciaArmazem(transferencia))
                 return Ok();
             else
                 return BadRequest();
-        }
-
-        // PUT: api/Armazem/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/Armazem/5
-        public void Delete(int id)
-        {
         }
     }
 }

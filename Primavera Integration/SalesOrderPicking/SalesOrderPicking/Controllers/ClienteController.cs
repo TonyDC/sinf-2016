@@ -11,39 +11,61 @@ namespace SalesOrderPicking.Controllers {
 
     public class ClienteController : ApiController {
 
-        // GET: api/Cliente
+        // GET: api/cliente
         public IHttpActionResult Get() {
-
             List<Cliente> clientes = PriIntegration.GetListaClientes();
 
             if (clientes == null)
                 return NotFound();
-
             else
                 return Ok(clientes);
         }
 
-        // GET: api/Cliente/5
+        // GET: api/cliente/{cliente-id}
         public IHttpActionResult Get(string id) {
             Cliente cliente = PriIntegration.GetClienteInfo(id);
 
             if (cliente == null)
                 return NotFound();
-
             else
                 return Ok(cliente);
         }
 
-        // POST: api/Cliente
-        public void Post([FromBody]string value) {
+        // GET: api/cliente/{cliente-id}/encomendas
+        [Route("api/cliente/{id}/encomendas")]
+        public IHttpActionResult GetEncomenda(string id) {
+            List<EncomendaCliente> encomendasCliente = PriIntegration.GetEncomendasClientes(id);
+
+            if (encomendasCliente == null)
+                return NotFound();
+            else
+                return Ok(encomendasCliente);
         }
 
-        // PUT: api/Cliente/5
-        public void Put(int id, [FromBody]string value) {
+        // GET: api/clientes/encomendas
+        [Route("api/clientes/encomendas")]
+        public IHttpActionResult GetEncomendas() {
+            List<EncomendaCliente> encomendas = PriIntegration.GetEncomendasClientes();
+
+            if (encomendas == null)
+                return NotFound();
+            else
+                return Ok(encomendas);
         }
 
-        // DELETE: api/Cliente/5
-        public void Delete(int id) {
+        // POST: api/clientes/encomendas
+        /*
+         * Body: Object
+         *          nDoc: string,
+         *          serie: string,
+         *          filial: string
+         */
+        [Route("api/clientes/encomendas")]
+        public IHttpActionResult PostEncomendas(PedidoTransformacaoECL encomenda) {
+            if (PriIntegration.GerarGuiaRemessa(encomenda))
+                return Ok();
+            else
+                return BadRequest();
         }
     }
 }

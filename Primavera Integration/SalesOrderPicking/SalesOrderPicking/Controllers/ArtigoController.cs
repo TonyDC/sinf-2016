@@ -22,7 +22,7 @@ namespace SalesOrderPicking.Controllers {
                 return PriIntegration.ListaArtigos();
         }
 
-        // GET api/artigo/5
+        // GET api/artigo/{artigo-id}
         public IHttpActionResult Get(string id) {
             Artigo artigo = PriIntegration.ObterArtigo(id);
 
@@ -30,18 +30,6 @@ namespace SalesOrderPicking.Controllers {
                 return NotFound();
             else
                 return Ok(artigo);
-        }
-
-        // POST api/artigo
-        public void Post([FromBody]string value) {
-        }
-
-        // PUT api/artigo/5
-        public void Put(int id, [FromBody]string value) {
-        }
-
-        // DELETE api/artigo/5
-        public void Delete(int id) {
         }
     }
 }

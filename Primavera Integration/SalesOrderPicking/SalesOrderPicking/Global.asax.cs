@@ -25,7 +25,11 @@ namespace SalesOrderPicking {
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            // Remove XML serialization support
             GlobalConfiguration.Configuration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
+
+            // Ensure that all proper inicializations have been made
+            GlobalConfiguration.Configuration.EnsureInitialized();
 
             // ------------------------------------------------------------------------
             // Inicializar o Engine do Primavera

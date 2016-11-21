@@ -11,6 +11,7 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
         private string numeroDocumento;
         private string filial;
         private string serie;
+        private string cliente;
         private List<LinhaEncomendaCliente> artigos;
 
         public string ID {
@@ -43,11 +44,18 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
             }
         }
 
-        public EncomendaCliente(string id, string numeroDocumento, string filial, string serie, List<LinhaEncomendaCliente> artigos = null) {
+        public string Cliente {
+            get {
+                return this.cliente;
+            }
+        }
+
+        public EncomendaCliente(string id, string numeroDocumento, string cliente, string serie, string filial = null, List<LinhaEncomendaCliente> artigos = null) {
             this.encomendaID = id;
             this.numeroDocumento = numeroDocumento;
-            this.filial = filial == null ? "000" : filial;
+            this.filial = filial?? GeneralConstants.FILIAL_POR_OMISSAO;
             this.serie = serie;
+            this.cliente = cliente;
             this.artigos = artigos;
         }
 

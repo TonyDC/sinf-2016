@@ -12,11 +12,17 @@ namespace SalesOrderPicking.Lib_Primavera {
     
     public class PriEngine {
 
+        private static StdPlatBS platform = null;
+        private static ErpBS engine = null;
+        private static string databaseConnectionString = null;
+
         // Gere a parte da autenticação da plataforma
-        public static StdPlatBS Platform { get; set; }
+        public static StdPlatBS Platform { get { return PriEngine.platform; } }
 
         // Gere a parte de acesso à plataforma, e garante o cumprimento das regras de negócio
-        public static ErpBS Engine { get; set; }
+        public static ErpBS Engine { get { return PriEngine.engine; } }
+
+        public static string DBConnString { get { return PriEngine.databaseConnectionString; } }
 
         private PriEngine() {
         }
@@ -66,7 +72,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             if (Plataforma.Inicializada) {
 
                 // Retuns the ptl.
-                Platform = Plataforma;
+                platform = Plataforma;
 
                 bool blnModoPrimario = true;
 
@@ -75,7 +81,12 @@ namespace SalesOrderPicking.Lib_Primavera {
                 MotorLE.set_CacheActiva(false);
 
                 // Returns the engine.
-                Engine = MotorLE;
+                engine = MotorLE;
+
+                string databaseInstance = "Default";
+                string dbNomeEmpresa = platform.BaseDados.DaNomeBDdaEmpresa(engine.Contexto.CodEmp);
+                databaseConnectionString = platform.BaseDados.DaConnectionStringNET(dbNomeEmpresa, databaseInstance);
+
                 return true;
 
             } else {

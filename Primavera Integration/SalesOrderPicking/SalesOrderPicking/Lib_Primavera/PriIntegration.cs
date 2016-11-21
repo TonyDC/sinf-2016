@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Data.SqlClient;
+using System.Text;
+
 using Interop.ErpBS900;
 using Interop.StdPlatBS900;
 using Interop.StdBE900;
 using Interop.GcpBE900;
 using ADODB;
+
 using SalesOrderPicking.Lib_Primavera.Model;
 
 namespace SalesOrderPicking.Lib_Primavera {
@@ -14,57 +18,62 @@ namespace SalesOrderPicking.Lib_Primavera {
     public class PriIntegration {
 
         #region Artigo
+
         public static List<Artigo> ListaArtigos() {
 
-            if (PriEngine.IniciaTransaccao()) {
-                StdBELista objLista = PriEngine.Engine.Consulta("SELECT * FROM Artigo WITH (NOLOCK)");
+            List<Artigo> listaArtigos = new List<Artigo>();
 
-                List<Artigo> listaArtigos = new List<Artigo>();
+            List<Dictionary<string, object>> rows = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM Artigo WITH (NOLOCK)");
 
-                while (!objLista.NoFim()) {
-                    listaArtigos.Add(new Artigo(objLista.Valor("artigo"), objLista.Valor("descricao")));
-                    objLista.Seguinte();
-                }
+            foreach (var item in rows) {
+                object artigoID, descricao;
 
-                PriEngine.TerminaTransaccao();
-                return listaArtigos;
+                item.TryGetValue("Artigo", out artigoID);
+                item.TryGetValue("Descricao", out descricao);
 
-            } else
-                return null;
+                listaArtigos.Add(new Artigo(artigoID as string, descricao as string));
+            }
 
+            return listaArtigos;
         }
+
 
         public static Artigo ObterArtigo(string codArtigo) {
 
-            if (PriEngine.IniciaTransaccao()) {
+            if (PriEngine.DBConnString == null)
+                throw new InvalidOperationException("Connexão não inicializada (Connection string is null)");
 
-                StdBELista objLista = PriEngine.Engine.Consulta("SELECT * FROM Artigo WITH (NOLOCK) WHERE Artigo = '" + codArtigo + "'");
+            else if (codArtigo == null)
+                throw new InvalidOperationException("Invalid object code");
 
-                if (objLista.NumLinhas() < 1) {
-                    PriEngine.TerminaTransaccao();
-                    return null;
-                }
 
-                StdBELista objListaStocks = PriEngine.Engine.Consulta("SELECT * FROM ArtigoArmazem WITH (NOLOCK) WHERE Artigo = '" + codArtigo + "' ORDER BY StkActual DESC");
-                List<StockArtigo> listaStockArtigo = new List<StockArtigo>();
+            List<Dictionary<string, object>> artigo = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM Artigo WITH (NOLOCK) WHERE Artigo = '@0@'", codArtigo);
+            if (artigo.Count != 1)
+                throw new InvalidOperationException("Código de artigo inválido");
 
-                while (!objListaStocks.NoFim()) {
-                    listaStockArtigo.Add(new StockArtigo(objListaStocks.Valor("Armazem"),
-                                                            objListaStocks.Valor("Localizacao"),
-                                                            objListaStocks.Valor("Lote"),
-                                                            objListaStocks.Valor("StkActual").ToString()));
+            object artigoID, descricao;
+            Dictionary<string, object> linhaArtigo = artigo.ElementAt(0);
+            linhaArtigo.TryGetValue("Artigo", out artigoID);
+            linhaArtigo.TryGetValue("Descricao", out descricao);
 
-                    objListaStocks.Seguinte();
-                }
+            List<Dictionary<string, object>> stockArtigo = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM ArtigoArmazem WITH (NOLOCK) WHERE Artigo = '@0@' ORDER BY StkActual DESC", codArtigo);
 
-                Artigo artigo = new Artigo(objLista.Valor("Artigo"), objLista.Valor("Descricao"), listaStockArtigo);
+            List<StockArtigo> listaStockArtigo = new List<StockArtigo>();
 
-                objLista.Fim();
-                PriEngine.TerminaTransaccao();
-                return artigo;
+            for (int i = 0; i < stockArtigo.Count; i++) {
 
-            } else
-                return null;
+                Dictionary<string, object> line = stockArtigo.ElementAt(i);
+
+                object armazem, localizacao, lote, stock;
+                line.TryGetValue("Armazem", out armazem);
+                line.TryGetValue("Localizacao", out localizacao);
+                line.TryGetValue("Lote", out lote);
+                line.TryGetValue("StkActual", out stock);
+
+                listaStockArtigo.Add(new StockArtigo(armazem as string, localizacao as string, lote as string, stock.ToString()));
+            }
+
+            return new Artigo(artigoID as string, descricao as string, listaStockArtigo);
         }
 
         #endregion Artigo
@@ -72,164 +81,54 @@ namespace SalesOrderPicking.Lib_Primavera {
 
         #region Encomendas
 
-        public static List<EncomendaCliente> GetEncomendasClientes() {
+        public static List<EncomendaCliente> GetEncomendasClientes(string clienteID = null) {
 
-            if (PriEngine.IniciaTransaccao()) {
+            List<EncomendaCliente> listaArtigos = new List<EncomendaCliente>();
 
-                // Performed query: SELECT CabecDoc.Entidade, LinhasDoc.Artigo, CabecDoc.TipoDoc, CabecDoc.NumDoc,LinhasDoc.Descricao,CabecDoc.Data, CabecDoc.Serie, CabecDoc.Filial, LinhasDoc.NumLinha FROM LinhasDoc INNER JOIN CabecDoc ON (LinhasDoc.IdCabecDoc = CabecDoc.Id) WHERE TipoDoc = 'ECL'
-                // StdBELista listaEncomendas = PriEngine.Engine.Comercial.Vendas.LstLinhasDocVendas("TipoDoc = 'ECL'");
+            List<Dictionary<string, object>> listaEncomendas = null;
 
-                StdBELista queryEncomendas = PriEngine.Engine.Consulta("SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL' ORDER BY NumDoc");
-                List<EncomendaCliente> listaEncomendas = new List<EncomendaCliente>();
+            if (clienteID == null)
+                listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL' ORDER BY NumDoc");
+            else
+                listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL' AND EntidadeFac = '@0@' ORDER BY NumDoc", clienteID);
 
-                while (!queryEncomendas.NoFim()) {
+            foreach (var item in listaEncomendas) {
 
-                    string encomendaID = queryEncomendas.Valor("Id");
+                object encomendaID = item["Id"], filial = item["Filial"], serie = item["Serie"], numDoc = item["NumDoc"], cliente = item["EntidadeFac"];
+                /*
+                item.TryGetValue("Id", out encomendaID);
+                item.TryGetValue("Filial", out filial);
+                item.TryGetValue("Serie", out serie);
+                item.TryGetValue("NumDoc", out numDoc);
+                 * */
 
-                    // Seleccionar apenas os atributos pretendidos
-                    StdBELista queryEncomendasPorCliente = PriEngine.Engine.Consulta("SELECT * FROM LinhasDoc WITH (NOLOCK) WHERE IdCabecDoc = '" + encomendaID + "' AND Artigo IS NOT NULL");
-                    List<LinhaEncomendaCliente> artigosEncomenda = new List<LinhaEncomendaCliente>();
+                List<Dictionary<string, object>> linhasEncomenda = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM LinhasDoc WITH (NOLOCK) WHERE IdCabecDoc = '@0@' AND Artigo IS NOT NULL", encomendaID.ToString());
 
-                    while (!queryEncomendasPorCliente.NoFim()) {
+                List<LinhaEncomendaCliente> artigosEncomenda = new List<LinhaEncomendaCliente>();
 
-                        string id = queryEncomendasPorCliente.Valor("Id"),
-                            artigo = queryEncomendasPorCliente.Valor("Artigo"),
-                            //unidadeVenda = 
-                            quantidade = queryEncomendasPorCliente.Valor("Quantidade").ToString(),
-                            numLinha = queryEncomendasPorCliente.Valor("NumLinha").ToString();
+                foreach (var linha in linhasEncomenda) {
+                    object linhaID, artigoID, quantidade, numLinha;
+                    linha.TryGetValue("Id", out linhaID);
+                    linha.TryGetValue("Artigo", out artigoID);
+                    linha.TryGetValue("Quantidade", out quantidade);
+                    linha.TryGetValue("NumLinha", out numLinha);
 
-                        artigosEncomenda.Add(new LinhaEncomendaCliente(id, artigo, quantidade, numLinha));
-                        queryEncomendasPorCliente.Seguinte();
-                    }
-
-                    listaEncomendas.Add(new EncomendaCliente(encomendaID, queryEncomendas.Valor("NumDoc").ToString(), queryEncomendas.Valor("Filial"), queryEncomendas.Valor("Serie"), artigosEncomenda));
-                    queryEncomendas.Seguinte();
+                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID.ToString(), quantidade.ToString(), numLinha.ToString()));
                 }
 
-                PriEngine.TerminaTransaccao();
-                return listaEncomendas;
+                listaArtigos.Add(new EncomendaCliente(encomendaID.ToString(), numDoc.ToString(), cliente.ToString(), serie.ToString(), filial.ToString(), artigosEncomenda));
+            }
 
-            } else
-                return null;
+            return listaArtigos;
         }
 
-        #endregion Encomendas
-
-
-
-        #region Cliente
-
-        public static List<Cliente> GetListaClientes() {
-
-            if (PriEngine.IniciaTransaccao()) {
-
-                List<Cliente> listaClientes = new List<Cliente>();
-                StdBELista queryCliente = PriEngine.Engine.Consulta("SELECT * FROM Clientes WITH (NOLOCK)");
-
-                while (!queryCliente.NoFim()) {
-                    listaClientes.Add(new Cliente(queryCliente.Valor("Cliente"),
-                                                    queryCliente.Valor("Nome")));
-
-                    queryCliente.Seguinte();
-                }
-
-                PriEngine.TerminaTransaccao();
-                return listaClientes;
-
-            } else
-                return null;
-        }
-
-        public static Cliente GetClienteInfo(string clienteID) {
-
-            if (PriEngine.IniciaTransaccao()) {
-                StdBELista queryCliente = PriEngine.Engine.Consulta("SELECT * FROM Clientes WITH (NOLOCK) WHERE Cliente = '" + clienteID + "'");
-
-                if (queryCliente.NumLinhas() < 1) {
-                    PriEngine.TerminaTransaccao();
-                    return null;
-                }
-
-                Cliente cliente = new Cliente(queryCliente.Valor("Cliente"),
-                                                    queryCliente.Valor("Nome"),
-                                                    queryCliente.Valor("NomeFiscal"),
-                                                    queryCliente.Valor("Fac_Mor"),
-                                                    queryCliente.Valor("Fac_Local"),
-                                                    queryCliente.Valor("Fac_Cp"),
-                                                    queryCliente.Valor("Fac_Cploc"),
-                                                    queryCliente.Valor("Fac_Tel"),
-                                                    queryCliente.Valor("Pais"));
-
-                queryCliente.Fim();
-                PriEngine.TerminaTransaccao();
-                return cliente;
-
-            } else
-                return null;
-        }
-
-        #endregion Cliente
-
-
-        #region Armazem
-
-        public static List<Armazem> GetArmazens() {
-
-            if (PriEngine.IniciaTransaccao()) {
-                List<Armazem> listaArmazens = new List<Armazem>();
-                StdBELista queryArmazens = PriEngine.Engine.Consulta("SELECT * FROM Armazens WITH (NOLOCK)");
-
-                while (!queryArmazens.NoFim()) {
-                    listaArmazens.Add(new Armazem(queryArmazens.Valor("Armazem"),
-                                                    queryArmazens.Valor("Descricao")));
-
-                    queryArmazens.Seguinte();
-                }
-
-                PriEngine.TerminaTransaccao();
-                return listaArmazens;
-
-            } else
-                return null;
-        }
-
-
-        public static bool GerarTransferenciaArmazem(string artigoID, string armazemOrigem, string armazemDestino, float quantidade) {
-            return true;
-        }
-
-
-        // Determinar as varias localizacoes associadas ao armazem
-        public static List<LocalizacaoArmazem> GetLocalizacoesArmazens(string armazemID) {
-
-            if (PriEngine.IniciaTransaccao()) {
-                List<LocalizacaoArmazem> listaArmazens = new List<LocalizacaoArmazem>();
-                StdBELista queryArmazens = PriEngine.Engine.Consulta("SELECT * FROM ArmazemLocalizacoes");
-
-                while (!queryArmazens.NoFim()) {
-                    listaArmazens.Add(new LocalizacaoArmazem(queryArmazens.Valor("Id"),
-                                                             queryArmazens.Valor("Localizacao"),
-                                                             queryArmazens.Valor("Descricao"),
-                                                             queryArmazens.Valor("NomeNivel")));
-
-                    queryArmazens.Seguinte();
-                }
-
-                return listaArmazens;
-
-            } else
-                return null;
-
-        }
-
-        #endregion Armazem
-
-
-        #region Testes
 
         public static bool GerarGuiaRemessa(PedidoTransformacaoECL encomenda) {
 
             if (PriEngine.IniciaTransaccao()) {
+
+                if (encomenda == null)
+                    throw new InvalidOperationException("Pedido de encomenda inválido (parâmetro a null)");
 
                 // Carregar encomenda de cliente
                 GcpBEDocumentoVenda objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, Int16.Parse(encomenda.NumeroDocumento));
@@ -261,24 +160,101 @@ namespace SalesOrderPicking.Lib_Primavera {
             }
         }
 
+        #endregion Encomendas
 
-        /**
-         * Request body: 
-         * 
-         * {
-	            armazemOrigem: "A1",
-	            serie: "2016",
-	            artigos: [
-		                    {
-			                    artigo: "A0004",
-			                    localizacaoOrigem: "A1.A.1.001",
-			                    armazemDestino: "A1",
-			                    localizacaoDestino: "A1.A.1.003",
-			                    quantidade: "9"
-		                    }
-		                ]
+
+
+        #region Cliente
+
+        public static List<Cliente> GetListaClientes() {
+
+            List<Cliente> listaClientes = new List<Cliente>();
+            List<Dictionary<string, object>> queryRows = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM Clientes WITH (NOLOCK)");
+
+            foreach (var item in queryRows) {
+                object id, nome;
+                item.TryGetValue("Cliente", out id);
+                item.TryGetValue("Nome", out nome);
+
+                listaClientes.Add(new Cliente(id.ToString(), nome.ToString()));
             }
-         * */
+
+            return listaClientes;
+        }
+
+
+        public static Cliente GetClienteInfo(string clienteID) {
+
+            if (clienteID == null)
+                throw new InvalidOperationException("ID de cliente inválido");
+
+
+            List<Dictionary<string, object>> queryRows = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM Clientes WITH (NOLOCK) WHERE Cliente = '@0@'", clienteID);
+
+            if (queryRows.Count != 1)
+                throw new InvalidOperationException("Cliente inexistente");
+
+            Dictionary<string, object> clientRow = queryRows.ElementAt(0);
+
+            object id, nome, nomeFiscal, morada, local, codPostal, locCodPostal, telefone, pais;
+            clientRow.TryGetValue("Cliente", out id);
+            clientRow.TryGetValue("Nome", out nome);
+            clientRow.TryGetValue("NomeFiscal", out nomeFiscal);
+            clientRow.TryGetValue("Fac_Mor", out morada);
+            clientRow.TryGetValue("Fac_Local", out local);
+            clientRow.TryGetValue("Fac_Cp", out codPostal);
+            clientRow.TryGetValue("Fac_Cploc", out locCodPostal);
+            clientRow.TryGetValue("Fac_Tel", out telefone);
+            clientRow.TryGetValue("Pais", out pais);
+
+            return new Cliente(id.ToString(), nome.ToString(), nomeFiscal.ToString(), morada.ToString(), local.ToString(), codPostal.ToString(), locCodPostal.ToString(), telefone.ToString(), pais.ToString());
+        }
+
+        #endregion Cliente
+
+
+        #region Armazem
+
+        public static List<Armazem> GetArmazens() {
+
+            List<Armazem> listaArmazens = new List<Armazem>();
+            List<Dictionary<string, object>> queryRows = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM Armazens WITH (NOLOCK)");
+
+            foreach (var item in queryRows) {
+                object id, descricao;
+                item.TryGetValue("Armazem", out id);
+                item.TryGetValue("Descricao", out descricao);
+
+                listaArmazens.Add(new Armazem(id.ToString(), descricao.ToString()));
+            }
+
+            return listaArmazens;
+        }
+
+        // Determinar as varias localizacoes associadas ao armazem
+        public static List<LocalizacaoArmazem> GetLocalizacoesArmazens(string armazemID) {
+
+            if (armazemID == null)
+                throw new InvalidOperationException("Identificador de armazém inválido");
+
+
+            List<LocalizacaoArmazem> listaLocalizacoesArmazem = new List<LocalizacaoArmazem>();
+            List<Dictionary<string, object>> queryRows = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM ArmazemLocalizacoes WITH (NOLOCK) WHERE Armazem = '@0@'", armazemID);
+
+            foreach (var item in queryRows) {
+                object id, localizacao, descricao, nomeNivel;
+                item.TryGetValue("Id", out id);
+                item.TryGetValue("Localizacao", out localizacao);
+                item.TryGetValue("Descricao", out descricao);
+                item.TryGetValue("NomeNivel", out nomeNivel);
+
+                listaLocalizacoesArmazem.Add(new LocalizacaoArmazem(id.ToString(), localizacao.ToString(), descricao.ToString(), nomeNivel.ToString()));
+            }
+
+            return listaLocalizacoesArmazem;
+        }
+
+
         public static bool GerarTransferenciaArmazem(TransferenciaArmazem lista) {
 
             if (PriEngine.IniciaTransaccao()) {
@@ -328,10 +304,14 @@ namespace SalesOrderPicking.Lib_Primavera {
                 return false;
         }
 
+        #endregion Armazem
+
+
+        #region Testes
+
         #endregion Testes
 
     }
 }
 
 // TODO try...catch em cada controlador
-// TODO atencao ao SQL injection -> usar os controladores de base de dados nativos
