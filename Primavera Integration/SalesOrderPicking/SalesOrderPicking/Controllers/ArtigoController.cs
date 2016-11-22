@@ -13,18 +13,30 @@ namespace SalesOrderPicking.Controllers {
     public class ArtigoController : ApiController {
 
         // GET api/artigo
-        public IEnumerable<Artigo> Get() {
-            IEnumerable<Artigo> listaFinal = PriIntegration.ListaArtigos();
+        public IHttpActionResult Get() {
+            IEnumerable<Artigo> listaFinal = null;
+            try {
+                listaFinal = PriIntegration.ListaArtigos();
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
 
             if (listaFinal == null)
-                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+                return BadRequest();
             else
-                return PriIntegration.ListaArtigos();
+                return Ok(PriIntegration.ListaArtigos());
         }
 
         // GET api/artigo/{artigo-id}
         public IHttpActionResult Get(string id) {
-            Artigo artigo = PriIntegration.ObterArtigo(id);
+            Artigo artigo = null;
+            try {
+                artigo = PriIntegration.ObterArtigo(id);
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
 
             if (artigo == null)
                 return NotFound();

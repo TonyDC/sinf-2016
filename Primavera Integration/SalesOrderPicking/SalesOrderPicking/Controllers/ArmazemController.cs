@@ -14,7 +14,13 @@ namespace SalesOrderPicking.Controllers {
 
         // GET: api/armazem
         public IHttpActionResult Get() {
-            List<Armazem> listaArmazens = PriIntegration.GetArmazens();
+            List<Armazem> listaArmazens = null;
+            try {
+                listaArmazens = PriIntegration.GetArmazens();
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
 
             if (listaArmazens == null)
                 return NotFound();
@@ -24,7 +30,13 @@ namespace SalesOrderPicking.Controllers {
 
         // GET: api/armazem/{armazem-id}
         public IHttpActionResult Get(string id) {
-            List<LocalizacaoArmazem> listaLocalizacoes = PriIntegration.GetLocalizacoesArmazens(id);
+            List<LocalizacaoArmazem> listaLocalizacoes = null;
+            try {
+                listaLocalizacoes = PriIntegration.GetLocalizacoesArmazens(id);
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
 
             if (listaLocalizacoes == null)
                 return NotFound();
@@ -43,13 +55,20 @@ namespace SalesOrderPicking.Controllers {
          *              localizacaoDestino: string,
          *              armazemDestino: string,
          *              quantidade: uint
-         */              
+         */
         public IHttpActionResult Post(TransferenciaArmazem transferencia) {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            if (PriIntegration.GerarTransferenciaArmazem(transferencia))
-                return Ok();
-            else
-                return BadRequest();
+            try {
+                if (PriIntegration.GerarTransferenciaArmazem(transferencia))
+                    return Ok();
+                else
+                    return BadRequest();
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
         }
     }
 }

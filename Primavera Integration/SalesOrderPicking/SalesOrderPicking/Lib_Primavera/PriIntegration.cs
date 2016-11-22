@@ -97,9 +97,9 @@ namespace SalesOrderPicking.Lib_Primavera {
                 List<LinhaEncomendaCliente> artigosEncomenda = new List<LinhaEncomendaCliente>();
 
                 foreach (var linha in linhasEncomenda) {
-                    object linhaID = linha["Id"], artigoID = linha["Artigo"], quantidade = linha["Quantidade"], numLinha = linha["NumLinha"], armazem = linha["Armazem"], localizacao = linha["Localizacao"], lote = linha["Lote"];
+                    object linhaID = linha["Id"], artigoID = linha["Artigo"], quantidade = linha["Quantidade"], numLinha = linha["NumLinha"], armazem = linha["Armazem"], localizacao = linha["Localizacao"], lote = linha["Lote"], dataEntrega = linha["DataEntrega"];
       
-                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID as string, armazem as string, localizacao as string, lote as string, Convert.ToDouble(quantidade), Convert.ToUInt32(numLinha)));
+                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID as string, armazem as string, localizacao as string, lote as string, Convert.ToDouble(quantidade), Convert.ToUInt32(numLinha), (DateTime) dataEntrega));
                 }
 
                 listaArtigos.Add(new EncomendaCliente(encomendaID.ToString(),  Convert.ToUInt32(numDoc), cliente as string, serie as string, filial as string, artigosEncomenda));

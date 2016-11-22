@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
 
 namespace SalesOrderPicking.Lib_Primavera.Model {
 
@@ -12,8 +13,14 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
         private string serie;
         private List<TransferenciaArtigo> artigos;
 
+        [Required]
         public string ArmazemOrigem { get { return this.armazemOrigem; } }
+        
+        [Required]
         public string Serie { get { return this.serie; } }
+       
+        [Required]
+        [MinLength(1)]
         public List<TransferenciaArtigo> Artigos { get { return this.artigos; } }
 
         public TransferenciaArmazem(string armazemOrigem, string serie, List<TransferenciaArtigo> artigos) {

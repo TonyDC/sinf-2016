@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
 
 namespace SalesOrderPicking.Lib_Primavera.Model {
 
@@ -14,10 +15,20 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
         private string localizacaoDestino;
         private double quantidade;
 
+        [Required]
         public string ArtigoID { get { return this.artigoID; } }
+
+        [Required]
         public string LocalizacaoOrigem { get { return this.localizacaoOrigem; } }
+
+        [Required]
         public string LocalizacaoDestino { get { return this.localizacaoDestino; } }
+
+        [Required]
         public string ArmazemDestino { get { return this.armazemDestino; } }
+
+        [Required]
+        [Range(0, double.MaxValue)]
         public double Quantidade { get { return this.quantidade; } }
 
         public TransferenciaArtigo(string artigo, string localizacaoOrigem, string localizacaoDestino, string armazemDestino, double quantidade) {

@@ -13,7 +13,13 @@ namespace SalesOrderPicking.Controllers {
 
         // GET: api/cliente
         public IHttpActionResult Get() {
-            List<Cliente> clientes = PriIntegration.GetListaClientes();
+            List<Cliente> clientes = null;
+            try {
+                clientes = PriIntegration.GetListaClientes();
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
 
             if (clientes == null)
                 return NotFound();
@@ -23,7 +29,13 @@ namespace SalesOrderPicking.Controllers {
 
         // GET: api/cliente/{cliente-id}
         public IHttpActionResult Get(string id) {
-            Cliente cliente = PriIntegration.GetClienteInfo(id);
+            Cliente cliente = null;
+            try {
+                cliente = PriIntegration.GetClienteInfo(id);
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
 
             if (cliente == null)
                 return NotFound();
@@ -34,7 +46,13 @@ namespace SalesOrderPicking.Controllers {
         // GET: api/cliente/{cliente-id}/encomendas
         [Route("api/cliente/{id}/encomendas")]
         public IHttpActionResult GetEncomenda(string id) {
-            List<EncomendaCliente> encomendasCliente = PriIntegration.GetEncomendasClientes(id);
+            List<EncomendaCliente> encomendasCliente = null;
+            try {
+                encomendasCliente = PriIntegration.GetEncomendasClientes(id);
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
 
             if (encomendasCliente == null)
                 return NotFound();
@@ -45,7 +63,13 @@ namespace SalesOrderPicking.Controllers {
         // GET: api/clientes/encomendas
         [Route("api/clientes/encomendas")]
         public IHttpActionResult GetEncomendas() {
-            List<EncomendaCliente> encomendas = PriIntegration.GetEncomendasClientes();
+            List<EncomendaCliente> encomendas = null;
+            try {
+                PriIntegration.GetEncomendasClientes();
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
 
             if (encomendas == null)
                 return NotFound();
@@ -62,10 +86,19 @@ namespace SalesOrderPicking.Controllers {
          */
         [Route("api/clientes/encomendas")]
         public IHttpActionResult PostEncomendas(PedidoTransformacaoECL encomenda) {
-            if (PriIntegration.GerarGuiaRemessa(encomenda))
-                return Ok();
-            else
-                return BadRequest();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try {
+                if (PriIntegration.GerarGuiaRemessa(encomenda))
+                    return Ok();
+                else
+                    return BadRequest();
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
+ 
         }
     }
 }
