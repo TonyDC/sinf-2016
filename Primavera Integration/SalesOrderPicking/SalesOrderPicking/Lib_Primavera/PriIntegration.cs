@@ -26,10 +26,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             List<Dictionary<string, object>> rows = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM Artigo WITH (NOLOCK)");
 
             foreach (var item in rows) {
-                object artigoID, descricao;
-
-                item.TryGetValue("Artigo", out artigoID);
-                item.TryGetValue("Descricao", out descricao);
+                object artigoID = item["Artigo"], descricao = item["Descricao"];
 
                 listaArtigos.Add(new Artigo(artigoID as string, descricao as string));
             }
@@ -51,10 +48,8 @@ namespace SalesOrderPicking.Lib_Primavera {
             if (artigo.Count != 1)
                 throw new InvalidOperationException("Código de artigo inválido");
 
-            object artigoID, descricao;
             Dictionary<string, object> linhaArtigo = artigo.ElementAt(0);
-            linhaArtigo.TryGetValue("Artigo", out artigoID);
-            linhaArtigo.TryGetValue("Descricao", out descricao);
+            object descricao = linhaArtigo["Descricao"], unidadeVenda = linhaArtigo["UnidadeVenda"];
 
             List<Dictionary<string, object>> stockArtigo = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM ArtigoArmazem WITH (NOLOCK) WHERE Artigo = '@0@' ORDER BY StkActual DESC", codArtigo);
 
@@ -63,17 +58,12 @@ namespace SalesOrderPicking.Lib_Primavera {
             for (int i = 0; i < stockArtigo.Count; i++) {
 
                 Dictionary<string, object> line = stockArtigo.ElementAt(i);
+                object armazem = line["Armazem"], localizacao = line["Localizacao"], lote = line["Lote"], stock = line["StkActual"];
 
-                object armazem, localizacao, lote, stock;
-                line.TryGetValue("Armazem", out armazem);
-                line.TryGetValue("Localizacao", out localizacao);
-                line.TryGetValue("Lote", out lote);
-                line.TryGetValue("StkActual", out stock);
-
-                listaStockArtigo.Add(new StockArtigo(armazem as string, localizacao as string, lote as string, stock.ToString()));
+                listaStockArtigo.Add(new StockArtigo(armazem as string, localizacao as string, lote as string, Convert.ToDouble(stock)));
             }
 
-            return new Artigo(artigoID as string, descricao as string, listaStockArtigo);
+            return new Artigo(codArtigo, descricao as string, unidadeVenda as string, listaStockArtigo);
         }
 
         #endregion Artigo
@@ -107,16 +97,12 @@ namespace SalesOrderPicking.Lib_Primavera {
                 List<LinhaEncomendaCliente> artigosEncomenda = new List<LinhaEncomendaCliente>();
 
                 foreach (var linha in linhasEncomenda) {
-                    object linhaID, artigoID, quantidade, numLinha;
-                    linha.TryGetValue("Id", out linhaID);
-                    linha.TryGetValue("Artigo", out artigoID);
-                    linha.TryGetValue("Quantidade", out quantidade);
-                    linha.TryGetValue("NumLinha", out numLinha);
-
-                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID.ToString(), quantidade.ToString(), numLinha.ToString()));
+                    object linhaID = linha["Id"], artigoID = linha["Artigo"], quantidade = linha["Quantidade"], numLinha = linha["NumLinha"], armazem = linha["Armazem"], localizacao = linha["Localizacao"], lote = linha["Lote"];
+      
+                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID as string, armazem as string, localizacao as string, lote as string, Convert.ToDouble(quantidade), Convert.ToUInt32(numLinha)));
                 }
 
-                listaArtigos.Add(new EncomendaCliente(encomendaID.ToString(), numDoc.ToString(), cliente.ToString(), serie.ToString(), filial.ToString(), artigosEncomenda));
+                listaArtigos.Add(new EncomendaCliente(encomendaID.ToString(),  Convert.ToUInt32(numDoc), cliente as string, serie as string, filial as string, artigosEncomenda));
             }
 
             return listaArtigos;
@@ -131,7 +117,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                     throw new InvalidOperationException("Pedido de encomenda inválido (parâmetro a null)");
 
                 // Carregar encomenda de cliente
-                GcpBEDocumentoVenda objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, Int16.Parse(encomenda.NumeroDocumento));
+                GcpBEDocumentoVenda objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, (int) encomenda.NumeroDocumento);
 
                 if (objEncomenda == null) {
                     PriEngine.TerminaTransaccao();
@@ -172,11 +158,9 @@ namespace SalesOrderPicking.Lib_Primavera {
             List<Dictionary<string, object>> queryRows = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM Clientes WITH (NOLOCK)");
 
             foreach (var item in queryRows) {
-                object id, nome;
-                item.TryGetValue("Cliente", out id);
-                item.TryGetValue("Nome", out nome);
+                object id = item["Cliente"], nome = item["Nome"];
 
-                listaClientes.Add(new Cliente(id.ToString(), nome.ToString()));
+                listaClientes.Add(new Cliente(id as string, nome as string));
             }
 
             return listaClientes;
@@ -196,18 +180,9 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             Dictionary<string, object> clientRow = queryRows.ElementAt(0);
 
-            object id, nome, nomeFiscal, morada, local, codPostal, locCodPostal, telefone, pais;
-            clientRow.TryGetValue("Cliente", out id);
-            clientRow.TryGetValue("Nome", out nome);
-            clientRow.TryGetValue("NomeFiscal", out nomeFiscal);
-            clientRow.TryGetValue("Fac_Mor", out morada);
-            clientRow.TryGetValue("Fac_Local", out local);
-            clientRow.TryGetValue("Fac_Cp", out codPostal);
-            clientRow.TryGetValue("Fac_Cploc", out locCodPostal);
-            clientRow.TryGetValue("Fac_Tel", out telefone);
-            clientRow.TryGetValue("Pais", out pais);
+            object id = clientRow["Cliente"], nome = clientRow["Nome"], nomeFiscal = clientRow["NomeFiscal"], morada = clientRow["Fac_Mor"], local = clientRow["Fac_Local"], codPostal = clientRow["Fac_Cp"], locCodPostal = clientRow["Fac_Cploc"], telefone = clientRow["Fac_Tel"], pais = clientRow["Pais"];
 
-            return new Cliente(id.ToString(), nome.ToString(), nomeFiscal.ToString(), morada.ToString(), local.ToString(), codPostal.ToString(), locCodPostal.ToString(), telefone.ToString(), pais.ToString());
+            return new Cliente(id as string, nome as string, nomeFiscal as string, morada as string, local as string, codPostal as string, locCodPostal as string, telefone as string, pais as string);
         }
 
         #endregion Cliente
@@ -221,11 +196,9 @@ namespace SalesOrderPicking.Lib_Primavera {
             List<Dictionary<string, object>> queryRows = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM Armazens WITH (NOLOCK)");
 
             foreach (var item in queryRows) {
-                object id, descricao;
-                item.TryGetValue("Armazem", out id);
-                item.TryGetValue("Descricao", out descricao);
+                object id = item["Armazem"], descricao = item["Descricao"];
 
-                listaArmazens.Add(new Armazem(id.ToString(), descricao.ToString()));
+                listaArmazens.Add(new Armazem(id as string, descricao as string));
             }
 
             return listaArmazens;
@@ -242,13 +215,9 @@ namespace SalesOrderPicking.Lib_Primavera {
             List<Dictionary<string, object>> queryRows = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM ArmazemLocalizacoes WITH (NOLOCK) WHERE Armazem = '@0@'", armazemID);
 
             foreach (var item in queryRows) {
-                object id, localizacao, descricao, nomeNivel;
-                item.TryGetValue("Id", out id);
-                item.TryGetValue("Localizacao", out localizacao);
-                item.TryGetValue("Descricao", out descricao);
-                item.TryGetValue("NomeNivel", out nomeNivel);
+                object id = item["Id"], localizacao = item["Localizacao"], descricao = item["Descricao"], nomeNivel = item["NomeNivel"];
 
-                listaLocalizacoesArmazem.Add(new LocalizacaoArmazem(id.ToString(), localizacao.ToString(), descricao.ToString(), nomeNivel.ToString()));
+                listaLocalizacoesArmazem.Add(new LocalizacaoArmazem(id.ToString(), localizacao as string, descricao as string, nomeNivel as string));
             }
 
             return listaLocalizacoesArmazem;
@@ -258,8 +227,6 @@ namespace SalesOrderPicking.Lib_Primavera {
         public static bool GerarTransferenciaArmazem(TransferenciaArmazem lista) {
 
             if (PriEngine.IniciaTransaccao()) {
-
-                System.Diagnostics.Debug.WriteLine(lista);
 
                 GcpBEDocumentoStock docStock = new GcpBEDocumentoStock();
 
@@ -287,7 +254,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                     linhaDocStock.set_LocalizacaoOrigem(item.LocalizacaoOrigem);
                     linhaDocStock.set_Localizacao(item.LocalizacaoDestino);
                     linhaDocStock.set_Armazem(item.ArmazemDestino);
-                    linhaDocStock.set_Quantidade(Double.Parse(item.Quantidade));
+                    linhaDocStock.set_Quantidade(item.Quantidade);
                     linhaDocStock.set_DataStock(DateTime.Today);
 
                     linhasDocStock.Insere(linhaDocStock);

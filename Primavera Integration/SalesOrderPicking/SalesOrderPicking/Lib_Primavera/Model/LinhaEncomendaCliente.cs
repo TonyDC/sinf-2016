@@ -9,17 +9,26 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
 
         private string linhaID;
         private string artigoID;
-        private string quantidade;
-        private string ordemNaEncomenda;
+        private string armazem;
+        private string localizacao;
+        private string lote;
+        private double quantidade;
+        private uint ordemNaEncomenda;
 
         public string LinhaID { get { return this.linhaID; } }
         public string ArtigoID { get { return this.artigoID; } }
-        public string Quantidade { get { return this.quantidade; } }
-        public string OrdemNaEncomenda { get { return this.ordemNaEncomenda; } }
+        public string Armazem { get { return this.armazem; } }
+        public string Localizacao { get { return this.localizacao; } }
+        public string Lote { get { return this.lote; } }
+        public double Quantidade { get { return this.quantidade; } }
+        public uint OrdemNaEncomenda { get { return this.ordemNaEncomenda; } }
 
-        public LinhaEncomendaCliente(string linhaID, string artigoID, string quantidade, string ordemNaEncomenda) {
+        public LinhaEncomendaCliente(string linhaID, string artigoID, string armazem, string localizacao, string lote, double quantidade, uint ordemNaEncomenda) {
             this.linhaID = linhaID;
             this.artigoID = artigoID;
+            this.armazem = armazem;
+            this.localizacao = localizacao;
+            this.lote = lote;
             this.quantidade = quantidade;
             this.ordemNaEncomenda = ordemNaEncomenda;
         }

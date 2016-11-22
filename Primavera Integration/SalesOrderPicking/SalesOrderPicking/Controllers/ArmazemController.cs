@@ -42,7 +42,7 @@ namespace SalesOrderPicking.Controllers {
          *              localizacaoOrigem: string,
          *              localizacaoDestino: string,
          *              armazemDestino: string,
-         *              quantidade: string
+         *              quantidade: uint
          */              
         public IHttpActionResult Post(TransferenciaArmazem transferencia) {
 

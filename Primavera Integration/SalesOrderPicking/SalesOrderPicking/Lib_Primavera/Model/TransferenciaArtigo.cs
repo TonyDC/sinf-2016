@@ -12,15 +12,15 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
         private string localizacaoOrigem;
         private string armazemDestino;
         private string localizacaoDestino;
-        private string quantidade;
+        private double quantidade;
 
         public string ArtigoID { get { return this.artigoID; } }
         public string LocalizacaoOrigem { get { return this.localizacaoOrigem; } }
         public string LocalizacaoDestino { get { return this.localizacaoDestino; } }
         public string ArmazemDestino { get { return this.armazemDestino; } }
-        public string Quantidade { get { return this.quantidade; } }
+        public double Quantidade { get { return this.quantidade; } }
 
-        public TransferenciaArtigo(string artigo, string localizacaoOrigem, string localizacaoDestino, string armazemDestino, string quantidade) {
+        public TransferenciaArtigo(string artigo, string localizacaoOrigem, string localizacaoDestino, string armazemDestino, double quantidade) {
             this.artigoID = artigo;
             this.localizacaoOrigem = localizacaoOrigem;
             this.localizacaoDestino = localizacaoDestino;
@@ -35,7 +35,7 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
             str.Append("Localização Origem: ").AppendLine(localizacaoOrigem);
             str.Append("Armazém Destino: ").AppendLine(armazemDestino);
             str.Append("Localização Destino: ").AppendLine(localizacaoDestino);
-            str.Append("Quantidade: ").AppendLine(quantidade);
+            str.Append("Quantidade: ").AppendLine(quantidade.ToString());
 
             return str.ToString();
         }
