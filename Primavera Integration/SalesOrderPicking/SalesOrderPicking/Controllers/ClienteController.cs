@@ -43,7 +43,7 @@ namespace SalesOrderPicking.Controllers {
                 return Ok(cliente);
         }
 
-        // GET: api/cliente/{cliente-id}/encomenda
+        // GET: api/cliente/{cliente-id}/encomenda/{filial}/{serie}
         [Route("api/cliente/{id}/encomenda/{filial}/{serie}")]
         public IHttpActionResult GetEncomendaByCliente(string id, string filial, string serie) {
             List<EncomendaCliente> encomendasCliente = null;
@@ -61,7 +61,7 @@ namespace SalesOrderPicking.Controllers {
                 return Ok(encomendasCliente);
         }
 
-        // GET: api/clientes/encomenda
+        // GET: api/cliente/{cliente-id}/encomenda/{filial}/{serie}/{n}
         [Route("api/cliente/{id}/encomenda/{filial}/{serie}/{n:int:min(1)}")]
         public IHttpActionResult GetEncomendaByClienteAndNumber(string id, string filial, string serie, int n) {
             List<EncomendaCliente> encomendas = null;
@@ -96,7 +96,7 @@ namespace SalesOrderPicking.Controllers {
         }
 
 
-        // GET: api/encomenda/{filial}/{serie}/{n:int:min(1)}
+        // GET: api/encomenda/{filial}/{serie}/{n}
         [Route("api/encomenda/{filial}/{serie}/{n:int:min(1)}")]
         public IHttpActionResult GetEncomendaByNumDoc(string filial, string serie, int n) {
             List<EncomendaCliente> encomendas = null;
