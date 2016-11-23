@@ -120,7 +120,7 @@ namespace SalesOrderPicking.Controllers {
          *          serie: string,
          *          filial: string
          */
-        [Route("api/clientes/encomendas")]
+        [Route("api/encomenda")]
         public IHttpActionResult PostEncomendas(PedidoTransformacaoECL encomenda) {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

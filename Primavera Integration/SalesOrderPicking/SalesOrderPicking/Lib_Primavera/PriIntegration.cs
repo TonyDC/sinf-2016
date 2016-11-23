@@ -83,14 +83,14 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             if (clienteID == null)
                 if (nDoc == null)
-                    listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL' AND Filial = '@0@' AND Serie = '@1@' ORDER BY NumDoc", f, s);
+                    listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, GeneralConstants.QUERY_ENCOMENDAS_PENDENTES + " AND Filial = '@0@' AND Serie = '@1@' ORDER BY NumDoc", f, s);
                 else
-                    listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL' AND NumDoc = @0@ AND Filial = '@1@' AND Serie = '@2@'", nDoc, f, s);
+                    listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, GeneralConstants.QUERY_ENCOMENDAS_PENDENTES + " AND NumDoc = @0@ AND Filial = '@1@' AND Serie = '@2@'", nDoc, f, s);
             else
                 if (nDoc == null)
-                    listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL' AND EntidadeFac = '@0@' AND Filial = '@1@' AND Serie = '@2@' ORDER BY NumDoc", clienteID, f, s);
+                    listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, GeneralConstants.QUERY_ENCOMENDAS_PENDENTES + " AND EntidadeFac = '@0@' AND Filial = '@1@' AND Serie = '@2@' ORDER BY NumDoc", clienteID, f, s);
                 else
-                    listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL' AND EntidadeFac = '@0@' AND Filial = '@1@' AND Serie = '@2@' AND NumDoc = @3@ ORDER BY NumDoc", clienteID, f, s, nDoc);
+                    listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, GeneralConstants.QUERY_ENCOMENDAS_PENDENTES + " AND EntidadeFac = '@0@' AND Filial = '@1@' AND Serie = '@2@' AND NumDoc = @3@ ORDER BY NumDoc", clienteID, f, s, nDoc);
 
             foreach (var item in listaEncomendas) {
 
