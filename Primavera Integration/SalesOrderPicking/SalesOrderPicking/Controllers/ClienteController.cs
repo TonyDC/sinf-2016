@@ -113,7 +113,7 @@ namespace SalesOrderPicking.Controllers {
                 return Ok(encomendas);
         }
 
-        // POST: api/clientes/encomendas
+        // POST: api/encomendas
         /*
          * Body: Object
          *          nDoc: uint,
@@ -125,15 +125,13 @@ namespace SalesOrderPicking.Controllers {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            try {
+           
                 if (PriIntegration.GerarGuiaRemessa(encomenda))
                     return Ok();
                 else
                     return BadRequest();
 
-            } catch (Exception) {
-                return InternalServerError();
-            }
+           
  
         }
     }

@@ -92,15 +92,9 @@ namespace SalesOrderPicking.Lib_Primavera {
                 else
                     listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, GeneralConstants.QUERY_ENCOMENDAS_PENDENTES + " AND EntidadeFac = '@0@' AND Filial = '@1@' AND Serie = '@2@' AND NumDoc = @3@ ORDER BY NumDoc", clienteID, f, s, nDoc);
 
-            foreach (var item in listaEncomendas) {
 
+            foreach (var item in listaEncomendas) {
                 object encomendaID = item["Id"], filial = item["Filial"], serie = item["Serie"], numDoc = item["NumDoc"], cliente = item["EntidadeFac"];
-                /*
-                item.TryGetValue("Id", out encomendaID);
-                item.TryGetValue("Filial", out filial);
-                item.TryGetValue("Serie", out serie);
-                item.TryGetValue("NumDoc", out numDoc);
-                 * */
 
                 List<Dictionary<string, object>> linhasEncomenda = Utilities.performQuery(PriEngine.DBConnString, "SELECT Id, Artigo, LinhasDoc.Quantidade AS Quantidade, QuantTrans, NumLinha, Armazem, Localizacao, Lote, DataEntrega FROM LinhasDoc WITH (NOLOCK) INNER JOIN LinhasDocStatus WITH (NOLOCK) ON (LinhasDocStatus.IdLinhasDoc = LinhasDoc.Id) WHERE LinhasDoc.IdCabecDoc = '@0@' AND LinhasDoc.Artigo IS NOT NULL", encomendaID.ToString());
 
@@ -117,10 +111,6 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             return listaArtigos;
         }
-        /*
-        public static List<uint> GetNumDocEncomendasPorCompletar() {
-
-        }*/
 
         public static bool GerarGuiaRemessa(PedidoTransformacaoECL encomenda) {
 
@@ -130,8 +120,28 @@ namespace SalesOrderPicking.Lib_Primavera {
                     throw new InvalidOperationException("Pedido de encomenda inválido (parâmetro a null)");
 
                 // Carregar encomenda de cliente
-                GcpBEDocumentoVenda objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, (int)encomenda.NumeroDocumento);
-                //objEncomenda.set_EmModoEdicao(true);
+                GcpBEDocumentoVenda objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, (int)encomenda.NDoc);
+                
+                // A saída de stock é feita a partir do armazém de expedição
+                objEncomenda.set_EmModoEdicao(true);
+                GcpBELinhasDocumentoVenda linhasObjEncomenda = objEncomenda.get_Linhas();
+                for (int i = 1; i <= linhasObjEncomenda.NumItens; i++) {
+                    GcpBELinhaDocumentoVenda linha = linhasObjEncomenda[i];
+
+                    linha.set_Armazem("EXPED");
+                    linha.set_Localizacao("EXPED");
+                }
+                
+                PriEngine.Engine.Comercial.Vendas.Actualiza(objEncomenda);
+                objEncomenda.set_EmModoEdicao(false);
+                PriEngine.TerminaTransaccao();
+
+                // ------------------------------------------------------------------------------------
+
+                if (!PriEngine.IniciaTransaccao())
+                    return false;
+
+                objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, (int)encomenda.NDoc);
                 if (objEncomenda == null) {
                     PriEngine.TerminaTransaccao();
                     throw new InvalidOperationException("Não existe uma encomenda de cliente com os dados fornecidos.");

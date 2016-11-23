@@ -8,19 +8,19 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
 
     public class PedidoTransformacaoECL {
 
-        private uint numeroDocumento;
+        private uint nDoc;
         private string filial;
         private string serie;
 
         [Required]
-        public uint NumeroDocumento { get { return this.numeroDocumento; } }
+        public uint NDoc { get { return this.nDoc; } }
         [Required]
         public string Filial { get { return this.filial; } }
         [Required]
         public string Serie { get { return this.serie; } }
 
         public PedidoTransformacaoECL(uint nDoc, string serie, string filial = GeneralConstants.FILIAL_POR_OMISSAO) {
-            this.numeroDocumento = nDoc;
+            this.nDoc = nDoc;
             this.filial = filial;
             this.serie = serie;
         }
