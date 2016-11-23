@@ -43,35 +43,71 @@ namespace SalesOrderPicking.Controllers {
                 return Ok(cliente);
         }
 
-        // GET: api/cliente/{cliente-id}/encomendas
-        [Route("api/cliente/{id}/encomendas")]
-        public IHttpActionResult GetEncomenda(string id) {
+        // GET: api/cliente/{cliente-id}/encomenda
+        [Route("api/cliente/{id}/encomenda/{filial}/{serie}")]
+        public IHttpActionResult GetEncomendaByCliente(string id, string filial, string serie) {
             List<EncomendaCliente> encomendasCliente = null;
             try {
-                encomendasCliente = PriIntegration.GetEncomendasClientes(id);
+                encomendasCliente = PriIntegration.GetEncomendasClientes(filial, serie, id);
 
-            } catch (Exception) {
+            } catch (Exception e) {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
                 return InternalServerError();
             }
 
-            if (encomendasCliente == null)
+            if (encomendasCliente == null || encomendasCliente.Count < 1)
                 return NotFound();
             else
                 return Ok(encomendasCliente);
         }
 
-        // GET: api/clientes/encomendas
-        [Route("api/clientes/encomendas")]
-        public IHttpActionResult GetEncomendas() {
+        // GET: api/clientes/encomenda
+        [Route("api/cliente/{id}/encomenda/{filial}/{serie}/{n:int:min(1)}")]
+        public IHttpActionResult GetEncomendaByClienteAndNumber(string id, string filial, string serie, int n) {
             List<EncomendaCliente> encomendas = null;
             try {
-                PriIntegration.GetEncomendasClientes();
+                encomendas = PriIntegration.GetEncomendasClientes(filial, serie, id, n.ToString());
 
             } catch (Exception) {
                 return InternalServerError();
             }
 
-            if (encomendas == null)
+            if (encomendas == null || encomendas.Count < 1)
+                return NotFound();
+            else
+                return Ok(encomendas);
+        }
+
+        // GET: api/encomenda/{filial}/{serie}
+        [Route("api/encomenda/{filial}/{serie}")]
+        public IHttpActionResult GetEncomendas(string filial, string serie) {
+            List<EncomendaCliente> encomendas = null;
+            try {
+                encomendas = PriIntegration.GetEncomendasClientes(filial, serie);
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
+
+            if (encomendas == null || encomendas.Count < 1)
+                return NotFound();
+            else
+                return Ok(encomendas);
+        }
+
+
+        // GET: api/encomenda/{filial}/{serie}/{n:int:min(1)}
+        [Route("api/encomenda/{filial}/{serie}/{n:int:min(1)}")]
+        public IHttpActionResult GetEncomendaByNumDoc(string filial, string serie, int n) {
+            List<EncomendaCliente> encomendas = null;
+            try {
+                encomendas = PriIntegration.GetEncomendasClientes(filial, serie, null, n.ToString());
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
+
+            if (encomendas == null || encomendas.Count < 1)
                 return NotFound();
             else
                 return Ok(encomendas);
@@ -80,7 +116,7 @@ namespace SalesOrderPicking.Controllers {
         // POST: api/clientes/encomendas
         /*
          * Body: Object
-         *          nDoc: string,
+         *          nDoc: uint,
          *          serie: string,
          *          filial: string
          */

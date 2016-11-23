@@ -71,16 +71,26 @@ namespace SalesOrderPicking.Lib_Primavera {
 
         #region Encomendas
 
-        public static List<EncomendaCliente> GetEncomendasClientes(string clienteID = null) {
+        public static List<EncomendaCliente> GetEncomendasClientes(string f, string s, string clienteID = null, string nDoc = null) {
+
+            uint nDocUInt;
+            if (f == null || s == null || (nDoc != null && !uint.TryParse(nDoc, out nDocUInt)))
+                throw new InvalidOperationException("Bad arguments: 'f', 's' or 'nDoc'");
+
 
             List<EncomendaCliente> listaArtigos = new List<EncomendaCliente>();
-
             List<Dictionary<string, object>> listaEncomendas = null;
 
             if (clienteID == null)
-                listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL' ORDER BY NumDoc");
+                if (nDoc == null)
+                    listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL' AND Filial = '@0@' AND Serie = '@1@' ORDER BY NumDoc", f, s);
+                else
+                    listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL' AND NumDoc = @0@ AND Filial = '@1@' AND Serie = '@2@'", nDoc, f, s);
             else
-                listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL' AND EntidadeFac = '@0@' ORDER BY NumDoc", clienteID);
+                if (nDoc == null)
+                    listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL' AND EntidadeFac = '@0@' AND Filial = '@1@' AND Serie = '@2@' ORDER BY NumDoc", clienteID, f, s);
+                else
+                    listaEncomendas = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL' AND EntidadeFac = '@0@' AND Filial = '@1@' AND Serie = '@2@' AND NumDoc = @3@ ORDER BY NumDoc", clienteID, f, s, nDoc);
 
             foreach (var item in listaEncomendas) {
 
@@ -92,22 +102,25 @@ namespace SalesOrderPicking.Lib_Primavera {
                 item.TryGetValue("NumDoc", out numDoc);
                  * */
 
-                List<Dictionary<string, object>> linhasEncomenda = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM LinhasDoc WITH (NOLOCK) WHERE IdCabecDoc = '@0@' AND Artigo IS NOT NULL", encomendaID.ToString());
+                List<Dictionary<string, object>> linhasEncomenda = Utilities.performQuery(PriEngine.DBConnString, "SELECT Id, Artigo, LinhasDoc.Quantidade AS Quantidade, QuantTrans, NumLinha, Armazem, Localizacao, Lote, DataEntrega FROM LinhasDoc WITH (NOLOCK) INNER JOIN LinhasDocStatus WITH (NOLOCK) ON (LinhasDocStatus.IdLinhasDoc = LinhasDoc.Id) WHERE LinhasDoc.IdCabecDoc = '@0@' AND LinhasDoc.Artigo IS NOT NULL", encomendaID.ToString());
 
                 List<LinhaEncomendaCliente> artigosEncomenda = new List<LinhaEncomendaCliente>();
 
                 foreach (var linha in linhasEncomenda) {
-                    object linhaID = linha["Id"], artigoID = linha["Artigo"], quantidade = linha["Quantidade"], numLinha = linha["NumLinha"], armazem = linha["Armazem"], localizacao = linha["Localizacao"], lote = linha["Lote"], dataEntrega = linha["DataEntrega"];
-      
-                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID as string, armazem as string, localizacao as string, lote as string, Convert.ToDouble(quantidade), Convert.ToUInt32(numLinha), (DateTime) dataEntrega));
+                    object linhaID = linha["Id"], artigoID = linha["Artigo"], quantidade = linha["Quantidade"], quantidadeSatisfeita = linha["QuantTrans"], numLinha = linha["NumLinha"], armazem = linha["Armazem"], localizacao = linha["Localizacao"], lote = linha["Lote"], dataEntrega = linha["DataEntrega"];
+
+                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID as string, armazem as string, localizacao as string, lote as string, Convert.ToDouble(quantidade), Convert.ToDouble(quantidadeSatisfeita), Convert.ToUInt32(numLinha), (DateTime)dataEntrega));
                 }
 
-                listaArtigos.Add(new EncomendaCliente(encomendaID.ToString(),  Convert.ToUInt32(numDoc), cliente as string, serie as string, filial as string, artigosEncomenda));
+                listaArtigos.Add(new EncomendaCliente(encomendaID.ToString(), Convert.ToUInt32(numDoc), cliente as string, serie as string, filial as string, artigosEncomenda));
             }
 
             return listaArtigos;
         }
+        /*
+        public static List<uint> GetNumDocEncomendasPorCompletar() {
 
+        }*/
 
         public static bool GerarGuiaRemessa(PedidoTransformacaoECL encomenda) {
 
@@ -117,8 +130,8 @@ namespace SalesOrderPicking.Lib_Primavera {
                     throw new InvalidOperationException("Pedido de encomenda inválido (parâmetro a null)");
 
                 // Carregar encomenda de cliente
-                GcpBEDocumentoVenda objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, (int) encomenda.NumeroDocumento);
-
+                GcpBEDocumentoVenda objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, (int)encomenda.NumeroDocumento);
+                //objEncomenda.set_EmModoEdicao(true);
                 if (objEncomenda == null) {
                     PriEngine.TerminaTransaccao();
                     throw new InvalidOperationException("Não existe uma encomenda de cliente com os dados fornecidos.");
