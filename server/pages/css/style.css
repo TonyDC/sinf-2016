@@ -1,0 +1,36 @@
+/* line 7, ../sass/style.scss */
+h1, h2, h3, h4, h5 {
+  font-family: 'Roboto', sans-serif;
+}
+
+/* line 11, ../sass/style.scss */
+p, body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* line 15, ../sass/style.scss */
+.first-row {
+  padding-top: 30px;
+}
+
+/* line 20, ../sass/style.scss */
+.sortable-header:hover {
+  cursor: pointer;
+}
+
+/* line 25, ../sass/style.scss */
+.jumbotron {
+  padding: 20px;
+  padding-top: 5px;
+}
+
+/* line 30, ../sass/style.scss */
+.table-icon {
+  font-size: 150%;
+  color: #28666e;
+}
+
+/* line 40, ../sass/style.scss */
+.pointer-cursor:hover {
+  cursor: pointer;
+}

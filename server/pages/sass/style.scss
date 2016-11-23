@@ -1,0 +1,43 @@
+$darkest: #033F63;
+$dark: #28666E;
+$medium: #7C9885;
+$light: #B5B682;
+$lightest: #FEDC97;
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Roboto', sans-serif;
+}
+
+p, body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.first-row {
+  padding-top: 30px;
+}
+
+.sortable-header {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.jumbotron {
+  padding: 20px;
+  padding-top: 5px;
+}
+
+.table-icon {
+  font-size: 150%;
+  color: $dark;
+
+  i {
+
+  }
+}
+
+.pointer-cursor {
+  &:hover {
+    cursor: pointer;
+  }
+}
