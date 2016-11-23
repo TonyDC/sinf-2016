@@ -84,7 +84,6 @@
                     <h1 class="page-header">Criar picking orders</h1>
                 </div>
                 <div class="col-md-12">
-                    <form>
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
@@ -98,20 +97,18 @@
                                     <tbody>
                                     {{#each salesOrders}}
                                         <tr class="odd gradeX">
-                                            <td align="center" class="table-icon"><input type="checkbox" name="" value=""></td>
+                                            <td align="center" class="table-icon"><i class="fa fa-square-o checkbox" data-id={{id}}></i></td>
                                             <td align="center" class="pointer-cursor" data-toggle="modal" data-target="#myModal" data-id={{id}}>{{shipping-date}}</td>
                                             <td align="center" class="pointer-cursor" data-toggle="modal" data-target="#myModal" data-id={{id}}>{{client}}</td>
                                         </tr>
                                     {{/each}}
-
                                     </tbody>
                                 </table>
                                 <!-- /.table-responsive -->
                             </div>
                             <!-- /.panel-body -->
                         </div>
-                        <input type="button" class="btn-lg btn-primary" value="Gerar picking orders">
-                    </form>
+                        <button class="btn-lg btn-primary" id="gerar-picking">Gerar picking orders</button>
                     <!-- /.panel -->
                 </div>
                 <!-- /.col-lg-12 -->
@@ -150,6 +147,11 @@
             $('#dataTables-example').DataTable({
                 responsive: true
             });
+            $('.checkbox').click(function() {
+                $(this).toggleClass('selected');
+                $(this).toggleClass('fa-square-o');
+                $(this).toggleClass('fa-check-square');
+            });
             $('#myModal').on('show.bs.modal', function(e) {
 
                 //get data-id attribute of the clicked element
@@ -162,6 +164,36 @@
                 });
                 //populate the textbox
                 $(e.currentTarget).find('input[name="id"]').val(id);
+            });
+            {{#if err}}
+                alert('Erro ao gerar picking wave: ' + err);
+            {{/if}}
+            $('#gerar-picking').click(function() {
+                var selected = [];
+                $("#page-wrapper .checkbox.fa-check-square").each(function() {
+                    selected.push($(this).data('id'));
+                });
+                console.log(selected);
+
+                $.ajax({
+                    url:'/createPickingWave',
+                    type:"POST",
+                    contentType:"application/json; charset=utf-8",
+                    data:JSON.stringify({selected:selected}),
+                    success: function(){
+                        alert('Sucesso!');
+                    },
+                    fail: function(){
+                        alert('Erro: ' + err.responseText);
+                    }
+                });
+/*
+                $.post('/createPickingWave', function() {
+                    console.log("sucesso");
+                }).fail(function(err) {
+                    alert('Erro: ' + err.responseText);
+                });
+*/
             });
         });
     </script>

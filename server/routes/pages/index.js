@@ -23,4 +23,13 @@ router.get('/partials/salesOrder/:id', function(req, res, next) {
    })
 });
 
+router.post('/createPickingWave', function(req, res, next) {
+    if (!req.body.selected) {
+        res.status(400).send('Erro ao gerar picking wave');
+        return;
+    }
+    const ids = req.body.selected;
+    res.send("Sucesso");
+});
+
 module.exports = router;
