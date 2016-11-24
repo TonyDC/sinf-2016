@@ -11,8 +11,16 @@ router.get('/', function(req, res, next) {
         */
 
     SalesOrder.getAll().then(function(salesOrders) {
-        res.render('index', {salesOrders: salesOrders});
+        res.render('shipping', {salesOrders: salesOrders});
     });
+});
+
+router.get('/status', function(req, res, next) {
+    res.render('status');
+});
+
+router.get('/', function(req, res, next) {
+    res.render('index');
 });
 
 module.exports = router;

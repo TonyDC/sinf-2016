@@ -32,4 +32,12 @@ router.post('/createPickingWave', function(req, res, next) {
     res.send("Sucesso");
 });
 
+router.get('/status', function(req, res, next) {
+    res.render('status');
+});
+
+router.get('/shipping', function(req, res, next) {
+    res.render('shipping');
+});
+
 module.exports = router;
