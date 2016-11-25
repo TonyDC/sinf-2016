@@ -19,12 +19,25 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/status', function(req, res, next) {
+    /*
+     NOTA: status em percentagem
+
+     const pickingOrders = [{status: "100", shipping-date: "2016/11/23", worker: "Joaquim"},
+     {status: "60", shipping-date: "2015/11/23", worker: "Fernando"},
+     {status: "50", shipping-date: "2013/11/23", worker: "Alice"}];
+     */
+
     PickingOrder.getAll().then(function(pickingOrders) {
         res.render('status', {pickingOrders: pickingOrders});
     });
 });
 
 router.get('/shipping', function(req, res, next) {
+    /*
+     const salesOrders = [{status: "Expedida", shipping-date: "2016/11/23", shipping-guide: ""},
+     {status: "Parcial", shipping-date: "2015/11/23", shipping-guide: ""},
+     {status: "Expedida", shipping-date: "2013/11/23", shipping-guide: ""}];
+     */
 
     SalesOrder.getAll().then(function(salesOrders) {
         res.render('shipping', {salesOrders: salesOrders});
@@ -32,7 +45,15 @@ router.get('/shipping', function(req, res, next) {
 });
 
 router.get('/worker', function(req, res, next) {
-    PickingOrder.getAll().then(function(pickingOrders) {
+    /*
+     const pickingOrder = [{location: "ABCDEF", done: "false",
+     items = [{name: "CPU", amount: "2", client: "Joaquim", final-amount:"1"},
+     {name: "Motherboard", amount: "3", client: "Google", final-amount:"3"}]
+     }];
+     */
+
+    //não sei o que pôr no id
+    PickingOrder.get(id).then(function(pickingOrders) {
         res.render('worker', {pickingOrders: pickingOrders});
     });
 });
