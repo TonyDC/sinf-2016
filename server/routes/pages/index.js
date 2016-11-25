@@ -7,57 +7,67 @@ const PickingOrder = require('../../models/PickingOrder');
  * PAGES INITIALIZATION
  */
 router.get('/', function(req, res, next) {
-/*
+
     const salesOrders = [{id: "1", shippingDate: "2016/11/23", client: "Joaquim Almeida"},
         {id: "2", shippingDate: "2015/11/23", client: "Alberto Almeida"},
         {id: "3", shippingDate: "2013/11/23", client: "Joaquim Martins"}];
     res.render('index', {salesOrders: salesOrders});
-*/shippingDate:
+
+/*shippingDate:
     SalesOrder.getAll().then(function(salesOrders) {
         res.render('index', {salesOrders: salesOrders});
     });
+    */
 });
 
 router.get('/status', function(req, res, next) {
-    /*
-     NOTA: status em percentagem
+
+     //NOTA: status em percentagem
      const pickingOrders = [{status: "100", shippingDate: "2016/11/23", worker: "Joaquim"},
-     {status: "60",  "2015/11/23", worker: "Fernando"},
+     {status: "60", shippingDate: "2015/11/23", worker: "Fernando"},
      {status: "50", shippingDate: "2013/11/23", worker: "Alice"}];
-*/
+    res.render('status', {pickingOrders: pickingOrders});
+/*
     PickingOrder.getAll().then(function(pickingOrders) {
         res.render('status', {pickingOrders: pickingOrders});
     });
+    */
 });
 
 router.get('/shipping', function(req, res, next) {
-	/*
+
      const salesOrders = [{status: "Expedida", shippingDate: "2016/11/23", shippingguide: ""},
      {status: "Parcial", shippingDate: "2015/11/23", shippingGuide: ""},
      {status: "Expedida", shippingDate: "2013/11/23", shippingGuide: ""}];
-	*/
+    res.render('shipping', {salesOrders: salesOrders});
+	/*
     SalesOrder.getAllToShip().then(function(salesOrders) {
 		res.render('shipping', {salesOrders: salesOrders});
 	});
+	*/
 });
 
 router.get('/worker', function(req, res, next) {
-	/*
-     const pickingOrder = [{location: "ABCDEF", done: "false",
-     items: [{name: "CPU", amount: "2", client: "Joaquim", finalAmount:"1"},
-     {name: "Motherboard", amount: "3", client: "Google", finalAmount:"3"}]
-     },
-     {location: "JKLMN", done: "false",
-         items: [{name: "Abc", amount: "2", client: "Joaquim", finalAmount:"1"},
-             {name: "Def", amount: "3", client: "Google", finalAmount:"3"}]
-     }];
 
-    res.render('worker', {pickingOrder: pickingOrder});*/
+     const pickingOrder = {steps:
+         [
+             {location: "ABCDEF", done: "false", items:
+                 [
+                 {name: "CPU", quantity: "2", client: "Joaquim", finalAmount:"1"},
+                    {name: "Motherboard", quantity: "3", client: "Google", finalAmount:"3"}
+                 ]
+             }
+         ]
+     };
+
+    res.render('worker', {pickingOrder: pickingOrder});
 
     //FALTA PÔR ID
+    /*
     PickingOrder.get(1).then(function(pickingOrder) {
         res.render('worker', {pickingOrder: pickingOrder});
     });
+    */
 });
 
 /**
