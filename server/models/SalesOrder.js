@@ -14,8 +14,16 @@ module.exports.getAll = function () {
 	    	}
 
 		salesOrdersRaw = JSON.parse(body);
-		salesOrders = salesOrdersRaw.map(function(order) {
-			return {id: order.NumeroDocumento, 'shipping-date': order.Artigos[0].DataEntrega, client: order.Cliente};
+		salesOrders = salesOrdersRaw.filter(function(order) {
+			for(let i = 0; i < order.Artigos.length; ++i) {
+				const item = order.Artigos[0];
+				if (item.Quantidade - item.QuantidadeSatisfeita > 0) {
+					return true;
+				}
+			}
+			return false;
+		}).map(function(order) {
+			return {id: order.NumeroDocumento, shippingDate: order.Artigos[0].DataEntrega, client: order.Cliente};
 		});
 
 		fulfill(salesOrders);
@@ -74,7 +82,7 @@ module.exports.ship = function(id) {
 module.exports.getAllToShip = function() {
 	return new Promise(function(fulfill, reject) {
 		module.exports.getAll().then(function(salesOrders) {
-			fulfill(salesOrders.map(function(order) { return {status: 'Não pronto', 'shipping-date': order['shipping-date'], 'shipping-guide': 'Não emitido'};}));
+			fulfill(salesOrders.map(function(order) { return {status: 'Não pronto', shippingDate: order.shippingDate, shippingGuide: 'Não emitido'};}));
 		});
 	});
 }
