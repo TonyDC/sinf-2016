@@ -1,4 +1,6 @@
 const db = require('../config/db');
+const request = require('request');
+
 
 module.exports.getAll = function () {
     return new Promise(function (fulfill, reject) {
@@ -8,7 +10,25 @@ module.exports.getAll = function () {
         sales.push(sale1);
         sales.push(sale2);
 
-        fulfill(sales);
+	request('http://localhost:52313/api/encomenda/000/2016', function (error, response, body) {
+    		if(error){
+        		return console.log('Error:', error);
+    		}
+		if(response.statusCode !== 200){
+        		return console.log('Invalid Status Code Returned:', response.statusCode);
+	    	}
+
+		salesOrdersRaw = JSON.parse(body);
+		salesOrders = []
+		
+		
+		salesOrdersRaw.forEach(function(order) {
+			salesOrders.push({id: order.NumeroDocumento, 'shipping-date': order.Artigos[0].DataEntrega, client: order.Client});
+		});
+
+		fulfill(salesOrders);
+
+	});
     });
 };
 
