@@ -53,6 +53,9 @@
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
                         <li>
+                            <a href="#"><i class="fa fa-list-alt fa-fw"></i> Picking order ativa</a>
+                        </li>
+                        <li>
                             <a href="#"><i class="fa fa-gear fa-fw"></i> Definições</a>
                         </li>
                     </ul>
@@ -65,27 +68,27 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-xs-12">
-                    <h1 class="page-header">Picking order</h1>
+                    <h1 class="page-header">Picking order ativa</h1>
                 </div>
             </div>
-                {{!--#each pickingOrder--}}
+                {{#each pickingOrder}}
                 <div class="col-xs-12 location-system">
                     <div class="col-xs-12 worker-main pointer-cursor">
                         <div class="col-xs-10">
-                            <h3><i class="fa fa-caret-down fa-fw location-caret"></i><i class="fa fa-map-marker fa-fw"></i> Location{{!--location--}}</h3>
+                            <h3><i class="fa fa-caret-down fa-fw location-caret"></i><i class="fa fa-map-marker fa-fw"></i> {{location}}</h3>
                         </div>
                         <div class="col-xs-2 on-the-right">
                             <h3><i class="fa fa-check-square fa-fw location-check"></i></h3>
                         </div>
                     </div>
-                    {{!--#each order--}}
+                    {{#each items}}
                     <div class="col-xs-12 worker-sec">
                         <div class="col-xs-10">
-                            <h4>(2 un.) CPU</h4>
+                            <h4>({{amount}} un.) {{name}}</h4>
                         </div>
                         <div class="col-xs-2">
                             <div class="input-group spinner on-the-right" align="right">
-                                <input type="text" class="form-control" value="42">
+                                <input type="text" class="form-control" value="0">
                                 <div class="input-group-btn-vertical">
                                     <button class="btn btn-default" type="button"><i class="fa fa-caret-up"></i></button>
                                     <button class="btn btn-default" type="button"><i class="fa fa-caret-down"></i></button>
@@ -93,10 +96,9 @@
                             </div>
                         </div>
                     </div>
-                    {{!--/each--}}
+                    {{/each}}
                 </div>
-            {{!--/each--}}
-
+            {{/each}}
             </div>
         </div>
         <!-- /#page-wrapper -->
@@ -138,8 +140,8 @@
             $(this).toggleClass('fa-square-o');
             $(this).toggleClass('fa-check-square');
         });
-        $('.location-system').click(function() {
-            $(this).find('.worker-sec').toggle();
+        $('.worker-main').click(function() {
+            $(this).siblings('.worker-sec').slideToggle();
             $(this).find('.location-caret').toggleClass('fa-caret-down');
             $(this).find('.location-caret').toggleClass('fa-caret-up');
         });

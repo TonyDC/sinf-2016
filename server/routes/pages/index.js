@@ -7,12 +7,12 @@ const PickingOrder = require('../../models/PickingOrder');
  * PAGES INITIALIZATION
  */
 router.get('/', function(req, res, next) {
-    /*
-    const salesOrders = [{date: "2016/11/23", client: "Joaquim Almeida"},
-        {date: "2015/11/23", client: "Alberto Almeida"},
-        {date: "2013/11/23", client: "Joaquim Martins"}];
-        */
-
+/*
+    const salesOrders = [{id: "1", shippingDate: "2016/11/23", client: "Joaquim Almeida"},
+        {id: "2", shippingDate: "2015/11/23", client: "Alberto Almeida"},
+        {id: "3", shippingDate: "2013/11/23", client: "Joaquim Martins"}];
+    res.render('index', {salesOrders: salesOrders});
+*/
     SalesOrder.getAll().then(function(salesOrders) {
         res.render('index', {salesOrders: salesOrders});
     });
@@ -21,41 +21,46 @@ router.get('/', function(req, res, next) {
 router.get('/status', function(req, res, next) {
     /*
      NOTA: status em percentagem
+*/
+     const pickingOrders = [{status: "100", shippingDate: "2016/11/23", worker: "Joaquim"},
+     {status: "60", shippingDate: "2015/11/23", worker: "Fernando"},
+     {status: "50", shippingDate: "2013/11/23", worker: "Alice"}];
 
-     const pickingOrders = [{status: "100", shipping-date: "2016/11/23", worker: "Joaquim"},
-     {status: "60", shipping-date: "2015/11/23", worker: "Fernando"},
-     {status: "50", shipping-date: "2013/11/23", worker: "Alice"}];
-     */
-
-    PickingOrder.getAll().then(function(pickingOrders) {
+    res.render('status', {pickingOrders: pickingOrders});
+    /*PickingOrder.getAll().then(function(pickingOrders) {
         res.render('status', {pickingOrders: pickingOrders});
-    });
+    });*/
 });
 
 router.get('/shipping', function(req, res, next) {
-    /*
-     const salesOrders = [{status: "Expedida", shipping-date: "2016/11/23", shipping-guide: ""},
-     {status: "Parcial", shipping-date: "2015/11/23", shipping-guide: ""},
-     {status: "Expedida", shipping-date: "2013/11/23", shipping-guide: ""}];
-     */
 
-    SalesOrder.getAll().then(function(salesOrders) {
+     const salesOrders = [{status: "Expedida", shippingDate: "2016/11/23", shippingguide: ""},
+     {status: "Parcial", shippingDate: "2015/11/23", shippingGuide: ""},
+     {status: "Expedida", shippingDate: "2013/11/23", shippingGuide: ""}];
+
+    res.render('shipping', {salesOrders: salesOrders});
+    /*SalesOrder.getAll().then(function(salesOrders) {
         res.render('shipping', {salesOrders: salesOrders});
-    });
+    });*/
 });
 
 router.get('/worker', function(req, res, next) {
-    /*
-     const pickingOrder = [{location: "ABCDEF", done: "false",
-     items = [{name: "CPU", amount: "2", client: "Joaquim", final-amount:"1"},
-     {name: "Motherboard", amount: "3", client: "Google", final-amount:"3"}]
-     }];
-     */
 
-    //não sei o que pôr no id
-    PickingOrder.get(id).then(function(pickingOrders) {
+     const pickingOrder = [{location: "ABCDEF", done: "false",
+     items: [{name: "CPU", amount: "2", client: "Joaquim", finalAmount:"1"},
+     {name: "Motherboard", amount: "3", client: "Google", finalAmount:"3"}]
+     },
+     {location: "JKLMN", done: "false",
+         items: [{name: "Abc", amount: "2", client: "Joaquim", finalAmount:"1"},
+             {name: "Def", amount: "3", client: "Google", finalAmount:"3"}]
+     }];
+
+    res.render('worker', {pickingOrder: pickingOrder});
+
+    //FALTA PÔR ID
+    /*PickingOrder.get(id).then(function(pickingOrders) {
         res.render('worker', {pickingOrders: pickingOrders});
-    });
+    });*/
 });
 
 /**

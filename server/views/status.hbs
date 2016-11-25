@@ -81,6 +81,7 @@
                 </div>
             </div>
             <!-- /.row -->
+            <!--
             <div class="row">
                 <div class="col-lg-3 col-md-6">
                     <div class="panel panel-primary">
@@ -113,6 +114,7 @@
                     </div>
                 </div>
             </div>
+            -->
                 <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-body">
@@ -127,8 +129,13 @@
                                     <tbody>
                                     {{#each pickingOrders}}
                                         <tr class="odd gradeX">
-                                            <td align="center">{{status}}</td>
-                                            <td align="center">{{shipping-date}}</td>
+                                            <td align="center">
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar" aria-valuenow="{{status}}" aria-valuemin="0" aria-valuemax="100" style="width: {{status}}%;">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td align="center">{{shippingDate}}</td>
                                             <td align="center">{{worker}}</td>
                                         </tr>
                                     {{/each}}
