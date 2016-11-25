@@ -32,8 +32,8 @@ router.get('/shipping', function(req, res, next) {
 });
 
 router.get('/worker', function(req, res, next) {
-    PickingOrder.getAll().then(function(pickingOrders) {
-        res.render('worker', {pickingOrders: pickingOrders});
+    PickingOrder.get(1).then(function(pickingOrder) {
+        res.render('worker', {pickingOrder: pickingOrder});
     });
 });
 

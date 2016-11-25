@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const Product = require('./Product');
 
 module.exports.getAll = function () {
     return new Promise(function (fulfill, reject) {
@@ -12,28 +13,38 @@ module.exports.getAll = function () {
 module.exports.get = function (id) {
     return new Promise(function (fulfill, reject) {
         const pickingOrder = {
-            'sales': [
-                {
-                    'id': '2',
-                    'items': [
-                        {
-                            'id': '1',
-                            'requested': 2,
-                            'picked': 1,
-                            'status': 'picked'
-                        },
-                        {
-                            'id': '32',
-                            'requested': 1,
-                            'picked': 0,
-                            'status': 'not picked'
-                        }
-                    ]
-                }
-            ]
+			id: id,
+			steps: [
+			{id: 1,
+				location: 'A1.01.2',
+				items: [
+				{quantity: 2,
+					name: 'CPU'
+				}
+				]
+			}
+			]
         };
+		
+		db.pool.query('SELECT id, id_localizacao FROM picking_order_step WHERE id_picking_order = ?', [id], function(err, rows) {
+			console.log(JSON.stringify(rows));
+			
+			stepPromises = rows.map(function(row) {
+				return new Promise(function(fulfill, reject) {
+					db.pool.query('SELECT id_artigo, quantidade_pedida FROM picking_order_item WHERE id_picking_order_step = ?', [row.id], function(err, rows) {
+						console.log(JSON.stringify(rows));
+						items = rows.map(function(row) { return {quantity: row.quantidade_pedida, name: row.id_artigo}; });
+						fulfill({id: row.id, location: row.id_localizacao, items: items});
+					});
+				});
+			});
+			
+			Promise.all(stepPromises).then(function(steps) {
+				fulfill({id: id, steps: steps});
+			});
+		});
 
-        fulfill(pickingOrder);
+//        fulfill(pickingOrder);
     });
 };
 

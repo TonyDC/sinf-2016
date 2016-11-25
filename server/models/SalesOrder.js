@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const request = require('request');
+const Product = require('./Product');
 
 
 module.exports.getAll = function () {
