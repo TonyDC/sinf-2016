@@ -39,7 +39,7 @@ router.get('/shipping', function(req, res, next) {
      {status: "Expedida", shipping-date: "2013/11/23", shipping-guide: ""}];
      */
 
-    SalesOrder.getAll().then(function(salesOrders) {
+    SalesOrder.getAllToShip().then(function(salesOrders) {
         res.render('shipping', {salesOrders: salesOrders});
     });
 });

@@ -70,3 +70,11 @@ module.exports.ship = function(id) {
       fulfill(document);
   });
 };
+
+module.exports.getAllToShip = function() {
+	return new Promise(function(fulfill, reject) {
+		module.exports.getAll().then(function(salesOrders) {
+			fulfill(salesOrders.map(function(order) { return {status: 'Não pronto', 'shipping-date': order['shipping-date'], 'shipping-guide': 'Não emitido'};}));
+		});
+	});
+}
