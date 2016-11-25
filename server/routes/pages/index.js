@@ -47,7 +47,6 @@ router.get('/shipping', function(req, res, next) {
 router.get('/worker', function(req, res, next) {
     PickingOrder.get(1).then(function(pickingOrder) {
         res.render('worker', {pickingOrder: pickingOrder});
-=======
     /*
      const pickingOrder = [{location: "ABCDEF", done: "false",
      items = [{name: "CPU", amount: "2", client: "Joaquim", final-amount:"1"},
