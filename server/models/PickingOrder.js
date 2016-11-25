@@ -4,7 +4,7 @@ const Product = require('./Product');
 module.exports.getAll = function () {
     return new Promise(function (fulfill, reject) {
 		db.pool.query('SELECT picking_order.id, nome, terminado, data_expedicao FROM picking_order JOIN utilizador ON picking_order.id_funcionario = utilizador.id;', function(err, rows) {
-			const pickingOrders = (rows.map(function(row) { return {id: row.id, status: row.terminado ? 'Terminado' : 'Não terminado', 'shipping-date': row.data_expedicao, worker: row.nome  };}));
+			const pickingOrders = (rows.map(function(row) { return {id: row.id, status: 10, shippingDate: row.data_expedicao, worker: row.nome  };}));
 			fulfill(pickingOrders);
 		});
     });
@@ -12,23 +12,7 @@ module.exports.getAll = function () {
 
 module.exports.get = function (id) {
     return new Promise(function (fulfill, reject) {
-        const pickingOrder = {
-			id: id,
-			steps: [
-			{id: 1,
-				location: 'A1.01.2',
-				items: [
-				{quantity: 2,
-					name: 'CPU'
-				}
-				]
-			}
-			]
-        };
-		
-		db.pool.query('SELECT id, id_localizacao FROM picking_order_step WHERE id_picking_order = ?', [id], function(err, rows) {
-			console.log(JSON.stringify(rows));
-			
+		db.pool.query('SELECT id, id_localizacao FROM picking_order_step WHERE id_picking_order = ?', [id], function(err, rows) {	
 			stepPromises = rows.map(function(row) {
 				return new Promise(function(fulfill, reject) {
 					db.pool.query('SELECT id_artigo, quantidade_pedida FROM picking_order_item WHERE id_picking_order_step = ?', [row.id], function(err, rows) {
@@ -43,8 +27,6 @@ module.exports.get = function (id) {
 				fulfill({id: id, steps: steps});
 			});
 		});
-
-//        fulfill(pickingOrder);
     });
 };
 

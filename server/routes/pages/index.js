@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
         {id: "2", shippingDate: "2015/11/23", client: "Alberto Almeida"},
         {id: "3", shippingDate: "2013/11/23", client: "Joaquim Martins"}];
     res.render('index', {salesOrders: salesOrders});
-*/
+*/shippingDate:
     SalesOrder.getAll().then(function(salesOrders) {
         res.render('index', {salesOrders: salesOrders});
     });
@@ -21,15 +21,13 @@ router.get('/', function(req, res, next) {
 router.get('/status', function(req, res, next) {
     /*
      NOTA: status em percentagem
-*/
      const pickingOrders = [{status: "100", shippingDate: "2016/11/23", worker: "Joaquim"},
-     {status: "60", shippingDate: "2015/11/23", worker: "Fernando"},
+     {status: "60",  "2015/11/23", worker: "Fernando"},
      {status: "50", shippingDate: "2013/11/23", worker: "Alice"}];
-
-    res.render('status', {pickingOrders: pickingOrders});
-    /*PickingOrder.getAll().then(function(pickingOrders) {
+*/
+    PickingOrder.getAll().then(function(pickingOrders) {
         res.render('status', {pickingOrders: pickingOrders});
-    });*/
+    });
 });
 
 router.get('/shipping', function(req, res, next) {
@@ -44,7 +42,7 @@ router.get('/shipping', function(req, res, next) {
 });
 
 router.get('/worker', function(req, res, next) {
-
+	/*
      const pickingOrder = [{location: "ABCDEF", done: "false",
      items: [{name: "CPU", amount: "2", client: "Joaquim", finalAmount:"1"},
      {name: "Motherboard", amount: "3", client: "Google", finalAmount:"3"}]
@@ -54,12 +52,12 @@ router.get('/worker', function(req, res, next) {
              {name: "Def", amount: "3", client: "Google", finalAmount:"3"}]
      }];
 
-    res.render('worker', {pickingOrder: pickingOrder});
+    res.render('worker', {pickingOrder: pickingOrder});*/
 
     //FALTA PÔR ID
-    /*PickingOrder.get(id).then(function(pickingOrders) {
-        res.render('worker', {pickingOrders: pickingOrders});
-    });*/
+    PickingOrder.get(1).then(function(pickingOrder) {
+        res.render('worker', {pickingOrder: pickingOrder});
+    });
 });
 
 /**
