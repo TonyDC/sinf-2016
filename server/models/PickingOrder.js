@@ -2,8 +2,10 @@ const db = require('../config/db');
 
 module.exports.getAll = function () {
     return new Promise(function (fulfill, reject) {
-        const pickingOrders = ['1', '2', '3'];
-        fulfill(pickingOrders);
+		db.pool.query('SELECT picking_order.id, nome, terminado, data_expedicao FROM picking_order JOIN utilizador ON picking_order.id_funcionario = utilizador.id;', function(err, rows) {
+			const pickingOrders = (rows.map(function(row) { return {id: row.id, status: row.terminado ? 'Terminado' : 'Não terminado', 'shipping-date': row.data_expedicao, worker: row.nome  };}));
+			fulfill(pickingOrders);
+		});
     });
 };
 
