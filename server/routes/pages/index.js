@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const SalesOrder = require('../../models/SalesOrder');
+const PickingOrder = require('../../models/PickingOrder');
 
-
+/**
+ * PAGES INITIALIZATION
+ */
 router.get('/', function(req, res, next) {
     /*
     const salesOrders = [{date: "2016/11/23", client: "Joaquim Almeida"},
@@ -14,6 +17,29 @@ router.get('/', function(req, res, next) {
         res.render('index', {salesOrders: salesOrders});
     });
 });
+
+router.get('/status', function(req, res, next) {
+    PickingOrder.getAll().then(function(pickingOrders) {
+        res.render('status', {pickingOrders: pickingOrders});
+    });
+});
+
+router.get('/shipping', function(req, res, next) {
+
+    SalesOrder.getAll().then(function(salesOrders) {
+        res.render('shipping', {salesOrders: salesOrders});
+    });
+});
+
+router.get('/worker', function(req, res, next) {
+    PickingOrder.getAll().then(function(pickingOrders) {
+        res.render('worker', {pickingOrders: pickingOrders});
+    });
+});
+
+/**
+ * REQUESTS
+ */
 
 router.get('/partials/salesOrder/:id', function(req, res, next) {
    const id = req.params.id;
@@ -30,14 +56,6 @@ router.post('/createPickingWave', function(req, res, next) {
     }
     const ids = req.body.selected;
     res.send("Sucesso");
-});
-
-router.get('/status', function(req, res, next) {
-    res.render('status');
-});
-
-router.get('/shipping', function(req, res, next) {
-    res.render('shipping');
 });
 
 module.exports = router;
