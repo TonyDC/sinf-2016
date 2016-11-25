@@ -1,25 +1,65 @@
 const db = require('../config/db');
+const request = require('request');
+const Product = require('./Product');
+
 
 module.exports.getAll = function () {
     return new Promise(function (fulfill, reject) {
-        let sales = [];
-        const sale1 = {'id': '1', 'shipping-date': '11/12/2016', 'client': 'Joaquim Almeida', 'client-id': '2'};
-        const sale2 = {'id': '2', 'shipping-date': '15/12/2016', 'client': 'Joaquim Martins', 'client-id': '2'};
-        sales.push(sale1);
-        sales.push(sale2);
+	request('http://localhost:52313/api/encomenda/000/2016', function (error, response, body) {
+    		if(error){
+        		return console.log('Error:', error);
+    		}
+		if(response.statusCode !== 200){
+        		return console.log('Invalid Status Code Returned:', response.statusCode);
+	    	}
 
-        fulfill(sales);
+		salesOrdersRaw = JSON.parse(body);
+		salesOrders = salesOrdersRaw.map(function(order) {
+			return {id: order.NumeroDocumento, 'shipping-date': order.Artigos[0].DataEntrega, client: order.Cliente};
+		});
+
+		fulfill(salesOrders);
+	});
     });
 };
 
 module.exports.getItems = function (id) {
     return new Promise(function (fulfill, reject) {
-        let items = [];
-        items.push({item: '1', quantity: 2, name: 'CPU', status: 'ready'});
-        items.push({item: '2', quantity: 4, name: 'Motherboard',  status: 'not ready'});
-        const salesOrder = {'id': '1', 'shipping-date': '11/12/2016', 'client': 'Joaquim Almeida', 'client-id': '2', items: items};
+		request('http://localhost:52313/api/encomenda/000/2016/' + id, function (error, response, body) {
+			if(error){
+				console.log('Error:', error);
+				reject();
+			}
+			if(response.statusCode !== 200){
+				console.log('Invalid Status Code Returned:', response.statusCode);
+				reject();
+			}
 
-        fulfill(salesOrder);
+			salesOrderRaw = JSON.parse(body)[0];
+
+			itemInfoPromises = salesOrderRaw.Artigos.map(function(item) {
+				return new Promise(function(fulfill, reject) {
+					request('http://localhost:52313/api/artigo/' + item.ArtigoID, function (error, response, body) {
+							if(error){
+							console.log('Error:', error);
+							reject();
+							}
+						if(response.statusCode !== 200){
+							console.log('Invalid Status Code Returned:', response.statusCode);
+							reject();
+							}				
+						
+						itemRaw = JSON.parse(body);
+						
+						fulfill({name:itemRaw.DescArtigo, quantity:item.Quantidade - item.QuantidadeSatisfeita});
+					});
+				});
+			});
+			
+			Promise.all(itemInfoPromises).then(function(items) {
+				fulfill({id: id, client:salesOrderRaw.Cliente, items: items});
+			});
+		});
     });
 };
 
