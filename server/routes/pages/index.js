@@ -8,10 +8,31 @@ const PickingOrder = require('../../models/PickingOrder');
  */
 router.get('/', function(req, res, next) {
 
+    res.render('index');
+
+});
+
+router.get('/choice', function(req, res, next) {
+
+    const filiais = [{name: "filial1"},{name: "filial2"},{name: "filial2"}];
+    const series = [{name: "serie1"},{name: "serie2"},{name: "serie3"}];
+    res.render('choice', {filiais: filiais, series: series});
+
+});
+
+router.get('/options', function(req, res, next) {
+
+    const variables = {warehouse: "300", worker: "100"};
+    res.render('options', {variables: variables});
+
+});
+
+router.get('/creation', function(req, res, next) {
+
     const salesOrders = [{id: "1", shippingDate: "2016/11/23", client: "Joaquim Almeida"},
         {id: "2", shippingDate: "2015/11/23", client: "Alberto Almeida"},
         {id: "3", shippingDate: "2013/11/23", client: "Joaquim Martins"}];
-    res.render('index', {salesOrders: salesOrders});
+    res.render('creation', {salesOrders: salesOrders});
 
 /*shippingDate:
     SalesOrder.getAll().then(function(salesOrders) {
@@ -55,6 +76,12 @@ router.get('/worker', function(req, res, next) {
                  [
                  {name: "CPU", quantity: "2", client: "Joaquim", finalAmount:"1"},
                     {name: "Motherboard", quantity: "3", client: "Google", finalAmount:"3"}
+                 ]
+             },
+             {location: "GHIJKL", done: "false", items:
+                 [
+                     {name: "dfgsgsd", quantity: "1", client: "Apple", finalAmount:"1"},
+                     {name: "gjhgks", quantity: "5", client: "Microsoft", finalAmount:"5"}
                  ]
              }
          ]
