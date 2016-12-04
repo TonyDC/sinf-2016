@@ -53,7 +53,7 @@ namespace SalesOrderPicking.Controllers {
 
            bool result = false;
             try {
-                result = PriIntegration.GerarPickingOrders(p["filial"].ToString(), p["serie"].ToString(), (List<uint>)p["encomendas"]);
+                result = PriIntegration.GerarPickingOrders(p["filial"].ToString(), p["serie"].ToString(), ((Newtonsoft.Json.Linq.JArray) p["encomendas"]).ToObject<List<uint>>());
             } catch (Exception e) {
                 return InternalServerError(e);
             }
