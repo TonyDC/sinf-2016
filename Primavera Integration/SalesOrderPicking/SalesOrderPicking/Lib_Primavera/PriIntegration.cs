@@ -397,13 +397,15 @@ namespace SalesOrderPicking.Lib_Primavera {
             Dictionary<string, int> stockActual = GetStockActual("A1");
             Dictionary<string, int> stockReserva = new Dictionary<string, int>();
 
-            List<Dictionary<string, object>> linhasEncomendas = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM CabecDoc INNER JOIN LinhasDoc ON (CabecDoc.id = LinhasDoc.idCabecDoc) WHERE TipoDoc = 'ECL' AND filial = '@0@' AND serie = '@1@' AND @2@", filial, serie, conditionQueryString.ToString());
+            List<Dictionary<string, object>> linhasEncomendas = Utilities.performQuery(PriEngine.DBConnString,
+                "SELECT LinhasDoc.Id, sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) as VersaoUltAct, LinhasDoc.Unidade, LinhasDoc.Artigo, LinhasDoc.Quantidade FROM CabecDoc INNER JOIN LinhasDoc ON (CabecDoc.id = LinhasDoc.idCabecDoc) WHERE TipoDoc = 'ECL' AND Quantidade > 0 AND filial = '@0@' AND serie = '@1@' AND @2@", 
+                filial, serie, conditionQueryString.ToString());
             int capMaxFuncionario = MAX_CAP_FUNCIONARIO;
 
             foreach (var tuple in linhasEncomendas) {
 
                 // Verificar se já existe uma linha
-                List<Dictionary<string, object>> linhaEncomenda = Utilities.performQuery(PriEngine.PickingDBConnString, "SELECT * FROM LinhaEncomenda WHERE id_linha = @0@ AND versao_ult_act = @1@", tuple["Id"].ToString(), tuple["VersaoUltAct"].ToString());
+                List<Dictionary<string, object>> linhaEncomenda = Utilities.performQuery(PriEngine.PickingDBConnString, "SELECT * FROM LinhaEncomenda WHERE id_linha = '@0@' AND versao_ult_act = '@1@'", tuple["Id"].ToString(), tuple["VersaoUltAct"].ToString());
 
                 if (linhaEncomenda.Count > 0) {
                     Dictionary<string, object> linha = linhaEncomenda.ElementAt(0);
@@ -440,11 +442,11 @@ namespace SalesOrderPicking.Lib_Primavera {
                         // A quantidade a satisfazer não pode ultrapassar a capacidade máxima do funcionário
                         while (diferenca > capMaxFuncionario) {
                             diferenca -= capMaxFuncionario;
-                            Utilities.performQuery(PriEngine.PickingDBConnString, "INSERT INTO LinhaPicking(quantidade_satisfazer, artigo, id_linha_encomenda) VALUES(@0@, '@1@', @2@)",
-                                capMaxFuncionario.ToString(), artigo, linha["Id"].ToString());
+                            Utilities.performQuery(PriEngine.PickingDBConnString, "INSERT INTO LinhaPicking(quant_a_satisfazer, artigo, id_linha_encomenda) VALUES(@0@, '@1@', '@2@')",
+                                capMaxFuncionario.ToString(), artigo, linha["id"].ToString());
                         }
-                        Utilities.performQuery(PriEngine.PickingDBConnString, "INSERT INTO LinhaPicking(quantidade_satisfazer, artigo, id_linha_encomenda) VALUES(@0@, '@1@', @2@)",
-                                diferenca.ToString(), artigo, linha["Id"].ToString());
+                        Utilities.performQuery(PriEngine.PickingDBConnString, "INSERT INTO LinhaPicking(quant_a_satisfazer, artigo, id_linha_encomenda) VALUES(@0@, '@1@', '@2@')",
+                                diferenca.ToString(), artigo, linha["id"].ToString());
 
                     }
 
@@ -468,8 +470,8 @@ namespace SalesOrderPicking.Lib_Primavera {
 
 
                     // Criar uma nova linha de encomenda
-                    List<Dictionary<string, object>> insertResult = Utilities.performQuery(PriEngine.DBConnString,
-                        "INSERT INTO PICKING.dbo.LinhaEncomenda(id_linha, versao_ult_act, artigo, quantidade_pedida, unidades) OUTPUT INSERTED.id VALUES(@0@, @1@, '@2@', @3@, '@4@')",
+                    List<Dictionary<string, object>> insertResult = Utilities.performQuery(PriEngine.PickingDBConnString,
+                        "INSERT INTO LinhaEncomenda(id_linha, versao_ult_act, artigo, quant_pedida, unidade) OUTPUT INSERTED.id VALUES('@0@', '@1@', '@2@', @3@, '@4@')",
                         tuple["Id"].ToString(), tuple["VersaoUltAct"].ToString(), artigo, tuple["Quantidade"].ToString(), tuple["Unidade"] as string);
 
                     if (insertResult.Count < 1)
@@ -478,13 +480,13 @@ namespace SalesOrderPicking.Lib_Primavera {
 
                     while (diferenca > capMaxFuncionario) {
                         diferenca -= capMaxFuncionario;
-                        Utilities.performQuery(PriEngine.DBConnString,
-                            "INSERT INTO PICKING.dbo.LinhaPicking(quantidade_satisfazer, artigo, id_linha_encomenda) VALUES(@0@, '@1@', @2@)",
-                            capMaxFuncionario.ToString(), artigo, insertResult.ElementAt(0)["Id"].ToString());
+                        Utilities.performQuery(PriEngine.PickingDBConnString,
+                            "INSERT INTO LinhaPicking(quant_a_satisfazer, artigo, id_linha_encomenda) VALUES(@0@, '@1@', '@2@')",
+                            capMaxFuncionario.ToString(), artigo, insertResult.ElementAt(0)["id"].ToString());
                     }
-                    Utilities.performQuery(PriEngine.DBConnString,
-                            "INSERT INTO PICKING.dbo.LinhaPicking(quantidade_satisfazer, artigo, id_linha_encomenda) VALUES(@0@, '@1@', @2@)",
-                            diferenca.ToString(), artigo, insertResult.ElementAt(0)["Id"].ToString());
+                    Utilities.performQuery(PriEngine.PickingDBConnString,
+                            "INSERT INTO LinhaPicking(quant_a_satisfazer, artigo, id_linha_encomenda) VALUES(@0@, '@1@', '@2@')",
+                            diferenca.ToString(), artigo, insertResult.ElementAt(0)["id"].ToString());
                 }
             }
 
@@ -492,14 +494,14 @@ namespace SalesOrderPicking.Lib_Primavera {
             foreach (KeyValuePair<string, int> item in stockReserva) {
                 
                 // Verificar se já existe
-                List<Dictionary<string, object>> reservedStockRows = Utilities.performQuery(PriEngine.DBConnString,
-                    "SELECT * FROM QuantidadeReserva WHERE Artigo = '@0@' AND Armazem = '@1@'", item.Key, "A1");
+                List<Dictionary<string, object>> reservedStockRows = Utilities.performQuery(PriEngine.PickingDBConnString,
+                    "SELECT * FROM QuantidadeReserva WHERE artigo = '@0@' AND armazem = '@1@'", item.Key, "A1");
                 if(reservedStockRows.Count > 0)
-                    Utilities.performQuery(PriEngine.DBConnString,
-                   "UPDATE QuantidadeReserva SET Quantidade = @0@ WHERE Id = @1@", (item.Value + Convert.ToInt32(reservedStockRows.ElementAt(0)["quant_reservada"])).ToString(), reservedStockRows.ElementAt(0)["Id"].ToString());
+                    Utilities.performQuery(PriEngine.PickingDBConnString,
+                   "UPDATE QuantidadeReserva SET quant_reservada = @0@ WHERE id = '@1@'", (item.Value + Convert.ToInt32(reservedStockRows.ElementAt(0)["quant_reservada"])).ToString(), reservedStockRows.ElementAt(0)["id"].ToString());
                 else
-                    Utilities.performQuery(PriEngine.DBConnString,
-                  "INSERT INTO QuantidadeReserva(Artigo, Quantidade, Armazem) VALUES ('@0@', @1@, '@2@')", item.Key, item.Value.ToString(), "A1");
+                    Utilities.performQuery(PriEngine.PickingDBConnString,
+                  "INSERT INTO QuantidadeReserva(artigo, quant_reservada, armazem) VALUES ('@0@', @1@, '@2@')", item.Key, item.Value.ToString(), "A1");
 
             }
 
@@ -576,6 +578,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             return new PickingWave(Convert.ToInt32(pickingOrder["id"]), Convert.ToInt32(workerRows.ElementAt(0)["id"]), pickingOrderContent);
         }
 
+        // ATENÇÃO: NÃO CONTABILIZAR AS LINHAS CUJA QUANTIDADE É 0
         // Argumento: numero da picking wave; linhas de pares id_da_linha_da_picking_wave - quantidade_de_facto_satisfeita
         public static bool terminarPickingOrder(uint pickingWave, List<uint> id, List<int> quant) {
 

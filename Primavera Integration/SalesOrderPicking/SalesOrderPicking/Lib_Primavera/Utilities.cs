@@ -44,7 +44,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             for (int i = 0; i < elements.Length; i++)
                 queryString = queryString.Replace("@" + i + "@", elements.ElementAt(i));
-
+            System.Diagnostics.Debug.WriteLine(queryString);
             List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
 
             using (var connection = new SqlConnection(connectionString)) {
