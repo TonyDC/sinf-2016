@@ -66,6 +66,24 @@ namespace SalesOrderPicking.Controllers {
                 return Ok();
         }
 
+        [Route("api/teste/pick")]
+        public IHttpActionResult PostNewPick(Dictionary<string, object> p) {
+
+            PickingWave result = null;
+            try {
+                result = PriIntegration.GetProximaPickingWave(Convert.ToInt32(p["funcionario"]));
+            } catch (Exception e) {
+                return InternalServerError(e);
+            }
+
+
+            if (result == null)
+                return NotFound();
+
+            else
+                return Ok(result);
+        }
+
         /*
         [Route("api/teste/satisfeita")]
         [HttpPost]
