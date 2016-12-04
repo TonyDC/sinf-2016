@@ -15,5 +15,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
         public const string QUERY_ENCOMENDAS_PENDENTES = "SELECT * FROM (SELECT distinct numDoc AS Doc FROM LinhASDocStatus INNER JOIN LinhASDoc ON (LinhASDocStatus.IdLinhASDoc = LinhASDoc.Id) INNER JOIN CabecDoc ON (LinhASDoc.IdCabecDoc = cabecDoc.id) WHERE LinhASDocStatus.EstadoTrans = 'P') AS DocPendentes INNER JOIN CabecDoc ON (DocPendentes.Doc = CabecDoc.NumDoc) WHERE CabecDoc.tipoDoc = 'ECL'";
         public const string QUERY_TODAS_ENCOMENDAS = "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL'";
+
+        public const double EPSILON = 1e-3;
     }
 }

@@ -15,6 +15,7 @@ namespace SalesOrderPicking.Lib_Primavera {
         private static StdPlatBS platform = null;
         private static ErpBS engine = null;
         private static string databaseConnectionString = null;
+        private static string pickingDatabaseConnectionString = @"Server=USER-PC\PRIMAVERA;UID=sa;Password=Feup2014;Database=PICKING";
 
         // Gere a parte da autenticação da plataforma
         public static StdPlatBS Platform { get { return PriEngine.platform; } }
@@ -23,6 +24,8 @@ namespace SalesOrderPicking.Lib_Primavera {
         public static ErpBS Engine { get { return PriEngine.engine; } }
 
         public static string DBConnString { get { return PriEngine.databaseConnectionString; } }
+
+        public static string PickingDBConnString { get { return PriEngine.pickingDatabaseConnectionString; } }
 
         private PriEngine() {
         }

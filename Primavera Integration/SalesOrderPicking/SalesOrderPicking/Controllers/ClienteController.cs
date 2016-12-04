@@ -125,13 +125,16 @@ namespace SalesOrderPicking.Controllers {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-           
+            try {
                 if (PriIntegration.GerarGuiaRemessa(encomenda))
                     return Ok();
                 else
                     return BadRequest();
 
-           
+            } catch (Exception e) {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+                return InternalServerError();
+            }
  
         }
     }

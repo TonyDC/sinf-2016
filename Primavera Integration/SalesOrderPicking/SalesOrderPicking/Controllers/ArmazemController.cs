@@ -50,11 +50,12 @@ namespace SalesOrderPicking.Controllers {
          *          armazemOrigem: string,
          *          serie: string,
          *          artigos: Array
-         *              artigo: string,
-         *              localizacaoOrigem: string,
-         *              localizacaoDestino: string,
-         *              armazemDestino: string,
-         *              quantidade: uint
+         *              Object
+         *                  artigo: string,
+         *                  localizacaoOrigem: string,
+         *                  localizacaoDestino: string,
+         *                  armazemDestino: string,
+         *                  quantidade: uint
          */
         public IHttpActionResult Post(TransferenciaArmazem transferencia) {
             if (!ModelState.IsValid)

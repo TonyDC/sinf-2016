@@ -20,7 +20,6 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
         public string Serie { get { return this.serie; } }
        
         [Required]
-        [MinLength(1)]
         public List<TransferenciaArtigo> Artigos { get { return this.artigos; } }
 
         public TransferenciaArmazem(string armazemOrigem, string serie, List<TransferenciaArtigo> artigos) {

@@ -16,7 +16,7 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
         private double quantidade;
 
         [Required]
-        public string ArtigoID { get { return this.artigoID; } }
+        public string Artigo { get { return this.artigoID; } }
 
         [Required]
         public string LocalizacaoOrigem { get { return this.localizacaoOrigem; } }

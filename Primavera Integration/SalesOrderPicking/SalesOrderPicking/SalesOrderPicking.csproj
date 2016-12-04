@@ -283,6 +283,7 @@
     <Compile Include="Controllers\ArtigoController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\UtilController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -294,6 +295,9 @@
     <Compile Include="Lib_Primavera\Model\LinhaEncomendaCliente.cs" />
     <Compile Include="Lib_Primavera\Model\LocalizacaoArmazem.cs" />
     <Compile Include="Lib_Primavera\Model\PedidoTransformacaoECL.cs" />
+    <Compile Include="Lib_Primavera\Model\PickingLine.cs" />
+    <Compile Include="Lib_Primavera\Model\PickingWave.cs" />
+    <Compile Include="Lib_Primavera\Model\Resposta.cs" />
     <Compile Include="Lib_Primavera\Model\StockArtigo.cs" />
     <Compile Include="Lib_Primavera\Model\TransferenciaArmazem.cs" />
     <Compile Include="Lib_Primavera\Model\TransferenciaArtigo.cs" />

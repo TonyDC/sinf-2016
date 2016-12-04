@@ -8,7 +8,38 @@ using System.Text;
 namespace SalesOrderPicking.Lib_Primavera {
 
     public class Utilities {
+        /*
+        private static bool useTransaction = false;
+        private static SqlTransaction transaction = null;
 
+        public static bool useTransactionMode() {
+            if (useTransaction)
+                return false;
+
+            useTransaction = true;
+            return true;
+        }
+
+        public static bool commitTransaction() {
+            if (!useTransaction || transaction == null)
+                return false;
+
+            transaction.Commit();
+            useTransaction = false;
+            transaction = null;
+            return true;
+        }
+
+        public static bool rollbackTransaction() {
+            if (!useTransaction || transaction == null)
+                return false;
+
+            transaction.Rollback();
+            useTransaction = false;
+            transaction = null;
+            return true;
+        }*/
+        // TODO: passar a ter uma parametrizacao
         public static List<Dictionary<string, object>> performQuery(string connectionString, string queryString, params string[] elements) {
 
             for (int i = 0; i < elements.Length; i++)
@@ -20,6 +51,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
                 SqlCommand command = new SqlCommand(queryString, connection);
                 connection.Open();
+                //command.Parameters.Add("ass", 23);
 
                 SqlDataReader reader = command.ExecuteReader();
 
