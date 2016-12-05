@@ -84,6 +84,35 @@ namespace SalesOrderPicking.Controllers {
                 return Ok(result);
         }
 
+        [Route("api/teste/end_pick")]
+        public IHttpActionResult PostFinishPick(Dictionary<string, object> p) {
+
+            List<Pair<string, int>> r = new List<Pair<string,int>>();
+
+            foreach (var item in ((Newtonsoft.Json.Linq.JArray) p["linhas"]).ToObject<List<Dictionary<string, object>>>()) {
+                r.Add(new Pair<string,int> { First = item["id"] as string, Second = Convert.ToInt32(item["quantidade"])} );
+                //System.Diagnostics.Debug.WriteLine(item["id"] + " " + item["quantidade"]);   
+            }
+
+            bool result = false;
+            try {
+                result = PriIntegration.TerminarPickingOrder(
+                    Convert.ToUInt32(p["funcionario"]), 
+                    p["pickingWave"] as string, 
+                    r, 
+                    p["serie"] as string);
+            } catch (Exception e) {
+                return InternalServerError(e);
+            }
+
+
+            if (!result)
+                return NotFound();
+
+            else
+                return Ok(result);
+        }
+
         /*
         [Route("api/teste/satisfeita")]
         [HttpPost]

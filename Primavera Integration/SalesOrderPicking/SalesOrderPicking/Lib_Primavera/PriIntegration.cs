@@ -12,6 +12,7 @@ using Interop.GcpBE900;
 using ADODB;
 
 using SalesOrderPicking.Lib_Primavera.Model;
+using SalesOrderPicking.Lib_Primavera;
 
 namespace SalesOrderPicking.Lib_Primavera {
 
@@ -341,7 +342,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             }
 
 
-            foreach (var item in rows) {           
+            foreach (var item in rows) {
                 string artigo = item["Artigo"] as string;
                 int quantidade = Convert.ToInt32(item["Stock"]);
 
@@ -398,7 +399,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             Dictionary<string, int> stockReserva = new Dictionary<string, int>();
 
             List<Dictionary<string, object>> linhasEncomendas = Utilities.performQuery(PriEngine.DBConnString,
-                "SELECT LinhasDoc.Id, sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) as VersaoUltAct, LinhasDoc.Unidade, LinhasDoc.Artigo, LinhasDoc.Quantidade FROM CabecDoc INNER JOIN LinhasDoc ON (CabecDoc.id = LinhasDoc.idCabecDoc) WHERE TipoDoc = 'ECL' AND Quantidade > 0 AND filial = '@0@' AND serie = '@1@' AND @2@", 
+                "SELECT LinhasDoc.Id, sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) as VersaoUltAct, LinhasDoc.Unidade, LinhasDoc.Artigo, LinhasDoc.Quantidade FROM CabecDoc INNER JOIN LinhasDoc ON (CabecDoc.id = LinhasDoc.idCabecDoc) WHERE TipoDoc = 'ECL' AND Quantidade > 0 AND filial = '@0@' AND serie = '@1@' AND @2@",
                 filial, serie, conditionQueryString.ToString());
             int capMaxFuncionario = MAX_CAP_FUNCIONARIO;
 
@@ -408,7 +409,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                 List<Dictionary<string, object>> linhaEncomenda = Utilities.performQuery(PriEngine.PickingDBConnString, "SELECT * FROM LinhaEncomenda WHERE id_linha = '@0@' AND versao_ult_act = '@1@'", tuple["Id"].ToString(), tuple["VersaoUltAct"].ToString());
 
                 if (linhaEncomenda.Count > 0) {
-                    List<Dictionary<string, object>> linhaPendente = Utilities.performQuery(PriEngine.PickingDBConnString, "SELECT * FROM LinhaEncomenda INNER JOIN LinhaPicking ON (LinhaEncomenda.id = LinhaPicking.id_linha_encomenda) WHERE id_linha = '@0@' AND versao_ult_act = '@1@' AND em_progresso IS TRUE", tuple["Id"].ToString(), tuple["VersaoUltAct"].ToString());
+                    List<Dictionary<string, object>> linhaPendente = Utilities.performQuery(PriEngine.PickingDBConnString, "SELECT LinhaEncomenda.id FROM LinhaEncomenda INNER JOIN LinhaPicking ON (LinhaEncomenda.id = LinhaPicking.id_linha_encomenda) LEFT JOIN PickingWave ON (LinhaPicking.id_picking = PickingWave.id) WHERE id_linha = '@0@' AND versao_ult_act = '@1@' AND (id_picking IS NULL OR em_progresso = 1)", tuple["Id"].ToString(), tuple["VersaoUltAct"].ToString());
                     if (linhaPendente.Count > 0)
                         continue;       // Está a decorrer uma picking order a satisfazer esta linha
 
@@ -492,11 +493,11 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             // Guardar as quantias reservadas
             foreach (KeyValuePair<string, int> item in stockReserva) {
-                
+
                 // Verificar se já existe
                 List<Dictionary<string, object>> reservedStockRows = Utilities.performQuery(PriEngine.PickingDBConnString,
                     "SELECT * FROM QuantidadeReserva WHERE artigo = '@0@' AND armazem = '@1@'", item.Key, "A1");
-                if(reservedStockRows.Count > 0)
+                if (reservedStockRows.Count > 0)
                     Utilities.performQuery(PriEngine.PickingDBConnString,
                    "UPDATE QuantidadeReserva SET quant_reservada = @0@ WHERE id = '@1@'", (item.Value + Convert.ToInt32(reservedStockRows.ElementAt(0)["quant_reservada"])).ToString(), reservedStockRows.ElementAt(0)["id"].ToString());
                 else
@@ -538,7 +539,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             return true;
         }
 
-        
+
         public static PickingWave GetProximaPickingWave(int IDfuncionario) {
 
             // Verificar se o funcionário existe no sistema
@@ -547,8 +548,8 @@ namespace SalesOrderPicking.Lib_Primavera {
                 throw new InvalidOperationException("There is no such worker");
 
             // O funcionário não pode ter picking a decorrer
-            List<Dictionary<string, object>> pendingPickingWaveRows = Utilities.performQuery(PriEngine.PickingDBConnString, 
-                "SELECT * FROM Funcionario INNER JOIN PickingWave ON (Funcionario.id = PickingWave.id_funcionario) INNER JOIN LinhaPicking ON (LinhaPicking.id_picking = PickingWave.id) WHERE id_funcionario = @0@ AND em_progresso IS TRUE", IDfuncionario.ToString());
+            List<Dictionary<string, object>> pendingPickingWaveRows = Utilities.performQuery(PriEngine.PickingDBConnString,
+                "SELECT Funcionario.id FROM Funcionario INNER JOIN PickingWave ON (Funcionario.id = PickingWave.id_funcionario) WHERE id_funcionario = @0@ AND em_progresso = 1", IDfuncionario.ToString());
             if (pendingPickingWaveRows.Count != 0)
                 throw new InvalidOperationException("The worker has pendign picking waves");
 
@@ -596,12 +597,12 @@ namespace SalesOrderPicking.Lib_Primavera {
             }
             queryString.Append(")");
             Utilities.performQuery(PriEngine.PickingDBConnString,
-                    "UPDATE LinhaPicking SET id_picking = '@0@' WHERE @1@", 
+                    "UPDATE LinhaPicking SET id_picking = '@0@' WHERE @1@",
                     pickingWaveResult.ElementAt(0)["id"].ToString(), queryString.ToString());
 
             // Estabelecer a rota: Ordenação alfabética das localizações
             List<Dictionary<string, object>> pickingLinesRows = Utilities.performQuery(PriEngine.PickingDBConnString,
-                    "SELECT * FROM LinhaPicking INNER JOIN LinhaEncomenda ON(LinhaPicking.id_picking = LinhaEncomenda.id) WHERE @0@ ORDER BY localizacao", 
+                    "SELECT * FROM LinhaPicking INNER JOIN LinhaEncomenda ON(LinhaPicking.id_picking = LinhaEncomenda.id) WHERE @0@ ORDER BY localizacao",
                     queryString.ToString());
 
             Dictionary<string, List<PickingLine>> pickingOrderContent = new Dictionary<string, List<PickingLine>>();
@@ -622,30 +623,96 @@ namespace SalesOrderPicking.Lib_Primavera {
             return new PickingWave(pickingWaveResult.ElementAt(0)["id"].ToString(), Convert.ToInt32(workerRows.ElementAt(0)["id"]), pickingOrderContent);
         }
 
-        /*
+
         // ATENÇÃO: NÃO CONTABILIZAR AS LINHAS CUJA QUANTIDADE É 0
         // Argumento: numero da picking wave; linhas de pares id_da_linha_da_picking_wave - quantidade_de_facto_satisfeita
-        public static bool terminarPickingOrder(uint pickingWave, List<uint> id, List<int> quant) {
+        public static bool TerminarPickingOrder(uint funcionarioID, string pickingWaveID, List<Pair<string, int>> linhas, string serie) {
 
-            // Verificar se essa picking wave existe
-            List<Dictionary<string, object>> pickingWavesRows = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM PickingWave WHERE id = @0@", pickingWave.ToString());
+            if (linhas.Count < 1)
+                throw new InvalidOperationException("A picking wave must have, at least, one line");
+
+            // Verificar se este funcionario tem a picking wave atribuída a ele + verificar se a picking wave existe + Verificar se o funcionário existe no sistema + verificar se a picking wave está pendente
+            List<Dictionary<string, object>> pickingWavesRows = Utilities.performQuery(PriEngine.PickingDBConnString,
+                "SELECT * FROM PickingWave WHERE id = '@0@' AND id_funcionario = '@1@' AND em_progresso = 1",
+                pickingWaveID, funcionarioID.ToString());
             if (pickingWavesRows.Count != 1)
                 throw new InvalidOperationException("There is no such picking wave");
+            /*
+            // Verificar se as linhas estão pendentes
+            List<Dictionary<string, object>> pickingLineRows = Utilities.performQuery(PriEngine.PickingDBConnString,
+                "SELECT * FROM LinhaPicking WHERE id_picking = '@0@' AND em_progresso = 1",
+                pickingWaveID, funcionarioID.ToString());
+            if (pickingLineRows.Count < 1)
+                throw new InvalidOperationException("The picking wave is concluded");*/
 
-            // Fazer o set da quantidade satisfeita
-            // Realizar tranferencia de armazem para EXPED
+            // Verificar se todas as linhas estão presentes
+            StringBuilder conditionQuery = new StringBuilder();
+            conditionQuery.Append("(id != '" + linhas.ElementAt(0).First + "'");
+            foreach (var item in linhas) {
+                conditionQuery.Append(" AND id != '" + item.First + "'");
+            }
+            conditionQuery.Append(")");
+            List<Dictionary<string, object>> nonIncludedRows = Utilities.performQuery(PriEngine.PickingDBConnString,
+                "SELECT * FROM LinhaPicking WHERE id_picking = '@0@' AND @1@",
+                pickingWaveID, conditionQuery.ToString());
+            if (nonIncludedRows.Count > 0)
+                throw new InvalidOperationException("The request must include all lines");
+
+           
+            // Marcar a quantidade satisfeita na linha
             foreach (var linha in linhas) {
                 // TODO verificar se a quantidade satisfeita e inferior a pedida e inferior a que existe actualmente
-                Utilities.performQuery(PriEngine.DBConnString, "UPDATE PickingLine SET quantSatisfeita = @0@ WHERE id = @1@", linha["quantSatisfeita"] as string, linha["id"]);
+                List<Dictionary<string, object>> updatedRow = Utilities.performQuery(PriEngine.PickingDBConnString,
+                    "UPDATE LinhaPicking SET quant_recolhida = @1@ OUTPUT INSERTED.id_linha_encomenda WHERE id = '@0@' AND id_picking = '@2@'",
+                    linha.First, linha.Second.ToString(), pickingWaveID);
+
+                if (updatedRow.Count < 1)
+                    continue;
+
+                Utilities.performQuery(PriEngine.PickingDBConnString,
+                    "UPDATE LinhaEncomenda SET quant_satisfeita = quant_satisfeita + @1@ WHERE id = '@0@'",
+                    updatedRow.ElementAt(0)["id_linha_encomenda"].ToString(), linha.Second.ToString());
             }
 
-            // verificar se a picking order foi satisfeita na totalidade; 
-            // marcar a quantidade satisfeita no Primavera (TESTAR E VER SE FUNCIONA!) -> Não funciona. Alternativa: marcar na nossa base de dados
+            // Marcar a picking order como completa
+            Utilities.performQuery(PriEngine.PickingDBConnString,
+                    "UPDATE PickingWave SET em_progresso = 0, data_conclusao = GETDATE() WHERE id = '@0@'",
+                    pickingWaveID);
+
+            // Realizar tranferencia de armazem para EXPED
+            // Retirar da quantidade reservada
+            List<Dictionary<string, object>> afectedRows = Utilities.performQuery(PriEngine.PickingDBConnString,
+               "SELECT artigo, quant_a_satisfazer, localizacao FROM LinhaPicking WHERE id_picking = '@0@'",
+               pickingWaveID);
+
+            foreach (var item in afectedRows) {
+                List<TransferenciaArtigo> lista = new List<TransferenciaArtigo>();
+                lista.Add(new TransferenciaArtigo(item["artigo"] as string, item["localizacao"] as string, GeneralConstants.ARMAZEM_EXPEDICAO, GeneralConstants.ARMAZEM_EXPEDICAO, Convert.ToDouble(item["quant_a_satisfazer"])));
+
+                GerarTransferenciaArmazem(new TransferenciaArmazem("A1", serie, lista));
+                Utilities.performQuery(PriEngine.PickingDBConnString,
+                    "UPDATE QuantidadeReserva SET quant_reservada = quant_reservada - @0@ WHERE artigo = '@1@' AND armazem = 'A1'",
+                    item["quant_a_satisfazer"].ToString(), item["artigo"] as string);
+            }
+
+            return true;
+        }
+
+        public static bool AreReplenishmentPending() {
 
 
             return true;
         }
 
+        // 
+        public static bool GerarReplenishment(List<Triple<string, string, int>> listaReposicao) {
+
+
+
+            return true;
+        }
+
+        /*
         // Argumento: linhas de pares id_da_linha - quantidade_de_facto_mudada
         public static bool terminarReplenishmentOrder() {
 
@@ -654,9 +721,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             return true;
         }
 
-        public static bool GerarReplenishment() {
-
-        }
+        
 
 
         // Não funciona!

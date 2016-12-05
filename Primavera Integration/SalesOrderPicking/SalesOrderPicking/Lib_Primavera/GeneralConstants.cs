@@ -17,5 +17,7 @@ namespace SalesOrderPicking.Lib_Primavera {
         public const string QUERY_TODAS_ENCOMENDAS = "SELECT * FROM CabecDoc WITH (NOLOCK) WHERE TipoDoc = 'ECL'";
 
         public const double EPSILON = 1e-3;
+
+        public const string ARMAZEM_EXPEDICAO = "EXPED";
     }
 }
