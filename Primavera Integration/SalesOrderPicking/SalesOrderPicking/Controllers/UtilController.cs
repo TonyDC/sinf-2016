@@ -97,7 +97,7 @@ namespace SalesOrderPicking.Controllers {
             bool result = false;
             try {
                 result = PriIntegration.TerminarPickingOrder(
-                    Convert.ToUInt32(p["funcionario"]), 
+                    Convert.ToInt32(p["funcionario"]), 
                     p["pickingWave"] as string, 
                     r, 
                     p["serie"] as string);
