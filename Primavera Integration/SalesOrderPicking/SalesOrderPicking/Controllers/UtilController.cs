@@ -114,7 +114,59 @@ namespace SalesOrderPicking.Controllers {
                 return NotFound();
 
             else
+                return Ok();
+        }
+
+
+        [Route("api/teste/replenishment")]
+        public IHttpActionResult PostNewReplenishment(Dictionary<string, object> p) {
+
+            Wave<ReplenishmentLine> result = null;
+            try {
+                result = PriIntegration.GetProximaReplenishmentOrder(Convert.ToInt32(p["funcionario"]));
+            } catch (Exception e) {
+                return InternalServerError(e);
+            }
+
+            if (result != null)
+                foreach (var item in result.Linhas) {
+                    System.Diagnostics.Debug.WriteLine(item.Key + " " + item.Value);
+                }
+
+            if (result == null)
+                return NotFound();
+
+            else
                 return Ok(result);
+        }
+
+        [Route("api/teste/end_replenishment")]
+        public IHttpActionResult PostFinishReplenishment(Dictionary<string, object> p) {
+
+            List<Pair<string, int>> r = new List<Pair<string, int>>();
+
+            foreach (var item in ((Newtonsoft.Json.Linq.JArray)p["linhas"]).ToObject<List<Dictionary<string, object>>>()) {
+                r.Add(new Pair<string, int> { First = item["id"] as string, Second = Convert.ToInt32(item["quantidade"]) });
+                //System.Diagnostics.Debug.WriteLine(item["id"] + " " + item["quantidade"]);   
+            }
+
+            bool result = false;
+            try {
+                result = PriIntegration.terminarReplenishmentOrder(
+                    Convert.ToInt32(p["funcionario"]),
+                    p["replenishmentWave"] as string,
+                    r,
+                    p["serie"] as string);
+            } catch (Exception e) {
+                return InternalServerError(e);
+            }
+
+
+            if (!result)
+                return NotFound();
+
+            else
+                return Ok();
         }
 
         /*
