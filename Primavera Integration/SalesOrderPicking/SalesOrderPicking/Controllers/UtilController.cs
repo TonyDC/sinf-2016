@@ -18,7 +18,7 @@ namespace SalesOrderPicking.Controllers {
             List<string> result = null;
             try {
                 result = PriIntegration.GetSeries();
-            } catch(Exception) {
+            } catch (Exception) {
                 return InternalServerError();
             }
 
@@ -51,9 +51,9 @@ namespace SalesOrderPicking.Controllers {
         [Route("api/teste/picking")]
         public IHttpActionResult PostPicking(Dictionary<string, object> p) {
 
-           bool result = false;
+            bool result = false;
             try {
-                result = PriIntegration.GerarPickingOrders(p["filial"].ToString(), p["serie"].ToString(), ((Newtonsoft.Json.Linq.JArray) p["encomendas"]).ToObject<List<uint>>());
+                result = PriIntegration.GerarPickingOrders(p["filial"].ToString(), p["serie"].ToString(), ((Newtonsoft.Json.Linq.JArray)p["encomendas"]).ToObject<List<uint>>());
             } catch (Exception e) {
                 return InternalServerError(e);
             }
@@ -69,13 +69,17 @@ namespace SalesOrderPicking.Controllers {
         [Route("api/teste/pick")]
         public IHttpActionResult PostNewPick(Dictionary<string, object> p) {
 
-            PickingWave result = null;
+            Wave<PickingLine> result = null;
             try {
                 result = PriIntegration.GetProximaPickingWave(Convert.ToInt32(p["funcionario"]));
             } catch (Exception e) {
                 return InternalServerError(e);
             }
 
+            if (result != null)
+                foreach (var item in result.Linhas) {
+                    System.Diagnostics.Debug.WriteLine(item.Key + " " + item.Value);
+                }
 
             if (result == null)
                 return NotFound();
@@ -87,19 +91,19 @@ namespace SalesOrderPicking.Controllers {
         [Route("api/teste/end_pick")]
         public IHttpActionResult PostFinishPick(Dictionary<string, object> p) {
 
-            List<Pair<string, int>> r = new List<Pair<string,int>>();
+            List<Pair<string, int>> r = new List<Pair<string, int>>();
 
-            foreach (var item in ((Newtonsoft.Json.Linq.JArray) p["linhas"]).ToObject<List<Dictionary<string, object>>>()) {
-                r.Add(new Pair<string,int> { First = item["id"] as string, Second = Convert.ToInt32(item["quantidade"])} );
+            foreach (var item in ((Newtonsoft.Json.Linq.JArray)p["linhas"]).ToObject<List<Dictionary<string, object>>>()) {
+                r.Add(new Pair<string, int> { First = item["id"] as string, Second = Convert.ToInt32(item["quantidade"]) });
                 //System.Diagnostics.Debug.WriteLine(item["id"] + " " + item["quantidade"]);   
             }
 
             bool result = false;
             try {
                 result = PriIntegration.TerminarPickingOrder(
-                    Convert.ToInt32(p["funcionario"]), 
-                    p["pickingWave"] as string, 
-                    r, 
+                    Convert.ToInt32(p["funcionario"]),
+                    p["pickingWave"] as string,
+                    r,
                     p["serie"] as string);
             } catch (Exception e) {
                 return InternalServerError(e);
