@@ -1,3 +1,6 @@
+USE PICKING;
+GO
+
 SELECT * FROM LinhaEncomenda;
 SELECT * FROM PickingWave;
 SELECT * FROM LinhaPicking;
