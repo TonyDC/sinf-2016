@@ -29,6 +29,10 @@ router.get('/options', function(req, res, next) {
 
 router.get('/creation', function(req, res, next) {
 
+    const required_params = ['serie', 'filial'];
+
+    console.log("Serie: " + req.query.serie);
+    console.log("Filial: " + req.query.filial);
     const salesOrders = [{id: "1", shippingDate: "2016/11/23", client: "Joaquim Almeida"},
         {id: "2", shippingDate: "2015/11/23", client: "Alberto Almeida"},
         {id: "3", shippingDate: "2013/11/23", client: "Joaquim Martins"}];
@@ -44,9 +48,9 @@ router.get('/creation', function(req, res, next) {
 router.get('/status', function(req, res, next) {
 
      //NOTA: status em percentagem
-     const pickingOrders = [{status: "100", shippingDate: "2016/11/23", worker: "Joaquim"},
-     {status: "60", shippingDate: "2015/11/23", worker: "Fernando"},
-     {status: "50", shippingDate: "2013/11/23", worker: "Alice"}];
+     const pickingOrders = [{status: "Em progresso", shippingDate: "2016/11/23", worker: "Joaquim"},
+     {status: "Em espera", shippingDate: "2015/11/23", worker: "Fernando"},
+     {status: "Concluída", shippingDate: "2013/11/23", worker: "Alice"}];
     res.render('status', {pickingOrders: pickingOrders});
 /*
     PickingOrder.getAll().then(function(pickingOrders) {

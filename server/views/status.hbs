@@ -133,12 +133,7 @@
                                     <tbody>
                                     {{#each pickingOrders}}
                                         <tr class="odd gradeX">
-                                            <td align="center">
-                                                <div class="progress">
-                                                    <div class="progress-bar" role="progressbar" aria-valuenow="{{status}}" aria-valuemin="0" aria-valuemax="100" style="width: {{status}}%;">
-                                                    </div>
-                                                </div>
-                                            </td>
+                                            <td align="center">{{status}}</td>
                                             <td align="center">{{shippingDate}}</td>
                                             <td align="center">{{worker}}</td>
                                         </tr>

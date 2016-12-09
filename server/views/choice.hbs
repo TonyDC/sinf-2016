@@ -83,10 +83,10 @@
                     <h1 class="page-header">Criar picking orders</h1>
                 </div>
                 <div class="col-md-12">
-                    <form role="form">
+                    <form role="form" method="get" action="creation">
                         <div class="form-group col-md-3">
                             <label>Série</label>
-                            <select class="form-control">
+                            <select class="form-control" name="serie">
                                 {{#each series}}
                                 <option>{{name}}</option>
                                 {{/each}}
@@ -94,7 +94,7 @@
                         </div>
                         <div class="form-group col-md-3 col-md-offset-1">
                             <label>Filial</label>
-                            <select class="form-control">
+                            <select class="form-control" name="filial">
                                 {{#each filiais}}
                                 <option>{{name}}</option>
                                 {{/each}}
