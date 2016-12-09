@@ -10,7 +10,7 @@ using SalesOrderPicking.Lib_Primavera.Model;
 namespace SalesOrderPicking.Controllers {
 
     public class UtilController : ApiController {
-
+        /*
         // GET: api/Util
         [Route("api/teste/series")]
         public IHttpActionResult Get() {
@@ -183,5 +183,7 @@ namespace SalesOrderPicking.Controllers {
             return Ok();
         }
         */
+        
+
     }
 }

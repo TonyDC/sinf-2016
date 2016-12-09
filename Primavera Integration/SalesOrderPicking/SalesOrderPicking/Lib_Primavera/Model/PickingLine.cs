@@ -13,13 +13,13 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
         private int quantPedida;
         private string unidades;
 
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty("id")]
         public string IDLinha { get { return this.idLinha; } }
-        [JsonProperty(PropertyName = "artigo")]
+        [JsonProperty("artigo")]
         public string Artigo { get { return this.artigo; } }
-        [JsonProperty(PropertyName = "quantidade")]
+        [JsonProperty("quantidade")]
         public int QuantPedida { get { return this.quantPedida; } }
-        [JsonProperty(PropertyName = "unidade")]
+        [JsonProperty("unidade")]
         public string Unidades { get { return this.unidades; } }
 
         public PickingLine(string idLinha, string artigo, int quantPedida, string unidades) {

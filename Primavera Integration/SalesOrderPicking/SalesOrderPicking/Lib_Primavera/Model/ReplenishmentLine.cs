@@ -15,17 +15,17 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
         private string localizacaoDestino;
         private string unidades;
 
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty("id")]
         public string IDLinha { get { return this.id; } }
-        [JsonProperty(PropertyName = "artigo")]
+        [JsonProperty("artigo")]
         public string Artigo { get { return this.artigo; } }
-        [JsonProperty(PropertyName = "quantidade")]
+        [JsonProperty("quantidade")]
         public int QuantATransferir { get { return this.quantATransferir; } }
-        [JsonProperty(PropertyName = "origem")]
+        [JsonProperty("origem")]
         public string LocalizacaoOrigem { get {return this.localizacaoOrigem; } }
-        [JsonProperty(PropertyName = "destino")]
+        [JsonProperty("destino")]
         public string LocalizacaoDestino { get { return this.localizacaoDestino; } }
-        [JsonProperty(PropertyName = "unidade")]
+        [JsonProperty("unidade")]
         public string Unidades { get { return this.unidades; } }
 
         public ReplenishmentLine(string id, string artigo, int quantATransferir, string unidades, string localizacaoOrigem, string localizacaoDestino) {
