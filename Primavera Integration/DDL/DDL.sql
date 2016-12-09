@@ -6,6 +6,10 @@ CREATE TABLE Definitions (
 	CONSTRAINT CHK_cap_max CHECK(cap_max_funcionario > 0)
 )
 */
+
+IF db_id('PICKING') IS NULL
+	CREATE DATABASE PICKING
+
 USE PICKING;
 
 IF OBJECT_ID('dbo.Definicoes', 'U') IS NOT NULL
