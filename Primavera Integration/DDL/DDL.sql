@@ -1,14 +1,7 @@
-/*
-CREATE TABLE Definitions (
-	id INT PRIMARY KEY IDENTITY,
-	cap_max_funcionario INT NOT NULL,
-	armazem_principal NVARCHAR(5) NOT NULL,			-- external database reference
-	CONSTRAINT CHK_cap_max CHECK(cap_max_funcionario > 0)
-)
-*/
 
 IF db_id('PICKING') IS NULL
 	CREATE DATABASE PICKING
+GO
 
 USE PICKING;
 
@@ -136,6 +129,8 @@ CREATE TABLE Avisos (
 	-- quem_viu INT REFERENCES Gerente(id)
 )
 
+-- cap_max_funcionario
+-- armazem_principal
 CREATE TABLE Definicoes (
 	chave NVARCHAR(300) PRIMARY KEY,
 	valor NVARCHAR(300)
@@ -147,11 +142,3 @@ INSERT INTO Funcionario VALUES(1)
 
 
 -- TRIGGERS
-/*
-CREATE TRIGGER TR_LinhaPicking 
-On PICKING.LinhaPicking
-AFTER INSERT
-AS
-BEGIN
-	UPDATE LinhaEncomenda SET quant_satisfeita = 
-	*/
