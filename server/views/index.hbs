@@ -88,63 +88,6 @@
     <!-- Custom Theme JavaScript -->
     <script src="/dist/js/sb-admin-2.js"></script>
 
-    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
-    <script>
-        $(document).ready(function() {
-            $('#dataTables-example').DataTable({
-                responsive: true
-            });
-            $('.checkbox').click(function() {
-                $(this).toggleClass('selected');
-                $(this).toggleClass('fa-square-o');
-                $(this).toggleClass('fa-check-square');
-            });
-            $('#myModal').on('show.bs.modal', function(e) {
-
-                //get data-id attribute of the clicked element
-                var id = $(e.relatedTarget).data('id');
-
-                $.get('/partials/salesOrder/' + id, function(data){
-                    $('#myModal').html(data);
-                }).fail(function() {
-                    alert('Houve um erro a pedir informações sobre o produto'); // or whatever
-                });
-                //populate the textbox
-                $(e.currentTarget).find('input[name="id"]').val(id);
-            });
-            {{#if err}}
-                alert('Erro ao gerar picking wave: ' + err);
-            {{/if}}
-            $('#gerar-picking').click(function() {
-                var selected = [];
-                $("#page-wrapper .checkbox.fa-check-square").each(function() {
-                    selected.push($(this).data('id'));
-                });
-                console.log(selected);
-
-                $.ajax({
-                    url:'/createPickingWave',
-                    type:"POST",
-                    contentType:"application/json; charset=utf-8",
-                    data:JSON.stringify({selected:selected}),
-                    success: function(){
-                        alert('Sucesso!');
-                    },
-                    fail: function(){
-                        alert('Erro: ' + err.responseText);
-                    }
-                });
-/*
-                $.post('/createPickingWave', function() {
-                    console.log("sucesso");
-                }).fail(function(err) {
-                    alert('Erro: ' + err.responseText);
-                });
-*/
-            });
-        });
-    </script>
-
 </body>
 
 </html>

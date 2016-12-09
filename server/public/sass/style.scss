@@ -3,6 +3,12 @@ $dark: #28666E;
 $medium: #7C9885;
 $light: #B5B682;
 $lightest: #FEDC97;
+$green: #36A800;
+$green-hover: #4ab019;
+$yellow: #E4C800;
+$yellow-hover: #e9d332;
+$red: #880A00;
+$red-hover: #a20c00;
 
 h1, h2, h3, h4, h5 {
   font-family: 'Roboto', sans-serif;
@@ -112,4 +118,132 @@ p, body {
 .on-the-right {
   text-align: right;
   float: right;
+}
+
+.tr-green {
+  background-color: $green !important;
+
+  &:hover {
+    background-color: $green-hover !important;
+  }
+}
+
+.tr-yellow {
+  background-color: $yellow !important;
+
+  &:hover {
+    background-color: $yellow-hover !important;
+  }
+}
+
+.tr-red {
+  background-color: $red !important;
+
+  &:hover {
+    background-color: $red-hover !important;
+  }
+}
+
+.main-button {
+  background-color: $dark;
+  font-size: 110%;
+  color: white;
+  box-shadow: none;
+  padding: 15px;
+  margin-top: 20px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $medium;
+  }
+}
+
+nav {
+  background-color: $dark !important;
+  margin-bottom: 0;
+
+  .navbar-header {
+    a {
+      color: white !important;
+    }
+  }
+}
+
+body {
+  background-color: white;
+}
+
+#page-wrapper {
+  border: none;
+  margin-top: -20px;
+}
+
+.sidebar {
+  background-color: white;
+
+  .sidebar-nav {
+    ul {
+      li {
+        a {
+          padding-top:15px;
+          padding-bottom:15px;
+          color: $dark;
+
+          i {
+            font-size: 130%;
+          }
+
+          &:hover {
+            background-color: lightgray;
+            color: $dark;
+          }
+        }
+
+        .active {
+          background-color: $medium;
+          color: $lightest;
+        }
+      }
+    }
+  }
+}
+
+#nav-logo {
+  max-height: 40px;
+  margin: 5px;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+#nav-text {
+  font-size: 120%;
+  color: $lightest !important;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:focus {
+    text-decoration: none;
+  }
+}
+
+.page-header {
+  color: $dark;
+  font-weight: 700;
+}
+
+.progress-bar {
+  background-color: $dark;
+}
+
+.pagination {
+  .active {
+    a {
+      background-color: $dark;
+    }
+  }
 }

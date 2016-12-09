@@ -68,6 +68,15 @@ router.get('/shipping', function(req, res, next) {
 	*/
 });
 
+router.get('/warnings', function(req, res, next) {
+
+    //NOTA: status em percentagem
+    const warnings = [{priority: true, message: "O produto CPU, pertencente à sales order #3, não foi expedido a tempo"},
+        {priority: true, message: "Apenas foram recolhidas 3 de 5 unidades pedidas do produto Motherboard"},
+        {priority: false, message: "Ontem foram expedidas 23 picking orders"}];
+    res.render('warnings', {warnings: warnings});
+});
+
 router.get('/worker', function(req, res, next) {
 
      const pickingOrder = {steps:
