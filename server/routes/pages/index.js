@@ -20,13 +20,6 @@ router.get('/choice', function(req, res, next) {
 
 });
 
-router.get('/options', function(req, res, next) {
-
-    const variables = {warehouse: "300", worker: "100"};
-    res.render('options', {variables: variables});
-
-});
-
 router.get('/creation', function(req, res, next) {
 
     const required_params = ['serie', 'filial'];
@@ -37,12 +30,17 @@ router.get('/creation', function(req, res, next) {
         {id: "2", shippingDate: "2015/11/23", client: "Alberto Almeida"},
         {id: "3", shippingDate: "2013/11/23", client: "Joaquim Martins"}];
     res.render('creation', {salesOrders: salesOrders});
-
-/*shippingDate:
+});
+/*
+shippingDate:
     SalesOrder.getAll().then(function(salesOrders) {
         res.render('index', {salesOrders: salesOrders});
-    });
-    */
+ });
+        */
+
+router.get('/options', function(req, res, next) {
+ const variables = {worker: "100"};
+ res.render('options', {variables: variables});
 });
 
 router.get('/status', function(req, res, next) {
@@ -79,6 +77,16 @@ router.get('/warnings', function(req, res, next) {
         {priority: true, message: "Apenas foram recolhidas 3 de 5 unidades pedidas do produto Motherboard"},
         {priority: false, message: "Ontem foram expedidas 23 picking orders"}];
     res.render('warnings', {warnings: warnings});
+});
+
+router.get('/users', function(req, res, next) {
+
+    const users = [{code: "001", email: "joaquimalmeida@email.com", name: "Joaquim Almeida", position: "Gerente"},
+        {code: "002", email: "marianacorreia@email.com", name: "Mariana Correia", position: "Funcionário"},
+        {code: "003", email: "ricardosantos@email.com", name: "Ricardo Santos", position: "Funcionário"},
+        {code: "004", email: "joanaferreira@email.com", name: "Joana Ferreira", position: "Funcionário"}];
+    res.render('users', {users: users});
+
 });
 
 router.get('/worker', function(req, res, next) {
@@ -120,6 +128,10 @@ router.get('/partials/salesOrder/:id', function(req, res, next) {
    SalesOrder.getItems(id).then(function (salesOrder) {
        res.render('partials/product-modal', {salesOrder:salesOrder, layout: false});
    })
+});
+
+router.get('/partials/newUser', function(req, res, next) {
+    res.render('partials/user-modal');
 });
 
 router.post('/createPickingWave', function(req, res, next) {
