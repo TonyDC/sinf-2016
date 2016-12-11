@@ -419,7 +419,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             Dictionary<string, int> stockReserva = new Dictionary<string, int>();
 
             List<Dictionary<string, object>> linhasEncomendas = Utilities.performQuery(PriEngine.DBConnString,
-                "SELECT LinhasDoc.Id, sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) as VersaoUltAct, LinhasDoc.Unidade, LinhasDoc.Artigo, LinhasDoc.Quantidade FROM CabecDoc INNER JOIN LinhasDoc ON (CabecDoc.id = LinhasDoc.idCabecDoc) WHERE TipoDoc = 'ECL' AND Quantidade > 0 AND filial = '@0@' AND serie = '@1@' AND @2@",
+                "SELECT LinhasDoc.Id, sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) as VersaoUltAct, LinhasDoc.Unidade, LinhasDoc.Artigo, LinhasDoc.Quantidade, LinhasDoc.DataEntrega, CabecDoc.Serie FROM CabecDoc INNER JOIN LinhasDoc ON (CabecDoc.id = LinhasDoc.idCabecDoc) WHERE TipoDoc = 'ECL' AND Quantidade > 0 AND filial = '@0@' AND serie = '@1@' AND @2@",
                 filial, serie, conditionQueryString.ToString());
 
             if (linhasEncomendas.Count < 1)
@@ -497,12 +497,14 @@ namespace SalesOrderPicking.Lib_Primavera {
                     else
                         stockReserva[artigo] += diferenca;
 
+                    DateTime t = (DateTime)tuple["DataEntrega"];
 
+                    System.Diagnostics.Debug.WriteLine(t.CompareTo(DateTime.Today));
 
                     // Criar uma nova linha de encomenda
                     List<Dictionary<string, object>> insertResult = Utilities.performQuery(PriEngine.PickingDBConnString,
-                        "INSERT INTO LinhaEncomenda(id_linha, versao_ult_act, artigo, quant_pedida, unidade) OUTPUT INSERTED.id VALUES('@0@', '@1@', '@2@', @3@, '@4@')",
-                        tuple["Id"].ToString(), tuple["VersaoUltAct"].ToString(), artigo, tuple["Quantidade"].ToString(), tuple["Unidade"] as string);
+                        "INSERT INTO LinhaEncomenda(id_linha, versao_ult_act, artigo, quant_pedida, unidade, data_entrega, serie) OUTPUT INSERTED.id VALUES('@0@', '@1@', '@2@', @3@, '@4@', CONVERT(DATETIME, @5@, 103), '@6@')",
+                        tuple["Id"].ToString(), tuple["VersaoUltAct"].ToString(), artigo, tuple["Quantidade"].ToString(), tuple["Unidade"] as string, tuple["DataEntrega"] != null ? "'" + tuple["DataEntrega"].ToString() + "'" : "NULL", tuple["Serie"] as string);
 
                     if (insertResult.Count < 1)
                         throw new InvalidOperationException("Error in inserting into LinhaEncomenda");
@@ -576,7 +578,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                     index++;
                     continue;
                 }
-                
+
                 // Determinar a localização (estratégia: localização aleatória)
                 // O produto deve estar disponível no piso de picking (piso 1), no armazém primário (A1)
                 List<Dictionary<string, object>> localizacoesRows = Utilities.performQuery(PriEngine.DBConnString,
@@ -608,7 +610,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             // Para precaver!
             if (consideredLines.Count < 1)
                 return null;
-                //throw new InvalidOperationException("No lines considered");
+            //throw new InvalidOperationException("No lines considered");
 
             // Criar picking wave
             List<Dictionary<string, object>> pickingWaveResult = Utilities.performQuery(PriEngine.PickingDBConnString,
@@ -659,7 +661,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
 
         // Argumento: numero da picking wave; linhas de pares id_da_linha_da_picking_wave - quantidade_de_facto_satisfeita
-        public static bool TerminarPickingOrder(int funcionarioID, string pickingWaveID, List<LinhaWave> linhas, string serie) {
+        public static bool TerminarPickingOrder(int funcionarioID, string pickingWaveID, List<LinhaWave> linhas) {
 
             if (linhas.Count < 1)
                 throw new InvalidOperationException("A picking wave must have, at least, one line");
@@ -684,12 +686,13 @@ namespace SalesOrderPicking.Lib_Primavera {
             if (nonIncludedRows.Count > 0)
                 throw new InvalidOperationException("The request must include all lines");
 
+            List<string> listaAvisos = new List<string>();
 
             // Marcar a quantidade satisfeita na linha
             foreach (var linha in linhas) {
-
+                // TODO pode ser optimizado
                 List<Dictionary<string, object>> pickingLineRow = Utilities.performQuery(PriEngine.PickingDBConnString,
-                   "SELECT LinhaPicking.artigo, quant_a_satisfazer FROM LinhaPicking INNER JOIN PickingWave ON (LinhaPicking.id_picking = PickingWave.id) WHERE LinhaPicking.id = '@0@' AND LinhaPicking.id_picking = '@1@' AND em_progresso = 1",
+                   "SELECT LinhaPicking.artigo, quant_a_satisfazer, LinhaEncomenda.data_entrega, LinhaPicking.id_linha_encomenda FROM LinhaPicking INNER JOIN PickingWave ON (LinhaPicking.id_picking = PickingWave.id) INNER JOIN LinhaEncomenda ON (LinhaPicking.id_linha_encomenda = LinhaEncomenda.id) WHERE LinhaPicking.id = '@0@' AND LinhaPicking.id_picking = '@1@' AND em_progresso = 1",
                    linha.First, pickingWaveID);
 
                 if (pickingLineRow.Count < 1)
@@ -712,6 +715,22 @@ namespace SalesOrderPicking.Lib_Primavera {
                 Utilities.performQuery(PriEngine.PickingDBConnString,
                     "UPDATE LinhaEncomenda SET quant_satisfeita = quant_satisfeita + @1@ WHERE id = '@0@'",
                     updatedRow.ElementAt(0)["id_linha_encomenda"].ToString(), linha.Second.ToString());
+
+                // Verificar se o picking foi cumprido dentro da data limite de entrega
+                DateTime dataEntrega = (DateTime)pickingLineRow.ElementAt(0)["data_entrega"];
+                if (dataEntrega == null)
+                    continue;
+
+                else if (dataEntrega.CompareTo(DateTime.Today) < 0) {
+                    List<Dictionary<string, object>> clientOrderRows = Utilities.performQuery(PriEngine.PickingDBConnString,
+                        "SELECT LinhasDoc.Entidade, LinhasDoc.NumDoc, LinhasDoc.Serie FROM LinhaEncomenda INNER JOIN PRIDEMOSINF.dbo.LinhasDoc ON (LinhasDoc.id = LinhaEncomenda.id_linha) INNER JOIN PRIDEMOSINF.dbo.CabecDoc ON (LinhasDoc.idCabecDoc = CabecDoc.id) WHERE LinhaEncomenda.id = '@0@'",
+                        pickingLineRow.ElementAt(0)["id_linha_encomenda"].ToString());
+
+                    if (clientOrderRows.Count > 0) {
+                        Dictionary<string, object> linhaClientOrder = clientOrderRows.ElementAt(0);
+                        listaAvisos.Add("Encomenda nº " + (linhaClientOrder["NumDoc"] as string) + ", série: " + (linhaClientOrder["Serie"] as string) + ", cliente: " + (linhaClientOrder["Entidade"] as string) + " -> O artigo '" + pickingLineRow.ElementAt(0)["artigo"].ToString() + "' vai ser entregue ao cliente fora do prazo de entrega estabelecido");
+                    }
+                }
             }
 
             // Marcar a picking order como completa
@@ -722,7 +741,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             // Realizar tranferencia de armazem para EXPED
             // Retirar da quantidade reservada
             List<Dictionary<string, object>> affectedRows = Utilities.performQuery(PriEngine.PickingDBConnString,
-               "SELECT LinhaPicking.artigo, LinhaPicking.quant_a_satisfazer, quant_recolhida, localizacao, unidade FROM LinhaPicking INNER JOIN LinhaEncomenda ON (LinhaPicking.id_linha_encomenda = LinhaEncomenda.id) WHERE id_picking = '@0@'",
+               "SELECT LinhaPicking.artigo, LinhaPicking.quant_a_satisfazer, quant_recolhida, localizacao, unidade, serie FROM LinhaPicking INNER JOIN LinhaEncomenda ON (LinhaPicking.id_linha_encomenda = LinhaEncomenda.id) WHERE id_picking = '@0@'",
                pickingWaveID);
 
             List<Quadruple<string, string, int, string>> toReplenish = new List<Quadruple<string, string, int, string>>();
@@ -730,13 +749,15 @@ namespace SalesOrderPicking.Lib_Primavera {
                 List<TransferenciaArtigo> lista = new List<TransferenciaArtigo>();
                 lista.Add(new TransferenciaArtigo(item["artigo"] as string, item["localizacao"] as string, GeneralConstants.ARMAZEM_EXPEDICAO, GeneralConstants.ARMAZEM_EXPEDICAO, Convert.ToDouble(item["quant_recolhida"])));
 
-                GerarTransferenciaArmazem(new TransferenciaArmazem(ARMAZEM_PRIMARIO, serie, lista));
+                GerarTransferenciaArmazem(new TransferenciaArmazem(ARMAZEM_PRIMARIO, item["serie"] as string, lista));
                 Utilities.performQuery(PriEngine.PickingDBConnString,
                     "UPDATE QuantidadeReserva SET quant_reservada = quant_reservada - @0@ WHERE artigo = '@1@' AND armazem = '@2@'",
                     item["quant_a_satisfazer"].ToString(), item["artigo"] as string, ARMAZEM_PRIMARIO);
 
                 toReplenish.Add(new Quadruple<string, string, int, string> { First = item["artigo"] as string, Second = item["localizacao"] as string, Third = Convert.ToInt32(item["quant_a_satisfazer"]), Fourth = item["unidade"] as string });
             }
+
+            RegistarAvisos(listaAvisos);
 
             GerarReplenishment(toReplenish);
 
@@ -855,7 +876,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                     index++;
                     continue;
                 }
-                
+
                 string localizacao = localizacoesRows.ElementAt(random.Next(0, localizacoesRows.Count - 1))["Localizacao"] as string;
                 if (localizacao == null)
                     throw new InvalidOperationException("Bad location name: 'null'");
@@ -943,7 +964,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                 replenishmentWaveID, funcionarioID.ToString());
             if (replenishmentWavesRows.Count != 1)
                 throw new InvalidOperationException("There is no such replenishment wave");
- 
+
 
             // Verificar se todas as linhas estão presentes
             StringBuilder conditionQuery = new StringBuilder();
@@ -1115,7 +1136,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
 
 
-        
+
 
         #endregion Testes
 

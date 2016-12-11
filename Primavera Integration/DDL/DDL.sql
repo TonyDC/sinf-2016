@@ -57,6 +57,8 @@ CREATE TABLE LinhaEncomenda (
 	quant_pedida REAL NOT NULL,						
 	quant_satisfeita REAL NOT NULL DEFAULT 0,
 	unidade NVARCHAR(5) NOT NULL,
+	data_entrega DATETIME,							-- pode admitir valores NULL!
+	serie NVARCHAR(5) NOT NULL, 
 	CONSTRAINT UN_idLinha_versao UNIQUE (id_linha, versao_ult_act),
 	CONSTRAINT CHK_LE_quantidade_nao_negativa CHECK(quant_pedida > 0 AND quant_satisfeita >= 0),
 	CONSTRAINT CHK_pedida_menorQue_satisfeita CHECK(quant_pedida >= quant_satisfeita)
@@ -104,7 +106,8 @@ CREATE TABLE LinhaReplenishment (
 	localizacao_origem VARCHAR(30),				        -- a localização vai ser preenchida aquando do pedido de criação de picking order
 	localizacao_destino VARCHAR(30) NOT NULL,
 	artigo NVARCHAR(48) NOT NULL,
-	unidade NVARCHAR(5) NOT NULL,				
+	unidade NVARCHAR(5) NOT NULL,	
+	serie NVARCHAR(5) NOT NULL, 			
 	CONSTRAINT CTR_recolhida_satisfeita_replenish CHECK(quant_recolhida <= quant_a_satisfazer),
 	CONSTRAINT CHK_LR_recolhida_aSatisfazer CHECK(quant_recolhida >= 0 AND quant_a_satisfazer > 0)
 )
