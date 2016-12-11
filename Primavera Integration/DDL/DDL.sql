@@ -64,9 +64,9 @@ CREATE TABLE LinhaEncomenda (
 
 CREATE TABLE Utilizador (
 	id INT PRIMARY KEY IDENTITY,
-	username NVARCHAR(100) NOT NULL,
+	username NVARCHAR(100) COLLATE Latin1_General_CS_AS NOT NULL,
 	pass NVARCHAR(60) NOT NULL,
-	CONSTRAINT UN_Username UNIQUE (username)
+	CONSTRAINT UN_Username UNIQUE (username) 
 )
 
 CREATE TABLE Funcionario (

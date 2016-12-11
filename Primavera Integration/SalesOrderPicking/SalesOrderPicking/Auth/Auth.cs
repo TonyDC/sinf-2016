@@ -16,13 +16,17 @@ namespace SalesOrderPicking.Auth {
         public static bool LoginWorker(string username, string password) {
 
             Pair<string, string> credentials = RetrieveCredentials(username, FUNCIONARIO_STR);
-            return BCrypt.Verify(password, credentials.Second);
+            if (credentials == null)
+                return false;
+            return BCrypt.Net.BCrypt.Verify(password, credentials.Second);
         }
 
         public static bool LoginManager(string username, string password) {
 
             Pair<string, string> credentials = RetrieveCredentials(username, FUNCIONARIO_STR);
-            return BCrypt.Verify(password, credentials.Second);
+            if (credentials == null)
+                return false;
+            return BCrypt.Net.BCrypt.Verify(password, credentials.Second);
         }
 
 
@@ -45,11 +49,11 @@ namespace SalesOrderPicking.Auth {
 
         private static int RegisterUser(string username, string password, string type) {
 
-            if (String.Compare(type, FUNCIONARIO_STR) != 0 || String.Compare(type, GERENTE_STR) != 0)
+            if ((String.Compare(type, FUNCIONARIO_STR) == 0 && String.Compare(type, GERENTE_STR) == 0) || (String.Compare(type, FUNCIONARIO_STR) != 0 && String.Compare(type, GERENTE_STR) != 0))
                 throw new InvalidOperationException("Bad user type");
 
             // Hash password
-            string hashedPassword = BCrypt.HashPassword(password, BCrypt.GenerateSalt(SALT_ROUNDS));
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt(SALT_ROUNDS));
             password = null;
 
             // Check if the username already exists
@@ -61,7 +65,7 @@ namespace SalesOrderPicking.Auth {
                 username, hashedPassword);
 
             hashedPassword = null;
-            int userID = Convert.ToInt32(insertedUser.ElementAt(0));
+            int userID = Convert.ToInt32(insertedUser.ElementAt(0)["id"]);
 
             if (String.Compare(type, FUNCIONARIO_STR) == 0)
                 Utilities.performQuery(PriEngine.PickingDBConnString,
@@ -79,11 +83,11 @@ namespace SalesOrderPicking.Auth {
 
         private static Pair<string, string> RetrieveCredentials(string username, string type) {
 
-            if (String.Compare(type, FUNCIONARIO_STR) != 0 || String.Compare(type, GERENTE_STR) != 0)
+            if ((String.Compare(type, FUNCIONARIO_STR) == 0 && String.Compare(type, GERENTE_STR) == 0) || (String.Compare(type, FUNCIONARIO_STR) != 0 && String.Compare(type, GERENTE_STR) != 0))
                 throw new InvalidOperationException("Bad user type");
 
             List<Dictionary<string, object>> rows = Utilities.performQuery(PriEngine.PickingDBConnString,
-                "SELECT Utilizador.username, Utilizador.pass FROM " + type + " INNER JOIN Utilizador ON (Funcionario.id = Utilizador.id) WHERE Utilizador.username = '@0@'",
+                "SELECT Utilizador.username, Utilizador.pass FROM " + type + " INNER JOIN Utilizador ON (" + type + ".id = Utilizador.id) WHERE Utilizador.username = '@0@'",
                 username);
 
             if (rows.Count < 1)
