@@ -10,6 +10,41 @@ using SalesOrderPicking.Lib_Primavera.Model;
 namespace SalesOrderPicking.Controllers {
 
     public class UtilController : ApiController {
+
+        [Route("api/util/series")]
+        public IHttpActionResult GetSeries() {
+            List<string> result = null;
+            try {
+                result = PriIntegration.GetSeries();
+            } catch (Exception) {
+                return InternalServerError();
+            }
+
+
+            if (result == null)
+                return NotFound();
+
+            else
+                return Ok(result);
+        }
+
+        [Route("api/util/filiais")]
+        public IHttpActionResult GetFiliais() {
+            List<string> result = null;
+            try {
+                result = PriIntegration.GetFiliais();
+            } catch (Exception) {
+                return InternalServerError();
+            }
+
+
+            if (result == null)
+                return NotFound();
+
+            else
+                return Ok(result);
+        }
+
         /*
         // GET: api/Util
         [Route("api/teste/series")]

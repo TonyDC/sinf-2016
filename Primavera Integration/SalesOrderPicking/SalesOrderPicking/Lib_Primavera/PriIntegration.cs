@@ -318,6 +318,19 @@ namespace SalesOrderPicking.Lib_Primavera {
             return result;
         }
 
+        public static List<string> GetFiliais() {
+
+            List<Dictionary<string, object>> queryRows = Utilities.performQuery(PriEngine.DBConnString, "SELECT DISTINCT Filial FROM CabecDoc WHERE TipoDoc = 'ECL'");
+            List<string> result = new List<string>();
+
+            foreach (var line in queryRows) {
+                object serie = line["Filial"];
+                result.Add(serie as string);
+            }
+
+            return result;
+        }
+
         #endregion Administracao
 
 
