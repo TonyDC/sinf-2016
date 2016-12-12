@@ -1,9 +1,43 @@
 const db = require('../config/db');
 const request = require('request');
 const Product = require('./Product');
+const configurations = require('../config/constants');
 
+module.exports.getAllSeries = function() {
+	return new Promise(function (fulfill, reject) {
+		request(configurations.URL_HOST + 'util/series', function(error, response, body) {
+			if(error)
+				reject(error);
 
-module.exports.getAll = function () {
+			else if(response.statusCode != 200)
+				reject('Response with code ' + response.statusCode);
+
+			else {
+				let jsonBody = JSON.parse(body);
+				fulfill(jsonBody.map(object => { return {name: object} }));
+			}
+		})
+	});
+}
+
+module.exports.getAllFiliais = function () {
+    return new Promise(function (fulfill, reject) {
+        request(configurations.URL_HOST + 'util/filiais', function(error, response, body) {
+            if(error)
+                reject(error);
+
+            else if(response.statusCode != 200)
+                reject('Response with code ' + response.statusCode);
+
+            else {
+                let jsonBody = JSON.parse(body);
+                fulfill(jsonBody.map(object => { return {name: object} }));
+            }
+        })
+    });
+}
+
+module.exports.getAll = function (filial, serie) {
     return new Promise(function (fulfill, reject) {
 	request('http://localhost:52313/api/encomenda/000/2016', function (error, response, body) {
     		if(error){

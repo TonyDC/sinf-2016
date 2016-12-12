@@ -7,17 +7,22 @@ const PickingOrder = require('../../models/PickingOrder');
  * PAGES INITIALIZATION
  */
 router.get('/', function(req, res, next) {
-
     res.render('index');
-
 });
 
 router.get('/choice', function(req, res, next) {
 
-    const filiais = [{name: "filial1"},{name: "filial2"},{name: "filial2"}];
-    const series = [{name: "serie1"},{name: "serie2"},{name: "serie3"}];
-    res.render('choice', {filiais: filiais, series: series});
+    let promise = new Promise(function (fulfill, reject) {
+        SalesOrder.getAllSeries().then(function (series) {
+            SalesOrder.getAllFiliais().then(function (filiais) {
+                let result = {filiais: filiais, series: series};
+                console.log(result);
+                fulfill(result);
+            }).catch(error => reject(error));
+        }).catch(error => reject(error));
+    });
 
+    promise.then(result => res.render('choice', result));//.catch(error => res.render('error', error));
 });
 
 router.get('/creation', function(req, res, next) {
@@ -29,7 +34,12 @@ router.get('/creation', function(req, res, next) {
     const salesOrders = [{id: "1", shippingDate: "2016/11/23", client: "Joaquim Almeida"},
         {id: "2", shippingDate: "2015/11/23", client: "Alberto Almeida"},
         {id: "3", shippingDate: "2013/11/23", client: "Joaquim Martins"}];
-    res.render('creation', {salesOrders: salesOrders});
+    const result = {
+        serie: req.query.serie,
+        filial: req.query.filial,
+        salesOrders: salesOrders
+    };
+    res.render('creation', result);
 });
 /*
 shippingDate:
