@@ -43,7 +43,7 @@ CREATE TABLE QuantidadeReserva (
 	id INT PRIMARY KEY IDENTITY,
 	artigo NVARCHAR(48) NOT NULL UNIQUE,					-- external database reference
 	armazem NVARCHAR(5) NOT NULL,							-- external database reference
-	-- localizacao VARCHAR(30) NOT NULL,					-- external database reference
+	--localizacao VARCHAR(30) NOT NULL,					-- external database reference
 	quant_reservada REAL NOT NULL DEFAULT 0,
 	CONSTRAINT CHK_QR_quantidade_nao_negativa CHECK(quant_reservada >= 0)
 	--CONSTRAINT UN_Artigo_Localizacao UNIQUE (artigo, localizacao)
@@ -107,7 +107,8 @@ CREATE TABLE LinhaReplenishment (
 	localizacao_destino VARCHAR(30) NOT NULL,
 	artigo NVARCHAR(48) NOT NULL,
 	unidade NVARCHAR(5) NOT NULL,	
-	serie NVARCHAR(5) NOT NULL, 			
+	serie NVARCHAR(5) NOT NULL, 	
+	notificado_aviso BIT NOT NULL DEFAULT 0,			-- para evitar nova geração de avisos
 	CONSTRAINT CTR_recolhida_satisfeita_replenish CHECK(quant_recolhida <= quant_a_satisfazer),
 	CONSTRAINT CHK_LR_recolhida_aSatisfazer CHECK(quant_recolhida >= 0 AND quant_a_satisfazer > 0)
 )
@@ -120,7 +121,7 @@ CREATE TABLE LinhaPicking (
 	quant_recolhida REAL NOT NULL DEFAULT 0,
 	localizacao VARCHAR(30),				        -- a localização vai ser preenchida aquando do pedido de criação de picking order
 	artigo NVARCHAR(48) NOT NULL,
-	-- em_progresso BIT NOT NULL DEFAULT 1,			-- picking não concluído
+	notificado_aviso BIT NOT NULL DEFAULT 0,		-- para evitar nova geração de avisos
 	CONSTRAINT CTR_recolhida_satisfeita_picking CHECK(quant_recolhida <= quant_a_satisfazer),
 	CONSTRAINT CHK_LP_recolhida_aSatisfazer CHECK(quant_recolhida >= 0 AND quant_a_satisfazer > 0)
 )
@@ -141,6 +142,9 @@ CREATE TABLE Definicoes (
 
 INSERT INTO Utilizador(username, pass) VALUES('ADC', 'adc')
 INSERT INTO Funcionario VALUES(1)
+
+INSERT INTO Definicoes VALUES ('cap_max_funcionario', '100'), ('armazem_principal', 'A1')
+
 
 
 

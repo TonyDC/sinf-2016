@@ -390,10 +390,26 @@ namespace SalesOrderPicking.Lib_Primavera {
             }
 
             return stock;
+
+            /*
+            List<Dictionary<string, object>> rows = Utilities.performQuery(PriEngine.PickingDBConnString, 
+                "SELECT StockNoArmazem.Stock - COALESCE(StockReservado.Stock, 0) AS Total, StockNoArmazem.Artigo FROM (SELECT CASE WHEN SUM(StkActual) < 0 THEN 0 ELSE sum(StkActual) END AS Stock, Artigo FROM PRIDEMOSINF.dbo.ArtigoArmazem WHERE Armazem = '@0@' GROUP BY Artigo) AS StockNoArmazem LEFT JOIN (SELECT sum(quant_reservada) AS Stock, Artigo FROM QuantidadeReserva INNER JOIN PRIDEMOSINF.dbo.ArmazemLocalizacoes ON (QuantidadeReserva.localizacao = ArmazemLocalizacoes.Localizacao) WHERE ArmazemLocalizacoes.Armazem = '@0@' GROUP BY Artigo) as StockReservado ON (StockNoArmazem.Artigo = StockReservado.Artigo)", 
+                armazem);
+
+            Dictionary<string, int> stock = new Dictionary<string, int>();
+            foreach (var tuple in rows) {
+                stock.Add(tuple["Artigo"].ToString(), Convert.ToInt32(tuple["Total"]));
+            }
+            
+            return stock;
+             * */
         }
+        /*
+        public static Dictionary<string, int> GetStockActualPorArtigo(string artigo) {
 
 
-
+        }
+        */
 
 
 
@@ -499,8 +515,6 @@ namespace SalesOrderPicking.Lib_Primavera {
 
                     DateTime t = (DateTime)tuple["DataEntrega"];
 
-                    System.Diagnostics.Debug.WriteLine(t.CompareTo(DateTime.Today));
-
                     // Criar uma nova linha de encomenda
                     List<Dictionary<string, object>> insertResult = Utilities.performQuery(PriEngine.PickingDBConnString,
                         "INSERT INTO LinhaEncomenda(id_linha, versao_ult_act, artigo, quant_pedida, unidade, data_entrega, serie) OUTPUT INSERTED.id VALUES('@0@', '@1@', '@2@', @3@, '@4@', CONVERT(DATETIME, @5@, 103), '@6@')",
@@ -573,6 +587,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                 Dictionary<string, object> line = pickingLineRows.ElementAt(index);
 
                 int quantidadeASatisfazer = Convert.ToInt32(line["quant_a_satisfazer"]);
+                bool notificado = (bool) line["notificado_aviso"];
 
                 if (currentWorkerCapacity + quantidadeASatisfazer > MAX_CAP_FUNCIONARIO) {
                     index++;
@@ -585,7 +600,11 @@ namespace SalesOrderPicking.Lib_Primavera {
                     "SELECT * FROM ArtigoArmazem WITH (NOLOCK) WHERE Artigo = '@0@' AND Localizacao LIKE '@1@.[A-Z].1.[0-9][0-9][0-9]'",
                     line["artigo"].ToString(), ARMAZEM_PRIMARIO);
                 if (localizacoesRows.Count < 1) {
-                    listaAvisos.Add("O armazém principal (" + ARMAZEM_PRIMARIO + ") não tem o artigo '" + line["Artigo"].ToString() + "' na zona de picking (piso 1).");
+                    if (!notificado) {
+                        listaAvisos.Add("O armazém principal (" + ARMAZEM_PRIMARIO + ") não tem o artigo '" + line["Artigo"].ToString() + "' na zona de picking (piso 1).");
+                        Utilities.performQuery(PriEngine.PickingDBConnString,
+                            "UPDATE LinhaPicking SET notificado_aviso = 1 WHERE id = '@0@'", line["id"].ToString());
+                    }
                     index++;
                     continue;
                 }
@@ -723,12 +742,12 @@ namespace SalesOrderPicking.Lib_Primavera {
 
                 else if (dataEntrega.CompareTo(DateTime.Today) < 0) {
                     List<Dictionary<string, object>> clientOrderRows = Utilities.performQuery(PriEngine.PickingDBConnString,
-                        "SELECT LinhasDoc.Entidade, LinhasDoc.NumDoc, LinhasDoc.Serie FROM LinhaEncomenda INNER JOIN PRIDEMOSINF.dbo.LinhasDoc ON (LinhasDoc.id = LinhaEncomenda.id_linha) INNER JOIN PRIDEMOSINF.dbo.CabecDoc ON (LinhasDoc.idCabecDoc = CabecDoc.id) WHERE LinhaEncomenda.id = '@0@'",
+                        "SELECT CabecDoc.Entidade, CabecDoc.NumDoc, CabecDoc.Serie FROM LinhaEncomenda INNER JOIN PRIDEMOSINF.dbo.LinhasDoc ON (LinhasDoc.id = LinhaEncomenda.id_linha) INNER JOIN PRIDEMOSINF.dbo.CabecDoc ON (LinhasDoc.idCabecDoc = CabecDoc.id) WHERE LinhaEncomenda.id = '@0@'",
                         pickingLineRow.ElementAt(0)["id_linha_encomenda"].ToString());
 
                     if (clientOrderRows.Count > 0) {
                         Dictionary<string, object> linhaClientOrder = clientOrderRows.ElementAt(0);
-                        listaAvisos.Add("Encomenda nº " + (linhaClientOrder["NumDoc"] as string) + ", série: " + (linhaClientOrder["Serie"] as string) + ", cliente: " + (linhaClientOrder["Entidade"] as string) + " -> O artigo '" + pickingLineRow.ElementAt(0)["artigo"].ToString() + "' vai ser entregue ao cliente fora do prazo de entrega estabelecido");
+                        listaAvisos.Add("Encomenda nº " + (linhaClientOrder["NumDoc"].ToString()) + ", série: " + (linhaClientOrder["Serie"] as string) + ", cliente: " + (linhaClientOrder["Entidade"] as string) + " -> O artigo ''" + pickingLineRow.ElementAt(0)["artigo"].ToString() + "'' vai ser entregue ao cliente fora do prazo de entrega estabelecido");
                     }
                 }
             }
@@ -744,7 +763,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                "SELECT LinhaPicking.artigo, LinhaPicking.quant_a_satisfazer, quant_recolhida, localizacao, unidade, serie FROM LinhaPicking INNER JOIN LinhaEncomenda ON (LinhaPicking.id_linha_encomenda = LinhaEncomenda.id) WHERE id_picking = '@0@'",
                pickingWaveID);
 
-            List<Quadruple<string, string, int, string>> toReplenish = new List<Quadruple<string, string, int, string>>();
+            List<ReplenishmentReservation> toReplenish = new List<ReplenishmentReservation>();
             foreach (var item in affectedRows) {
                 List<TransferenciaArtigo> lista = new List<TransferenciaArtigo>();
                 lista.Add(new TransferenciaArtigo(item["artigo"] as string, item["localizacao"] as string, GeneralConstants.ARMAZEM_EXPEDICAO, GeneralConstants.ARMAZEM_EXPEDICAO, Convert.ToDouble(item["quant_recolhida"])));
@@ -754,7 +773,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                     "UPDATE QuantidadeReserva SET quant_reservada = quant_reservada - @0@ WHERE artigo = '@1@' AND armazem = '@2@'",
                     item["quant_a_satisfazer"].ToString(), item["artigo"] as string, ARMAZEM_PRIMARIO);
 
-                toReplenish.Add(new Quadruple<string, string, int, string> { First = item["artigo"] as string, Second = item["localizacao"] as string, Third = Convert.ToInt32(item["quant_a_satisfazer"]), Fourth = item["unidade"] as string });
+                toReplenish.Add(new ReplenishmentReservation { Artigo = item["artigo"] as string, Localizacao = item["localizacao"] as string, Quantidade = Convert.ToInt32(item["quant_a_satisfazer"]), Unidade = item["unidade"] as string, Serie = item["serie"] as string });
             }
 
             RegistarAvisos(listaAvisos);
@@ -770,36 +789,39 @@ namespace SalesOrderPicking.Lib_Primavera {
 
 
         // O replenishment occore no armazém primário 'A1'
-        public static bool GerarReplenishment(List<Quadruple<string, string, int, string>> listaReposicao) {
+        public static bool GerarReplenishment(List<ReplenishmentReservation> listaReposicao) {
 
             if (listaReposicao == null || listaReposicao.Count < 1)
                 throw new InvalidOperationException("Invalid argument");
 
             // Verificar se a quantidade a repôr não ultrapassa a capacidade do funcionário
             foreach (var tuple in listaReposicao) {
-                while (tuple.Third > MAX_CAP_FUNCIONARIO) {
-                    tuple.Third -= MAX_CAP_FUNCIONARIO;
-                    listaReposicao.Add(new Quadruple<string, string, int, string> { First = tuple.First, Second = tuple.Second, Third = MAX_CAP_FUNCIONARIO, Fourth = tuple.Fourth });
+                while (tuple.Quantidade > MAX_CAP_FUNCIONARIO) {
+                    tuple.Quantidade -= MAX_CAP_FUNCIONARIO;
+                    listaReposicao.Add(new ReplenishmentReservation { Artigo = tuple.Artigo, Localizacao = tuple.Localizacao, Quantidade = MAX_CAP_FUNCIONARIO, Unidade = tuple.Unidade, Serie = tuple.Serie });
                 }
             }
 
-            StringBuilder queryString = new StringBuilder("INSERT INTO LinhaReplenishment(artigo, localizacao_destino, quant_a_satisfazer, unidade) VALUES('");
-            Quadruple<string, string, int, string> firstLine = listaReposicao.ElementAt(0);
-            queryString.Append(firstLine.First);
+            StringBuilder queryString = new StringBuilder("INSERT INTO LinhaReplenishment(artigo, localizacao_destino, quant_a_satisfazer, unidade, serie) VALUES('");
+            ReplenishmentReservation firstLine = listaReposicao.ElementAt(0);
+            queryString.Append(firstLine.Artigo);
             queryString.Append("', '");
-            queryString.Append(firstLine.Second);
+            queryString.Append(firstLine.Localizacao);
             queryString.Append("', ");
-            queryString.Append(firstLine.Third);
+            queryString.Append(firstLine.Quantidade);
             queryString.Append(", '");
-            queryString.Append(firstLine.Fourth);
+            queryString.Append(firstLine.Unidade);
+            queryString.Append("', '");
+            queryString.Append(firstLine.Serie);
             queryString.Append("')");
 
             for (int i = 1; i < listaReposicao.Count; i++) {
-                Quadruple<string, string, int, string> itemARepor = listaReposicao.ElementAt(i);
-                string artigo = itemARepor.First;
-                string localizacaoDestino = itemARepor.Second;
-                int quantidadeARepor = itemARepor.Third;
-                string unidade = itemARepor.Fourth;
+                ReplenishmentReservation itemARepor = listaReposicao.ElementAt(i);
+                string artigo = itemARepor.Artigo;
+                string localizacaoDestino = itemARepor.Localizacao;
+                int quantidadeARepor = itemARepor.Quantidade;
+                string unidade = itemARepor.Unidade;
+                string serie = itemARepor.Serie;
 
                 queryString.Append(", ('");
                 queryString.Append(artigo);
@@ -812,6 +834,9 @@ namespace SalesOrderPicking.Lib_Primavera {
 
                 queryString.Append(", '");
                 queryString.Append(unidade);
+
+                queryString.Append("', '");
+                queryString.Append(serie);
                 queryString.Append("')");
             }
 
@@ -862,6 +887,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                 string artigo = linha["artigo"].ToString(),
                         id = linha["id"].ToString();
                 int quantidade = Convert.ToInt32(linha["quant_a_satisfazer"]);
+                bool notificado = (bool) linha["notificado_aviso"];
 
                 if (currentWorkerCapacity + quantidade > MAX_CAP_FUNCIONARIO) {
                     index++;
@@ -872,7 +898,11 @@ namespace SalesOrderPicking.Lib_Primavera {
                 // O produto deve estar disponível nos pisos de replenishment (pisos 2-9), no armazém primário (A1)
                 List<Dictionary<string, object>> localizacoesRows = Utilities.performQuery(PriEngine.DBConnString, "SELECT * FROM ArtigoArmazem WITH (NOLOCK) WHERE Artigo = '@0@' AND Localizacao LIKE 'A1.[A-Z].[2-9].[0-9][0-9][0-9]'", artigo);
                 if (localizacoesRows.Count < 1) {
-                    listaAvisos.Add("O artigo '" + artigo + "' não está disponível nas áreas de reposição do armazém");
+                    if (!notificado) {
+                        listaAvisos.Add("O artigo ''" + artigo + "'' não está disponível nas áreas de reposição do armazém");
+                        Utilities.performQuery(PriEngine.PickingDBConnString,
+                            "UPDATE LinhaReplenishment SET notificado_aviso = 1 WHERE id = '@0@'", id);
+                    }
                     index++;
                     continue;
                 }
@@ -953,7 +983,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
 
         // Argumento: linhas de pares id_da_linha - quantidade_de_facto_mudada
-        public static bool terminarReplenishmentOrder(int funcionarioID, string replenishmentWaveID, List<LinhaWave> linhas, string serie) {
+        public static bool TerminarReplenishmentOrder(int funcionarioID, string replenishmentWaveID, List<LinhaWave> linhas) {
 
             if (linhas.Count < 1)
                 throw new InvalidOperationException("A replenishment wave must have, at least, one line");
@@ -984,7 +1014,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             foreach (var linha in linhas) {
                 // Verificar se a quantidade satisfeita é inferior à pedida
                 List<Dictionary<string, object>> replenishmentLineRow = Utilities.performQuery(PriEngine.PickingDBConnString,
-                   "SELECT quant_a_satisfazer FROM LinhaReplenishment INNER JOIN ReplenishmentWave ON (LinhaReplenishment.id_replenishment = ReplenishmentWave.id) WHERE LinhaReplenishment.id = '@0@' AND LinhaReplenishment.id_replenishment = '@1@' AND em_progresso = 1",
+                   "SELECT quant_a_satisfazer, artigo FROM LinhaReplenishment INNER JOIN ReplenishmentWave ON (LinhaReplenishment.id_replenishment = ReplenishmentWave.id) WHERE LinhaReplenishment.id = '@0@' AND LinhaReplenishment.id_replenishment = '@1@' AND em_progresso = 1",
                    linha.First, replenishmentWaveID);
 
                 if (replenishmentLineRow.Count < 1)
@@ -1010,14 +1040,14 @@ namespace SalesOrderPicking.Lib_Primavera {
             // Realizar tranferencia de armazem
             // Retirar da quantidade reservada
             List<Dictionary<string, object>> affectedRows = Utilities.performQuery(PriEngine.PickingDBConnString,
-               "SELECT artigo, quant_a_satisfazer, quant_recolhida, localizacao_origem, localizacao_destino FROM LinhaReplenishment WHERE id_replenishment = '@0@'",
+               "SELECT artigo, quant_a_satisfazer, quant_recolhida, localizacao_origem, localizacao_destino, serie FROM LinhaReplenishment WHERE id_replenishment = '@0@'",
                replenishmentWaveID);
 
             foreach (var item in affectedRows) {
                 List<TransferenciaArtigo> lista = new List<TransferenciaArtigo>();
                 lista.Add(new TransferenciaArtigo(item["artigo"] as string, item["localizacao_origem"] as string, item["localizacao_destino"] as string, ARMAZEM_PRIMARIO, Convert.ToDouble(item["quant_recolhida"])));
 
-                GerarTransferenciaArmazem(new TransferenciaArmazem(ARMAZEM_PRIMARIO, serie, lista));
+                GerarTransferenciaArmazem(new TransferenciaArmazem(ARMAZEM_PRIMARIO, item["serie"] as string, lista));
             }
 
             return true;

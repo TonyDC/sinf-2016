@@ -314,6 +314,7 @@
     <Compile Include="Lib_Primavera\PriEngine.cs" />
     <Compile Include="Lib_Primavera\PriIntegration.cs" />
     <Compile Include="Lib_Primavera\Quadruple.cs" />
+    <Compile Include="Lib_Primavera\ReplenishmentReservation.cs" />
     <Compile Include="Lib_Primavera\Triple.cs" />
     <Compile Include="Lib_Primavera\Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

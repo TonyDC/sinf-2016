@@ -72,7 +72,7 @@ namespace SalesOrderPicking.Controllers {
         public IHttpActionResult PostTerminatePicking(WaveCompletion wave) {
 
             try {
-                PriIntegration.TerminarPickingOrder(wave.IDFuncionario, wave.WaveID, wave.Lines, wave.Serie);
+                PriIntegration.TerminarPickingOrder(wave.IDFuncionario, wave.WaveID, wave.Lines);
             
             } catch (InvalidOperationException invalidOperation) {
                 return BadRequest(invalidOperation.Message);
@@ -89,13 +89,13 @@ namespace SalesOrderPicking.Controllers {
         public IHttpActionResult PostTerminateReplenishment(WaveCompletion wave) {
 
             try {
-                PriIntegration.terminarReplenishmentOrder(wave.IDFuncionario, wave.WaveID, wave.Lines, wave.Serie);
+                PriIntegration.TerminarReplenishmentOrder(wave.IDFuncionario, wave.WaveID, wave.Lines);
 
             } catch (InvalidOperationException invalidOperation) {
                 return BadRequest(invalidOperation.Message);
 
             } catch (Exception e) {
-                return InternalServerError(new Exception(e.Message));
+                return InternalServerError(e);
             }
 
             return Ok();

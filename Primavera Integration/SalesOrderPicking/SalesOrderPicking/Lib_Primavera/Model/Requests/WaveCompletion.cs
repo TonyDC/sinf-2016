@@ -21,8 +21,6 @@ namespace SalesOrderPicking.Lib_Primavera.Model.Requests {
         public int IDFuncionario { get; set; }
         [JsonProperty("wave", Required = Required.Always)]
         public string WaveID { get; set; }
-        [JsonProperty("serie", Required = Required.Always)]
-        public string Serie { get; set; }
         [JsonProperty("linhas", Required = Required.Always)]
         public List<LinhaWave> Lines { get; set; }
 
