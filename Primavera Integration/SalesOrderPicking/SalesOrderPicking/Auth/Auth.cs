@@ -60,7 +60,7 @@ namespace SalesOrderPicking.Auth {
             if (RetrieveCredentials(username, type) != null)
                 throw new InvalidOperationException("The username already exists");
 
-            List<Dictionary<string, object>> insertedUser = Utilities.performQuery(PriEngine.PickingDBConnString,
+            List<Dictionary<string, object>> insertedUser = DBQuery.performQuery(PriEngine.PickingDBConnString,
                 "INSERT INTO Utilizador(username, pass) OUTPUT INSERTED.id VALUES('@0@', '@1@')",
                 username, hashedPassword);
 
@@ -68,11 +68,11 @@ namespace SalesOrderPicking.Auth {
             int userID = Convert.ToInt32(insertedUser.ElementAt(0)["id"]);
 
             if (String.Compare(type, FUNCIONARIO_STR) == 0)
-                Utilities.performQuery(PriEngine.PickingDBConnString,
+                DBQuery.performQuery(PriEngine.PickingDBConnString,
                     "INSERT INTO Funcionario VALUES(@0@)",
                     userID.ToString());
             else
-                Utilities.performQuery(PriEngine.PickingDBConnString,
+                DBQuery.performQuery(PriEngine.PickingDBConnString,
                     "INSERT INTO Gerente VALUES(@0@)",
                     userID.ToString());
 
@@ -86,7 +86,7 @@ namespace SalesOrderPicking.Auth {
             if ((String.Compare(type, FUNCIONARIO_STR) == 0 && String.Compare(type, GERENTE_STR) == 0) || (String.Compare(type, FUNCIONARIO_STR) != 0 && String.Compare(type, GERENTE_STR) != 0))
                 throw new InvalidOperationException("Bad user type");
 
-            List<Dictionary<string, object>> rows = Utilities.performQuery(PriEngine.PickingDBConnString,
+            List<Dictionary<string, object>> rows = DBQuery.performQuery(PriEngine.PickingDBConnString,
                 "SELECT Utilizador.username, Utilizador.pass FROM " + type + " INNER JOIN Utilizador ON (" + type + ".id = Utilizador.id) WHERE Utilizador.username = '@0@'",
                 username);
 
