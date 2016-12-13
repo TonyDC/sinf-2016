@@ -99,7 +99,7 @@ namespace SalesOrderPicking.Controllers {
                 return InternalServerError();
             }
 
-
+            
             if (result == null)
                 return InternalServerError();
 

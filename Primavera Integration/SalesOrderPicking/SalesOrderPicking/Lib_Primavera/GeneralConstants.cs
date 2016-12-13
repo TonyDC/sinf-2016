@@ -19,5 +19,10 @@ namespace SalesOrderPicking.Lib_Primavera {
         public const double EPSILON = 1e-3;
 
         public const string ARMAZEM_EXPEDICAO = "EXPED";
+
+        public const string QUERY_TESTE1 = "SELECT CabecDoc.* FROM PRIDEMOSINF.dbo.CabecDoc INNER JOIN (" +
+                                                "SELECT DISTINCT NumDoc FROM PRIDEMOSINF.dbo.CabecDoc INNER JOIN PRIDEMOSINF.dbo.LinhasDoc ON (CabecDoc.id = LinhasDoc.IdCabecDoc) LEFT JOIN LinhaEncomenda ON (LinhaEncomenda.id_linha = LinhasDoc.id AND LinhaEncomenda.versao_ult_act = sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct)) LEFT JOIN LinhaPicking ON (LinhaEncomenda.id = LinhaPicking.id_linha_encomenda) LEFT JOIN PickingWave ON (LinhaPicking.id_picking = PickingWave.id) WHERE TipoDoc = 'ECL' AND CabecDoc.Serie = @1@ AND Filial = @0@ AND LinhasDoc.Quantidade > 0 AND (LinhaEncomenda.id IS NULL OR LinhaEncomenda.quant_pedida > LinhaEncomenda.quant_satisfeita) AND NumDoc NOT IN (" +
+                                                    "SELECT DISTINCT NumDoc FROM PRIDEMOSINF.dbo.CabecDoc INNER JOIN PRIDEMOSINF.dbo.LinhasDoc ON (CabecDoc.id = LinhasDoc.IdCabecDoc) LEFT JOIN LinhaEncomenda ON (LinhaEncomenda.id_linha = LinhasDoc.id) LEFT JOIN LinhaPicking ON (LinhaEncomenda.id = LinhaPicking.id_linha_encomenda) LEFT JOIN PickingWave ON (LinhaPicking.id_picking = PickingWave.id) WHERE LinhaEncomenda.id IS NOT NULL AND (PickingWave.em_progresso = 1 OR LinhaPicking.id_picking IS NULL) AND TipoDoc = 'ECL' AND LinhaEncomenda.Serie = @1@ AND Filial = @0@" +
+                                                ")) AS DocumentosValidos ON (CabecDoc.NumDoc = DocumentosValidos.NumDoc) WHERE CabecDoc.TipoDoc = 'ECL' AND CabecDoc.Filial = @0@ AND CabecDoc.Serie = @1@";
     }
 }

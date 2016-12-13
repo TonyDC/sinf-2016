@@ -85,8 +85,8 @@ namespace SalesOrderPicking.Controllers {
             try {
                 encomendas = PriIntegration.GetEncomendasClientes(filial, serie);
 
-            } catch (Exception) {
-                return InternalServerError();
+            } catch (Exception e) {
+                return InternalServerError(e);
             }
 
             if (encomendas == null || encomendas.Count < 1)

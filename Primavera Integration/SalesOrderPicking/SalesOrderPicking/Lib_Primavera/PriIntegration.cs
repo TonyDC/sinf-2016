@@ -76,6 +76,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
         #region Encomendas
 
+        // Vai buscar as encomendas que não estão satisfeitas na totalidade ou que estão com um processo de picking pendente
         public static List<EncomendaCliente> GetEncomendasClientes(string f, string s, string clienteID = null, int? nDoc = null) {
 
             if (f == null || s == null)
@@ -87,20 +88,20 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             if (clienteID == null)
                 if (nDoc == null)
-                    listaEncomendas = DBQuery.performQuery(PriEngine.DBConnString, GeneralConstants.QUERY_ENCOMENDAS_PENDENTES + " AND Filial = @0@ AND Serie = @1@ ORDER BY NumDoc", f, s);
+                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " ORDER BY NumDoc", f, s);
                 else
-                    listaEncomendas = DBQuery.performQuery(PriEngine.DBConnString, GeneralConstants.QUERY_ENCOMENDAS_PENDENTES + " AND NumDoc = @0@ AND Filial = @1@ AND Serie = @2@", nDoc, f, s);
+                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " AND NumDoc = @2@", f, s, nDoc);
             else
                 if (nDoc == null)
-                    listaEncomendas = DBQuery.performQuery(PriEngine.DBConnString, GeneralConstants.QUERY_ENCOMENDAS_PENDENTES + " AND EntidadeFac = @0@ AND Filial = @1@ AND Serie = @2@ ORDER BY NumDoc", clienteID, f, s);
+                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " AND EntidadeFac = @2@ ORDER BY NumDoc", f, s, clienteID);
                 else
-                    listaEncomendas = DBQuery.performQuery(PriEngine.DBConnString, GeneralConstants.QUERY_ENCOMENDAS_PENDENTES + " AND EntidadeFac = @0@ AND Filial = @1@ AND Serie = @2@ AND NumDoc = @3@ ORDER BY NumDoc", clienteID, f, s, nDoc);
+                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " AND EntidadeFac = @2@ AND NumDoc = @3@ ORDER BY NumDoc", f, s, clienteID, nDoc);
 
 
             foreach (var item in listaEncomendas) {
                 object encomendaID = item["Id"], filial = item["Filial"], serie = item["Serie"], numDoc = item["NumDoc"], cliente = item["EntidadeFac"];
 
-                List<Dictionary<string, object>> linhasEncomenda = DBQuery.performQuery(PriEngine.DBConnString, "SELECT Id, Artigo, LinhasDoc.Quantidade AS Quantidade, QuantTrans, NumLinha, Armazem, Localizacao, Lote, DataEntrega FROM LinhasDoc WITH (NOLOCK) INNER JOIN LinhasDocStatus WITH (NOLOCK) ON (LinhasDocStatus.IdLinhasDoc = LinhasDoc.Id) WHERE LinhasDoc.IdCabecDoc = @0@ AND LinhasDoc.Artigo IS NOT NULL", encomendaID);
+                List<Dictionary<string, object>> linhasEncomenda = DBQuery.performQuery(PriEngine.DBConnString, "SELECT LinhasDoc.Id, LinhasDoc.Artigo, LinhasDoc.Quantidade AS Quantidade, COALESCE(quant_satisfeita, 0) AS QuantTrans, NumLinha, Armazem, Localizacao, Lote, DataEntrega FROM LinhasDoc WITH (NOLOCK) LEFT JOIN PICKING.dbo.LinhaEncomenda WITH (NOLOCK) ON (LinhaEncomenda.id_linha = LinhasDoc.Id AND sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) = LinhaEncomenda.versao_ult_act) WHERE LinhasDoc.IdCabecDoc = @0@ AND LinhasDoc.Artigo IS NOT NULL", encomendaID);
 
                 List<LinhaEncomendaCliente> artigosEncomenda = new List<LinhaEncomendaCliente>();
 
