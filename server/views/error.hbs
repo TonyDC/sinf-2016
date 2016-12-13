@@ -1,3 +1,84 @@
-<h1>{{message}}</h1>
-<h2>{{error.status}}</h2>
-<pre>{{error.stack}}</pre>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="4MIEIC02-AD">
+
+    <title>Sales Order Picking</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+    <link href="/dist/css/sb-admin-2.css" rel="stylesheet">
+    <link href="/vendor/morrisjs/morris.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto:300" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body class="index-body">
+
+<div class="container">
+    <div class="row">
+        <div id="error-text" class="col-md-8 col-md-offset-2">
+            <div id="top-error">
+                <h1>Uh-oh!</h1>
+                <h3>Algo não correu bem. Por favor, volte atrás e tente novamente.</h3>
+                <span class="btn-lg main-button" id="error-btn">Ver detalhes</span>
+            </div>
+            <div id="error-info">
+                <h1><strong>{{error.status}}</strong>: {{message}}</h1>
+                <p>{{error.stack}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /#wrapper -->
+
+<script>
+    document.getElementById('error-btn').onclick=function(){
+        document.getElementById('error-info').style.display='block';
+        document.getElementById('error-btn').style.display='none';
+    };
+</script>
+<!-- jQuery -->
+<script src="/vendor/jquery/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- Metis Menu Plugin JavaScript -->
+<script src="/vendor/metisMenu/metisMenu.min.js"></script>
+
+<!-- Morris Charts JavaScript -->
+<script src="/vendor/raphael/raphael.min.js"></script>
+<script src="/vendor/morrisjs/morris.min.js"></script>
+<script src="/data/morris-data.js"></script>
+
+<!-- DataTables JavaScript -->
+<script src="/vendor/datatables/js/jquery.dataTables.min.js"></script>
+<script src="/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+<script src="/vendor/datatables-responsive/dataTables.responsive.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/dist/js/sb-admin-2.js"></script>
+
+</body>
+
+</html>

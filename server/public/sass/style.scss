@@ -158,6 +158,20 @@ p, body {
   }
 }
 
+.secondary-button {
+  background-color: $light;
+  font-size: 110%;
+  color: white;
+  box-shadow: none;
+  padding: 15px;
+  margin-top: 20px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $lightest;
+  }
+}
+
 nav {
   background-color: $dark !important;
   margin-bottom: 0;
@@ -249,5 +263,49 @@ body {
 }
 
 .index-body {
+  height: 100vh;
+  background: linear-gradient($dark, $medium 45%, $light 70%, $lightest 100%);
+}
+
+#index-logo {
+  padding-top: 15%;
+  max-width: 70%;
+  display: block;
+  margin: 0 auto;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+#index-title {
+  font-weight: 600;
+  font-size: 2.7em;
+  color: $lightest;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+}
+
+.panel {
   background-color: $dark;
+  color: white;
+  border: none;
+}
+
+#top-error {
+  color: white;
+  padding-top: 20%;
+
+  #error-btn {
+    display: block;
+    margin-top: 50px;
+    text-align: center;
+    width: 200px;
+  }
+}
+
+#error-info {
+  display: none;
+  padding-top: 50px;
 }
