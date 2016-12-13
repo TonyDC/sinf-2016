@@ -138,6 +138,8 @@ CREATE TABLE Definicoes (
 	valor NVARCHAR(300)
 )
 
+-- Username: admin, password: admin
+-- Username: worker, passowrd: worker
 INSERT INTO Utilizador(username, pass) VALUES('admin', '$2a$11$s0GMyuOSBXOUHLD353oHA..cmtYznNePmsIlWMvnIj06qlVkBaPFG'), ('worker', '$2a$11$mAmHgZiA.qyvHpHE0FK45.hWVW9oxRNn2ZXlt6wozDmF.Wq1k4jlC')
 INSERT INTO Gerente VALUES(1)
 INSERT INTO Funcionario VALUES(2)
