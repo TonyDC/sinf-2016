@@ -116,8 +116,16 @@ namespace SalesOrderPicking.Lib_Primavera {
             return listaArtigos;
         }
 
-        // TODO verificar se a quantidade satisfeita é igual à quantidade encomendada
+        
         public static bool GerarGuiaRemessa(PedidoTransformacaoECL encomenda) {
+
+            // Verificar se todas as linhas da encomenda fora satisfeitas na totalidade
+            List<Dictionary<string, object>> unfulfilledLines = DBQuery.performQuery(PriEngine.PickingDBConnString,
+                "SELECT * FROM PRIDEMOSINF.dbo.CabecDoc INNER JOIN PRIDEMOSINF.dbo.LinhasDoc ON (CabecDoc.id = LinhasDoc.IdCabecDoc) LEFT JOIN LinhaEncomenda ON (LinhasDoc.id = LinhaEncomenda.id_linha AND sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) = LinhaEncomenda.versao_ult_act) WHERE CabecDoc.TipoDoc = 'ECL' AND CabecDoc.Filial = @0@ AND CabecDoc.Serie = @1@ AND CabecDoc.NumDoc = @2@ AND (LinhaEncomenda.quant_satisfeita < LinhaEncomenda.quant_pedida OR LinhaEncomenda.id IS NULL) AND LinhasDoc.Quantidade > 0",
+                encomenda.Filial, encomenda.Serie, encomenda.NDoc);
+
+            if (unfulfilledLines.Count > 0)
+                throw new InvalidOperationException("Só podem ser geradas guias de remessa através da API caso cada linha da encomenda de cliente esteja totalmente satisfeita");
 
             if (PriEngine.IniciaTransaccao()) {
 

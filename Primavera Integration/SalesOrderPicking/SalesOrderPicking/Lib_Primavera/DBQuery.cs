@@ -31,8 +31,6 @@ namespace SalesOrderPicking.Lib_Primavera {
 
         public static List<Dictionary<string, object>> performQuery(string connectionString, string queryString, params object[] elements) {
 
-            //for (int i = 0; i < elements.Length; i++)
-            //    queryString = queryString.Replace("@" + i + "@", elements.ElementAt(i));
             System.Diagnostics.Debug.WriteLine(queryString);
             List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
 
