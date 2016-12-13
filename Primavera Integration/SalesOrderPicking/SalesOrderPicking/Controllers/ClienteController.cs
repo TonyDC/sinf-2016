@@ -103,8 +103,24 @@ namespace SalesOrderPicking.Controllers {
             try {
                 encomendas = PriIntegration.GetEncomendasClientes(filial, serie, null, n);
 
-            } catch (Exception) {
-                return InternalServerError();
+            } catch (Exception e) {
+                return InternalServerError(e);
+            }
+
+            if (encomendas == null || encomendas.Count < 1)
+                return NotFound();
+            else
+                return Ok(encomendas);
+        }
+
+        [Route("api/encomenda-pronto/{filial}/{serie}")]
+        public IHttpActionResult GetEncomendasProntas(string filial, string serie) {
+            List<EncomendaCliente> encomendas = null;
+            try {
+                encomendas = PriIntegration.GetEncomendasPassiveisDeTransformacao(filial, serie);
+
+            } catch (Exception e) {
+                return InternalServerError(e);
             }
 
             if (encomendas == null || encomendas.Count < 1)
