@@ -50,8 +50,10 @@ namespace SalesOrderPicking.Controllers {
             try {
                 encomendasCliente = PriIntegration.GetEncomendasClientes(filial, serie, id);
 
-            } catch (Exception e) {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
+
+            } catch (Exception) {
                 return InternalServerError();
             }
 
@@ -67,6 +69,9 @@ namespace SalesOrderPicking.Controllers {
             List<EncomendaCliente> encomendas = null;
             try {
                 encomendas = PriIntegration.GetEncomendasClientes(filial, serie, id, n);
+
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
 
             } catch (Exception) {
                 return InternalServerError();
@@ -84,6 +89,9 @@ namespace SalesOrderPicking.Controllers {
             List<EncomendaCliente> encomendas = null;
             try {
                 encomendas = PriIntegration.GetEncomendasClientes(filial, serie);
+
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
 
             } catch (Exception e) {
                 return InternalServerError(e);
@@ -103,6 +111,9 @@ namespace SalesOrderPicking.Controllers {
             try {
                 encomendas = PriIntegration.GetEncomendasClientes(filial, serie, null, n);
 
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
+
             } catch (Exception e) {
                 return InternalServerError(e);
             }
@@ -119,6 +130,9 @@ namespace SalesOrderPicking.Controllers {
             try {
                 encomendas = PriIntegration.GetEncomendasPassiveisDeTransformacao(filial, serie);
 
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
+
             } catch (Exception e) {
                 return InternalServerError(e);
             }
@@ -131,10 +145,11 @@ namespace SalesOrderPicking.Controllers {
 
         // POST: api/encomendas
         /*
-         * Body: Object
-         *          nDoc: uint,
-         *          serie: string,
-         *          filial: string
+         * {
+         *      "nDoc": uint,
+         *      "serie": string,
+         *      "filial": string
+         * }
          */
         [Route("api/encomenda")]
         public IHttpActionResult PostEncomendas(PedidoTransformacaoECL encomenda) {
@@ -147,8 +162,10 @@ namespace SalesOrderPicking.Controllers {
                 else
                     return BadRequest();
 
-            } catch (Exception e) {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
+
+            } catch (Exception) {
                 return InternalServerError();
             }
  

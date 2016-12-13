@@ -14,6 +14,16 @@ namespace SalesOrderPicking.Controllers {
 
     public class WaveController : ApiController {
 
+        // POST: api/wave/generate
+        /*
+         * {
+         *      "filial": string,
+         *      "serie": string,
+         *      "encomendas": [
+         *         uint, uint, ...
+         *      ]
+         * }
+         */
         [Route("api/wave/generate")]
         public IHttpActionResult PostNewWaves(GenerateWavesRequest request) {
 
@@ -67,7 +77,19 @@ namespace SalesOrderPicking.Controllers {
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-
+        // POST: api/wave/terminate/picking
+        /*
+         * {
+         *      "funcionario": uint,
+         *      "wave": string,             // Wave ID
+         *      "linhas": [
+         *          {   
+         *              "id": string,       // Wave line ID
+         *              "quantidade": uint    // Quantidade satisfeita
+         *          }
+         *      ]
+         * }
+         */
         [Route("api/wave/terminate/picking")]
         public IHttpActionResult PostTerminatePicking(WaveCompletion wave) {
 
@@ -84,7 +106,19 @@ namespace SalesOrderPicking.Controllers {
             return Ok();
         }
 
-
+        // POST: api/wave/terminate/replenishment
+        /*
+         * {
+         *      "funcionario": uint,
+         *      "wave": string,               // Wave ID
+         *      "linhas": [
+         *          {   
+         *              "id": string,         // Wave line ID
+         *              "quantidade": uint    // Quantidade satisfeita
+         *          }
+         *      ]
+         * }
+         */
         [Route("api/wave/terminate/replenishment")]
         public IHttpActionResult PostTerminateReplenishment(WaveCompletion wave) {
 

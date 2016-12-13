@@ -14,7 +14,7 @@ namespace SalesOrderPicking.Controllers {
 
         // GET api/artigo
         public IHttpActionResult Get() {
-            IEnumerable<Artigo> listaFinal = null;
+            List<Artigo> listaFinal = null;
             try {
                 listaFinal = PriIntegration.ListaArtigos();
 
@@ -25,7 +25,7 @@ namespace SalesOrderPicking.Controllers {
             if (listaFinal == null)
                 return BadRequest();
             else
-                return Ok(PriIntegration.ListaArtigos());
+                return Ok(listaFinal);
         }
 
         // GET api/artigo/{artigo-id}
@@ -34,12 +34,15 @@ namespace SalesOrderPicking.Controllers {
             try {
                 artigo = PriIntegration.ObterArtigo(id);
 
+            } catch(InvalidOperationException e) {
+                return BadRequest(e.Message);
+
             } catch (Exception e) {
                 return InternalServerError(e);
             }
 
             if (artigo == null)
-                return NotFound();
+                return BadRequest();
             else
                 return Ok(artigo);
         }

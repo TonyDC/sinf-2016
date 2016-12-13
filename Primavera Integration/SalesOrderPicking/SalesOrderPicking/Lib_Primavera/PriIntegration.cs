@@ -50,7 +50,8 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             List<Dictionary<string, object>> artigo = DBQuery.performQuery(PriEngine.DBConnString, "SELECT * FROM Artigo WITH (NOLOCK) WHERE Artigo = @0@", codArtigo);
             if (artigo.Count != 1)
-                throw new InvalidOperationException("Código de artigo inválido");
+                return null;
+                //throw new InvalidOperationException("Código de artigo inválido");
 
             Dictionary<string, object> linhaArtigo = artigo.ElementAt(0);
             object descricao = linhaArtigo["Descricao"], unidadeVenda = linhaArtigo["UnidadeVenda"];
@@ -116,7 +117,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             return listaArtigos;
         }
 
-        
+
         public static List<EncomendaCliente> GetEncomendasPassiveisDeTransformacao(string f, string s) {
 
             if (f == null || s == null)
@@ -144,8 +145,8 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             return listaArtigos;
         }
-        
-        
+
+
         public static bool GerarGuiaRemessa(PedidoTransformacaoECL encomenda) {
 
             // Verificar se todas as linhas da encomenda fora satisfeitas na totalidade
@@ -289,8 +290,10 @@ namespace SalesOrderPicking.Lib_Primavera {
 
         public static bool GerarTransferenciaArmazem(TransferenciaArmazem lista) {
 
-            if (PriEngine.IniciaTransaccao()) {
+            if (!PriEngine.IniciaTransaccao())
+                return false;
 
+            try {
                 GcpBEDocumentoStock docStock = new GcpBEDocumentoStock();
 
                 docStock.set_Tipodoc(GeneralConstants.TRANSFERENCIA_ARMAZEM_DOCUMENTO);
@@ -328,10 +331,12 @@ namespace SalesOrderPicking.Lib_Primavera {
                 PriEngine.Engine.Comercial.Stocks.Actualiza(docStock);
                 PriEngine.TerminaTransaccao();
 
-                return true;
+            } catch (Exception) {
+                PriEngine.TerminaTransaccao();
+                throw;
+            }
 
-            } else
-                return false;
+            return true;
         }
 
         #endregion Armazem
@@ -831,7 +836,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
                 List<ReplenishmentReservation> toReplenish = new List<ReplenishmentReservation>();
                 foreach (var item in affectedRows) {
-                    
+
                     dbQuery.performQueryWithTransaction(
                         "UPDATE QuantidadeReserva SET quant_reservada = quant_reservada - @0@ WHERE artigo = @1@ AND armazem = @2@",
                         item["quant_a_satisfazer"].ToString(), item["artigo"] as string, ARMAZEM_PRIMARIO);
@@ -951,10 +956,10 @@ namespace SalesOrderPicking.Lib_Primavera {
                 throw new InvalidOperationException("The worker has pending waves");
 
             List<string> listaAvisos = new List<string>();
-            
+
             List<Dictionary<string, object>> rowsToAssign = DBQuery.performQuery(PriEngine.PickingDBConnString,
                 "SELECT * FROM LinhaReplenishment WHERE id_replenishment IS NULL ORDER BY quant_a_satisfazer DESC");           // Abordagem gananciosa
-            
+
             if (rowsToAssign.Count < 1)
                 return null;
 
@@ -1286,7 +1291,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             if (cap < 1)
                 throw new InvalidOperationException("Capacidade inválida");
 
-            DBQuery.performQuery(PriEngine.PickingDBConnString, 
+            DBQuery.performQuery(PriEngine.PickingDBConnString,
                 "UPDATE Definicoes SET valor = @0@ WHERE chave = 'cap_max_funcionario'", cap.ToString());
 
             PriIntegration.MAX_CAP_FUNCIONARIO = cap;

@@ -9,6 +9,14 @@ namespace SalesOrderPicking.Controllers {
 
     public class AuthController : ApiController {
 
+        /*
+         * Body:
+         *  {
+         *      "username": string,
+         *      "password": string
+         *  }
+         * 
+         */
         [Route("api/auth/register/worker")]
         public IHttpActionResult PostNewWorker(Dictionary<string, string> body) {
 
@@ -32,7 +40,14 @@ namespace SalesOrderPicking.Controllers {
             return Ok(response);
         }
 
-
+        /*
+         * Body:
+         *  {
+         *      "username": string,
+         *      "password": string
+         *  }
+         * 
+         */
         [Route("api/auth/register/manager")]
         public IHttpActionResult PostNewManager(Dictionary<string, string> body) {
 
@@ -56,7 +71,14 @@ namespace SalesOrderPicking.Controllers {
             return Ok(response);
         }
 
-
+        /*
+         * Body:
+         *  {
+         *      "username": string,
+         *      "password": string
+         *  }
+         * 
+         */
         [Route("api/auth/login/worker")]
         public IHttpActionResult LoginWorker(Dictionary<string, string> body) {
 
@@ -80,7 +102,14 @@ namespace SalesOrderPicking.Controllers {
                 return Ok();
         }
 
-
+        /*
+         * Body:
+         *  {
+         *      "username": string,
+         *      "password": string
+         *  }
+         * 
+         */
         [Route("api/auth/login/manager")]
         public IHttpActionResult LoginManager(Dictionary<string, string> body) {
 

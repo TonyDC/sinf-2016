@@ -35,6 +35,9 @@ namespace SalesOrderPicking.Controllers {
             try {
                 listaLocalizacoes = PriIntegration.GetLocalizacoesArmazens(id);
 
+            } catch(InvalidOperationException e) {
+                return BadRequest(e.Message);
+
             } catch (Exception) {
                 return InternalServerError();
             }
@@ -59,9 +62,7 @@ namespace SalesOrderPicking.Controllers {
          *                  quantidade: uint
          */
         public IHttpActionResult Post(TransferenciaArmazem transferencia) {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
+     
             try {
                 if (PriIntegration.GerarTransferenciaArmazem(transferencia))
                     return Ok();
