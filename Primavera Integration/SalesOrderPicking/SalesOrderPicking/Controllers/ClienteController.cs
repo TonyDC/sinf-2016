@@ -66,7 +66,7 @@ namespace SalesOrderPicking.Controllers {
         public IHttpActionResult GetEncomendaByClienteAndNumber(string id, string filial, string serie, int n) {
             List<EncomendaCliente> encomendas = null;
             try {
-                encomendas = PriIntegration.GetEncomendasClientes(filial, serie, id, n.ToString());
+                encomendas = PriIntegration.GetEncomendasClientes(filial, serie, id, n);
 
             } catch (Exception) {
                 return InternalServerError();
@@ -101,7 +101,7 @@ namespace SalesOrderPicking.Controllers {
         public IHttpActionResult GetEncomendaByNumDoc(string filial, string serie, int n) {
             List<EncomendaCliente> encomendas = null;
             try {
-                encomendas = PriIntegration.GetEncomendasClientes(filial, serie, null, n.ToString());
+                encomendas = PriIntegration.GetEncomendasClientes(filial, serie, null, n);
 
             } catch (Exception) {
                 return InternalServerError();

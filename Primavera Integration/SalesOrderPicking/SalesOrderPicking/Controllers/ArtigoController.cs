@@ -34,8 +34,8 @@ namespace SalesOrderPicking.Controllers {
             try {
                 artigo = PriIntegration.ObterArtigo(id);
 
-            } catch (Exception) {
-                return InternalServerError();
+            } catch (Exception e) {
+                return InternalServerError(e);
             }
 
             if (artigo == null)
