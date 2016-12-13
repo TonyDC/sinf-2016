@@ -19,9 +19,8 @@ namespace SalesOrderPicking.Lib_Primavera {
 
     public class PriIntegration {
 
-        public const int MAX_CAP_FUNCIONARIO = 100;
-        // TODO GeneralConstants + substituir ocorrências
-        public const string ARMAZEM_PRIMARIO = "A1";
+        public static int MAX_CAP_FUNCIONARIO = 100;
+        public static string ARMAZEM_PRIMARIO = "A1";
 
         #region Artigo
 
@@ -653,7 +652,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                     }
 
                     // Determinar a localização (estratégia: ir à localização com a maior quantidade)
-                    // O produto deve estar disponível no piso de picking (piso 1), no armazém primário (A1)
+                    // O produto deve estar disponível no piso de picking (piso 1), no armazém primário
                     List<Dictionary<string, object>> localizacoesRows = dbQuery.performQueryWithTransaction(
                         "SELECT * FROM PRIDEMOSINF.dbo.ArtigoArmazem WITH (NOLOCK) WHERE Artigo = @0@ AND Localizacao LIKE @1@ ORDER BY StkActual DESC",
                         line["artigo"].ToString(), ARMAZEM_PRIMARIO + ".[A-Z].1.[0-9][0-9][0-9]");
@@ -832,15 +831,21 @@ namespace SalesOrderPicking.Lib_Primavera {
 
                 List<ReplenishmentReservation> toReplenish = new List<ReplenishmentReservation>();
                 foreach (var item in affectedRows) {
-                    List<TransferenciaArtigo> lista = new List<TransferenciaArtigo>();
-                    lista.Add(new TransferenciaArtigo(item["artigo"] as string, item["localizacao"] as string, GeneralConstants.ARMAZEM_EXPEDICAO, GeneralConstants.ARMAZEM_EXPEDICAO, Convert.ToDouble(item["quant_recolhida"])));
-
-                    GerarTransferenciaArmazem(new TransferenciaArmazem(ARMAZEM_PRIMARIO, item["serie"] as string, lista));
+                    
                     dbQuery.performQueryWithTransaction(
                         "UPDATE QuantidadeReserva SET quant_reservada = quant_reservada - @0@ WHERE artigo = @1@ AND armazem = @2@",
                         item["quant_a_satisfazer"].ToString(), item["artigo"] as string, ARMAZEM_PRIMARIO);
 
                     toReplenish.Add(new ReplenishmentReservation { Artigo = item["artigo"] as string, Localizacao = item["localizacao"] as string, Quantidade = Convert.ToInt32(item["quant_a_satisfazer"]), Unidade = item["unidade"] as string, Serie = item["serie"] as string });
+
+                    double quantidadeATransferir = Convert.ToDouble(item["quant_recolhida"]);
+                    if (quantidadeATransferir < 1)          // Caso não tenha havido quantidade a mover, nãp gerar a transferência de armazém
+                        continue;
+
+                    List<TransferenciaArtigo> lista = new List<TransferenciaArtigo>();
+                    lista.Add(new TransferenciaArtigo(item["artigo"] as string, item["localizacao"] as string, GeneralConstants.ARMAZEM_EXPEDICAO, GeneralConstants.ARMAZEM_EXPEDICAO, quantidadeATransferir));
+
+                    GerarTransferenciaArmazem(new TransferenciaArmazem(ARMAZEM_PRIMARIO, item["serie"] as string, lista));
                 }
 
                 RegistarAvisos(listaAvisos);
@@ -861,7 +866,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
 
 
-        // O replenishment occore no armazém primário 'A1'
+        // O replenishment occore no armazém primário
         public static bool GerarReplenishment(List<ReplenishmentReservation> listaReposicao) {
 
             if (listaReposicao == null || listaReposicao.Count < 1)
@@ -869,6 +874,9 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             // Verificar se a quantidade a repôr não ultrapassa a capacidade do funcionário
             foreach (var tuple in listaReposicao) {
+                if (tuple.Quantidade < 1)
+                    continue;
+
                 while (tuple.Quantidade > MAX_CAP_FUNCIONARIO) {
                     tuple.Quantidade -= MAX_CAP_FUNCIONARIO;
                     listaReposicao.Add(new ReplenishmentReservation { Artigo = tuple.Artigo, Localizacao = tuple.Localizacao, Quantidade = MAX_CAP_FUNCIONARIO, Unidade = tuple.Unidade, Serie = tuple.Serie });
@@ -943,10 +951,10 @@ namespace SalesOrderPicking.Lib_Primavera {
                 throw new InvalidOperationException("The worker has pending waves");
 
             List<string> listaAvisos = new List<string>();
-            System.Diagnostics.Debug.WriteLine("qqqqqqqqqqqqqqqqqqqqqqqqqqqq");
+            
             List<Dictionary<string, object>> rowsToAssign = DBQuery.performQuery(PriEngine.PickingDBConnString,
                 "SELECT * FROM LinhaReplenishment WHERE id_replenishment IS NULL ORDER BY quant_a_satisfazer DESC");           // Abordagem gananciosa
-            System.Diagnostics.Debug.WriteLine("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+            
             if (rowsToAssign.Count < 1)
                 return null;
 
@@ -971,8 +979,8 @@ namespace SalesOrderPicking.Lib_Primavera {
                     }
                     System.Diagnostics.Debug.WriteLine("lafkjlksdhgflkaueoriuwqf");
                     // Determinar a localização (estratégia: localização com maior quantidade)
-                    // O produto deve estar disponível nos pisos de replenishment (pisos 2-9), no armazém primário (A1)
-                    List<Dictionary<string, object>> localizacoesRows = dbQuery.performQueryWithTransaction("SELECT * FROM PRIDEMOSINF.dbo.ArtigoArmazem WITH (NOLOCK) WHERE Artigo = @0@ AND Localizacao LIKE 'A1.[A-Z].[2-9].[0-9][0-9][0-9]' ORDER BY StkActual DESC", artigo);
+                    // O produto deve estar disponível nos pisos de replenishment (pisos 2-9), no armazém primário
+                    List<Dictionary<string, object>> localizacoesRows = dbQuery.performQueryWithTransaction("SELECT * FROM PRIDEMOSINF.dbo.ArtigoArmazem WITH (NOLOCK) WHERE Artigo = @0@ AND Localizacao LIKE '" + ARMAZEM_PRIMARIO + ".[A-Z].[2-9].[0-9][0-9][0-9]' ORDER BY StkActual DESC", artigo);
                     if (localizacoesRows.Count < 1) {
                         if (!notificado) {
                             listaAvisos.Add("O artigo ''" + artigo + "'' não está disponível nas áreas de reposição do armazém");
@@ -1131,8 +1139,12 @@ namespace SalesOrderPicking.Lib_Primavera {
                    replenishmentWaveID);
 
                 foreach (var item in affectedRows) {
+                    double quantidadeATransferir = Convert.ToDouble(item["quant_recolhida"]);
+                    if (quantidadeATransferir < 1)
+                        continue;
+
                     List<TransferenciaArtigo> lista = new List<TransferenciaArtigo>();
-                    lista.Add(new TransferenciaArtigo(item["artigo"] as string, item["localizacao_origem"] as string, item["localizacao_destino"] as string, ARMAZEM_PRIMARIO, Convert.ToDouble(item["quant_recolhida"])));
+                    lista.Add(new TransferenciaArtigo(item["artigo"] as string, item["localizacao_origem"] as string, item["localizacao_destino"] as string, ARMAZEM_PRIMARIO, quantidadeATransferir));
 
                     GerarTransferenciaArmazem(new TransferenciaArmazem(ARMAZEM_PRIMARIO, item["serie"] as string, lista));
                 }
@@ -1276,6 +1288,8 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             DBQuery.performQuery(PriEngine.PickingDBConnString, 
                 "UPDATE Definicoes SET valor = @0@ WHERE chave = 'cap_max_funcionario'", cap.ToString());
+
+            PriIntegration.MAX_CAP_FUNCIONARIO = cap;
         }
 
 
@@ -1299,6 +1313,13 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             DBQuery.performQuery(PriEngine.PickingDBConnString,
                 "UPDATE Definicoes SET valor = @0@ WHERE chave = 'armazem_principal'", armazem);
+
+            PriIntegration.ARMAZEM_PRIMARIO = armazem;
+        }
+
+        public static void InitializeIntegration() {
+            PriIntegration.ARMAZEM_PRIMARIO = GetArmazemPrincipal();
+            PriIntegration.MAX_CAP_FUNCIONARIO = GetCapacidadeMaximaFuncionario();
         }
 
         #endregion Testes

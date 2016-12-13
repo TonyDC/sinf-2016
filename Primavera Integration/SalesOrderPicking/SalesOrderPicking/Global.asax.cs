@@ -41,7 +41,7 @@ namespace SalesOrderPicking {
             bool isInitialised = SalesOrderPicking.Lib_Primavera.PriEngine.InitializeCompany(company, username, password);
             if (!isInitialised)
                 throw new HttpResponseException(System.Net.HttpStatusCode.InternalServerError);
-            System.Diagnostics.Debug.WriteLine(Lib_Primavera.PriEngine.DBConnString);
+            SalesOrderPicking.Lib_Primavera.PriIntegration.InitializeIntegration();
         }
     }
 }
