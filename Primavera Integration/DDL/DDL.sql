@@ -133,15 +133,14 @@ CREATE TABLE Avisos (
 	-- quem_viu INT REFERENCES Gerente(id)
 )
 
--- cap_max_funcionario
--- armazem_principal
 CREATE TABLE Definicoes (
 	chave NVARCHAR(300) PRIMARY KEY,
 	valor NVARCHAR(300)
 )
 
-INSERT INTO Utilizador(username, pass) VALUES('ADC', 'adc')
-INSERT INTO Funcionario VALUES(1)
+INSERT INTO Utilizador(username, pass) VALUES('admin', '$2a$11$s0GMyuOSBXOUHLD353oHA..cmtYznNePmsIlWMvnIj06qlVkBaPFG'), ('worker', '$2a$11$mAmHgZiA.qyvHpHE0FK45.hWVW9oxRNn2ZXlt6wozDmF.Wq1k4jlC')
+INSERT INTO Gerente VALUES(1)
+INSERT INTO Funcionario VALUES(2)
 
 INSERT INTO Definicoes VALUES ('cap_max_funcionario', '100'), ('armazem_principal', 'A1')
 

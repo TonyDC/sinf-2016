@@ -97,7 +97,7 @@ namespace SalesOrderPicking.Controllers {
             }
 
             if (!loggedIn)
-                return Unauthorized();
+                return BadRequest();
             else
                 return Ok();
         }
@@ -128,7 +128,7 @@ namespace SalesOrderPicking.Controllers {
             }
 
             if (!loggedIn)
-                return Unauthorized();
+                return BadRequest();
             else
                 return Ok();
         }

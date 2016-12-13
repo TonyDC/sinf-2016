@@ -11,7 +11,7 @@ namespace SalesOrderPicking.Auth {
         
         private const string FUNCIONARIO_STR = "Funcionario";
         private const string GERENTE_STR = "Gerente";
-        private const int SALT_ROUNDS = 12;
+        private const int SALT_ROUNDS = 11;
 
         public static bool LoginWorker(string username, string password) {
 
@@ -23,7 +23,7 @@ namespace SalesOrderPicking.Auth {
 
         public static bool LoginManager(string username, string password) {
 
-            Pair<string, string> credentials = RetrieveCredentials(username, FUNCIONARIO_STR);
+            Pair<string, string> credentials = RetrieveCredentials(username, GERENTE_STR);
             if (credentials == null)
                 return false;
             return BCrypt.Net.BCrypt.Verify(password, credentials.Second);
@@ -61,7 +61,7 @@ namespace SalesOrderPicking.Auth {
                 throw new InvalidOperationException("The username already exists");
 
             List<Dictionary<string, object>> insertedUser = DBQuery.performQuery(PriEngine.PickingDBConnString,
-                "INSERT INTO Utilizador(username, pass) OUTPUT INSERTED.id VALUES('@0@', '@1@')",
+                "INSERT INTO Utilizador(username, pass) OUTPUT INSERTED.id VALUES(@0@, @1@)",
                 username, hashedPassword);
 
             hashedPassword = null;
@@ -70,11 +70,11 @@ namespace SalesOrderPicking.Auth {
             if (String.Compare(type, FUNCIONARIO_STR) == 0)
                 DBQuery.performQuery(PriEngine.PickingDBConnString,
                     "INSERT INTO Funcionario VALUES(@0@)",
-                    userID.ToString());
+                    userID);
             else
                 DBQuery.performQuery(PriEngine.PickingDBConnString,
                     "INSERT INTO Gerente VALUES(@0@)",
-                    userID.ToString());
+                    userID);
 
             return userID;
         }
@@ -85,11 +85,12 @@ namespace SalesOrderPicking.Auth {
 
             if ((String.Compare(type, FUNCIONARIO_STR) == 0 && String.Compare(type, GERENTE_STR) == 0) || (String.Compare(type, FUNCIONARIO_STR) != 0 && String.Compare(type, GERENTE_STR) != 0))
                 throw new InvalidOperationException("Bad user type");
-
+            System.Diagnostics.Debug.WriteLine(type);
+            System.Diagnostics.Debug.WriteLine(username);
             List<Dictionary<string, object>> rows = DBQuery.performQuery(PriEngine.PickingDBConnString,
-                "SELECT Utilizador.username, Utilizador.pass FROM " + type + " INNER JOIN Utilizador ON (" + type + ".id = Utilizador.id) WHERE Utilizador.username = '@0@'",
+                "SELECT Utilizador.username, Utilizador.pass FROM " + type + " INNER JOIN Utilizador ON (" + type + ".id = Utilizador.id) WHERE Utilizador.username = @0@",
                 username);
-
+            System.Diagnostics.Debug.WriteLine(rows.Count);
             if (rows.Count < 1)
                 return null;
 
