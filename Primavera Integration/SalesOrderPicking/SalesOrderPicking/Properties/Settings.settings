@@ -11,5 +11,11 @@
     <Setting Name="Password" Type="System.String" Scope="Application">
       <Value Profile="(Default)">sinf</Value>
     </Setting>
+    <Setting Name="APIUser" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">sinf</Value>
+    </Setting>
+    <Setting Name="APIPassword" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">primavera</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

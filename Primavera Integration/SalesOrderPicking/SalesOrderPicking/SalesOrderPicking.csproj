@@ -282,7 +282,9 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Auth\ApiIdentity.cs" />
     <Compile Include="Auth\Auth.cs" />
+    <Compile Include="Auth\BasicAuthenticationAttribute.cs" />
     <Compile Include="Controllers\ArmazemController.cs" />
     <Compile Include="Controllers\ArtigoController.cs" />
     <Compile Include="Controllers\AuthController.cs" />

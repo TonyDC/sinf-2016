@@ -49,5 +49,23 @@ namespace SalesOrderPicking.Properties {
                 return ((string)(this["Password"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("sinf")]
+        public string APIUser {
+            get {
+                return ((string)(this["APIUser"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("primavera")]
+        public string APIPassword {
+            get {
+                return ((string)(this["APIPassword"]));
+            }
+        }
     }
 }
