@@ -45,6 +45,95 @@ namespace SalesOrderPicking.Controllers {
                 return Ok(result);
         }
 
+        [Route("api/definitions/capacidade")]
+        public IHttpActionResult GetCapacidadeMaximaFuncionario() {
+            int result = -1;
+            try {
+                result = PriIntegration.GetCapacidadeMaximaFuncionario();
+            } catch (Exception) {
+                return InternalServerError();
+            }
+
+
+            if (result < 0)
+                return InternalServerError();
+
+            else {
+                Dictionary<string, int> response = new Dictionary<string, int>();
+                response.Add("capacidade", result);
+
+                return Ok(response);
+            }
+
+        }
+
+        [Route("api/definitions/capacidade")]
+        public IHttpActionResult PostCapacidadeMaximaFuncionario(Dictionary<string, int> request) {
+
+            if (!request.ContainsKey("capacidade"))
+                return BadRequest("A resposta deve conter um objecto com a propriedade 'capacidade'");
+
+            int novaCapacidade = request["capacidade"];
+
+            try {
+                PriIntegration.SetCapacidadeMaximaFuncionario(novaCapacidade);
+
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
+
+
+            return Ok();
+        }
+
+
+        [Route("api/definitions/armazem-principal")]
+        public IHttpActionResult GetArmazemPrincipal() {
+            string result = null;
+            try {
+                result = PriIntegration.GetArmazemPrincipal();
+            } catch (Exception) {
+                return InternalServerError();
+            }
+
+
+            if (result == null)
+                return InternalServerError();
+
+            else {
+                Dictionary<string, string> response = new Dictionary<string, string>();
+                response.Add("armazem-principal", result);
+
+                return Ok(response);
+            }
+
+        }
+
+        [Route("api/definitions/armazem-principal")]
+        public IHttpActionResult PostArmazemPrincipal(Dictionary<string, string> request) {
+
+            if (!request.ContainsKey("armazem"))
+                return BadRequest("A resposta deve conter um objecto com a propriedade 'armazem'");
+
+            string novoArmazemPrincipal = request["armazem"];
+
+            try {
+                PriIntegration.SetArmazemPrincipal(novoArmazemPrincipal);
+
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
+
+
+            return Ok();
+        }
+
         /*
         // GET: api/Util
         [Route("api/teste/series")]
@@ -218,7 +307,7 @@ namespace SalesOrderPicking.Controllers {
             return Ok();
         }
         */
-        
+
 
     }
 }

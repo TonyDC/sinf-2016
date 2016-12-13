@@ -1221,8 +1221,47 @@ namespace SalesOrderPicking.Lib_Primavera {
         }
 
 
+        public static int GetCapacidadeMaximaFuncionario() {
+
+            List<Dictionary<string, object>> definitionsRows = DBQuery.performQuery(PriEngine.PickingDBConnString, "SELECT * FROM Definicoes WHERE chave = 'cap_max_funcionario'");
+            if (definitionsRows.Count < 1)
+                throw new InvalidOperationException("Não existe nenhuma entrada na tabela de definições relativamente à capacidade máxima do funcionário");
+
+            string capMaxFuncionario = (string)definitionsRows.ElementAt(0)["valor"];
+            return Convert.ToInt32(capMaxFuncionario);
+        }
 
 
+        public static void SetCapacidadeMaximaFuncionario(int cap) {
+            if (cap < 1)
+                throw new InvalidOperationException("Capacidade inválida");
+
+            DBQuery.performQuery(PriEngine.PickingDBConnString, 
+                "UPDATE Definicoes SET valor = @0@ WHERE chave = 'cap_max_funcionario'", cap.ToString());
+        }
+
+
+
+        public static string GetArmazemPrincipal() {
+            List<Dictionary<string, object>> definitionsRows = DBQuery.performQuery(PriEngine.PickingDBConnString, "SELECT * FROM Definicoes WHERE chave = 'armazem_principal'");
+            if (definitionsRows.Count < 1)
+                throw new InvalidOperationException("Não existe nenhuma entrada na tabela de definições relativamente ao armazém principal");
+
+            string armazemPrincipal = (string)definitionsRows.ElementAt(0)["valor"];
+            return armazemPrincipal;
+        }
+
+        public static void SetArmazemPrincipal(string armazem) {
+            if (armazem == null)
+                throw new InvalidOperationException("Bad argument");
+
+            List<Dictionary<string, object>> armazensRows = DBQuery.performQuery(PriEngine.DBConnString, "SELECT * FROM Armazens WHERE Armazem = @0@", armazem);
+            if (armazensRows.Count < 1)
+                throw new InvalidOperationException("O armazém não está registado no Primavera");
+
+            DBQuery.performQuery(PriEngine.PickingDBConnString,
+                "UPDATE Definicoes SET valor = @0@ WHERE chave = 'armazem_principal'", armazem);
+        }
 
         #endregion Testes
 
