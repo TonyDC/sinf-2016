@@ -51,7 +51,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             List<Dictionary<string, object>> artigo = DBQuery.performQuery(PriEngine.DBConnString, "SELECT * FROM Artigo WITH (NOLOCK) WHERE Artigo = @0@", codArtigo);
             if (artigo.Count != 1)
                 return null;
-                //throw new InvalidOperationException("Código de artigo inválido");
+            //throw new InvalidOperationException("Código de artigo inválido");
 
             Dictionary<string, object> linhaArtigo = artigo.ElementAt(0);
             object descricao = linhaArtigo["Descricao"], unidadeVenda = linhaArtigo["UnidadeVenda"];
@@ -96,7 +96,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                 orderQuerySubString = " ORDER BY Entidade " + (clienteDesc ? "DESC" : "") + ", DataMinima " + (dataDesc ? "DESC" : "");
 
 
-             listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE3 + orderQuerySubString, f, s);
+            listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE3 + orderQuerySubString, f, s);
 
             foreach (var item in listaEncomendas) {
                 object encomendaID = item["Id"], filial = item["Filial"], serie = item["Serie"], numDoc = item["NumDoc"], cliente = item["EntidadeFac"];
@@ -129,14 +129,14 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             if (clienteID == null)
                 if (nDoc == null)
-                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " ORDER BY NumDoc", f, s);
+                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " ORDER BY CabecDoc.NumDoc", f, s);
                 else
-                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " AND NumDoc = @2@", f, s, nDoc);
+                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " AND CabecDoc.NumDoc = @2@", f, s, nDoc);
             else
                 if (nDoc == null)
-                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " AND EntidadeFac = @2@ ORDER BY NumDoc", f, s, clienteID);
+                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " AND EntidadeFac = @2@ ORDER BY CabecDoc.NumDoc", f, s, clienteID);
                 else
-                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " AND EntidadeFac = @2@ AND NumDoc = @3@ ORDER BY NumDoc", f, s, clienteID, nDoc);
+                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " AND EntidadeFac = @2@ AND CabecDoc.NumDoc = @3@ ORDER BY CabecDoc.NumDoc", f, s, clienteID, nDoc);
 
 
             foreach (var item in listaEncomendas) {
@@ -190,21 +190,24 @@ namespace SalesOrderPicking.Lib_Primavera {
 
         public static bool GerarGuiaRemessa(PedidoTransformacaoECL encomenda) {
 
+            if (encomenda == null)
+                throw new InvalidOperationException("Pedido de encomenda inválido (parâmetro a null)");
+            
             // Verificar se todas as linhas da encomenda fora satisfeitas na totalidade
             List<Dictionary<string, object>> unfulfilledLines = DBQuery.performQuery(PriEngine.PickingDBConnString,
-                "SELECT * FROM PRIDEMOSINF.dbo.CabecDoc INNER JOIN PRIDEMOSINF.dbo.LinhasDoc ON (CabecDoc.id = LinhasDoc.IdCabecDoc) LEFT JOIN LinhaEncomenda ON (LinhasDoc.id = LinhaEncomenda.id_linha AND sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) = LinhaEncomenda.versao_ult_act) WHERE CabecDoc.TipoDoc = 'ECL' AND CabecDoc.Filial = @0@ AND CabecDoc.Serie = @1@ AND CabecDoc.NumDoc = @2@ AND (LinhaEncomenda.quant_satisfeita < LinhaEncomenda.quant_pedida OR LinhaEncomenda.id IS NULL) AND LinhasDoc.Quantidade > 0",
-                encomenda.Filial, encomenda.Serie, encomenda.NDoc);
+                "SELECT CabecDoc.id FROM PRIDEMOSINF.dbo.CabecDoc INNER JOIN PRIDEMOSINF.dbo.LinhasDoc ON (CabecDoc.id = LinhasDoc.IdCabecDoc) LEFT JOIN LinhaEncomenda ON (LinhasDoc.id = LinhaEncomenda.id_linha AND sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) = LinhaEncomenda.versao_ult_act) WHERE CabecDoc.TipoDoc = 'ECL' AND CabecDoc.Filial = @0@ AND CabecDoc.Serie = @1@ AND CabecDoc.NumDoc = @2@ AND (LinhaEncomenda.quant_satisfeita < LinhaEncomenda.quant_pedida OR LinhaEncomenda.id IS NULL) AND LinhasDoc.Quantidade > 0",
+                encomenda.Filial, encomenda.Serie, (int)encomenda.NDoc);
 
             if (unfulfilledLines.Count > 0)
                 throw new InvalidOperationException("Só podem ser geradas guias de remessa através da API caso cada linha da encomenda de cliente esteja totalmente satisfeita");
+            
+            if (!PriEngine.IniciaTransaccao())
+                return false;
 
-            if (PriEngine.IniciaTransaccao()) {
-
-                if (encomenda == null)
-                    throw new InvalidOperationException("Pedido de encomenda inválido (parâmetro a null)");
-
+            GcpBEDocumentoVenda objEncomenda = null;
+            try {
                 // Carregar encomenda de cliente
-                GcpBEDocumentoVenda objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, (int)encomenda.NDoc);
+                objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, (int)encomenda.NDoc);
 
                 // A saída de stock é feita a partir do armazém de expedição
                 objEncomenda.set_EmModoEdicao(true);
@@ -220,11 +223,17 @@ namespace SalesOrderPicking.Lib_Primavera {
                 objEncomenda.set_EmModoEdicao(false);
                 PriEngine.TerminaTransaccao();
 
-                // ------------------------------------------------------------------------------------
+            } catch (Exception) {
+                PriEngine.TerminaTransaccao();
+                throw;
+            }
 
-                if (!PriEngine.IniciaTransaccao())
-                    return false;
+            // ------------------------------------------------------------------------------------
 
+            if (objEncomenda == null || !PriEngine.IniciaTransaccao())
+                return false;
+
+            try {
                 objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, (int)encomenda.NDoc);
                 if (objEncomenda == null) {
                     PriEngine.TerminaTransaccao();
@@ -246,11 +255,13 @@ namespace SalesOrderPicking.Lib_Primavera {
                 PriEngine.Engine.Comercial.Vendas.TransformaDocumentoEX2(ref arrayDocs, ref objGuiaRemessa, false);
 
                 PriEngine.TerminaTransaccao();
-                return true;
 
-            } else {
-                return false;
+            } catch (Exception) {
+                PriEngine.TerminaTransaccao();
+                throw;
             }
+
+            return true;
         }
 
         #endregion Encomendas

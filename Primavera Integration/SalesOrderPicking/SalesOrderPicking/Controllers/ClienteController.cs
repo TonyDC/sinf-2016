@@ -17,6 +17,9 @@ namespace SalesOrderPicking.Controllers {
             try {
                 clientes = PriIntegration.GetListaClientes();
 
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
+
             } catch (Exception) {
                 return InternalServerError();
             }
@@ -32,6 +35,9 @@ namespace SalesOrderPicking.Controllers {
             Cliente cliente = null;
             try {
                 cliente = PriIntegration.GetClienteInfo(id);
+
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
 
             } catch (Exception) {
                 return InternalServerError();
@@ -73,8 +79,8 @@ namespace SalesOrderPicking.Controllers {
             } catch (InvalidOperationException e) {
                 return BadRequest(e.Message);
 
-            } catch (Exception) {
-                return InternalServerError();
+            } catch (Exception e) {
+                return InternalServerError(e);
             }
 
             if (encomendas == null || encomendas.Count < 1)
@@ -104,7 +110,7 @@ namespace SalesOrderPicking.Controllers {
         }
 
         // GET: api/encomenda/{filial}/{serie}
-        [Route("api/encomenda/{filial}/{serie}/order/date/{desc:bool}")]
+        [Route("api/encomenda/{filial}/{serie}/order/date/{desc:bool=false}")]
         public IHttpActionResult GetEncomendasOrdenadasPorDataMinima(string filial, string serie, bool desc) {
             List<EncomendaCliente> encomendas = null;
             try {
@@ -125,7 +131,7 @@ namespace SalesOrderPicking.Controllers {
 
 
         // GET: api/encomenda/{filial}/{serie}
-        [Route("api/encomenda/{filial}/{serie}/order/cliente/{desc:bool}")]
+        [Route("api/encomenda/{filial}/{serie}/order/cliente/{desc:bool=false}")]
         public IHttpActionResult GetEncomendasOrdenadasPorCliente(string filial, string serie, bool desc) {
             List<EncomendaCliente> encomendas = null;
             try {
@@ -226,8 +232,8 @@ namespace SalesOrderPicking.Controllers {
             } catch (InvalidOperationException e) {
                 return BadRequest(e.Message);
 
-            } catch (Exception) {
-                return InternalServerError();
+            } catch (Exception e) {
+                return InternalServerError(e);
             }
  
         }

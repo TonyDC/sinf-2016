@@ -69,8 +69,9 @@ namespace SalesOrderPicking.Controllers {
                 else
                     return BadRequest();
 
-            } catch (Exception) {
-                return InternalServerError();
+            } catch (Exception e) {
+
+                return InternalServerError(new Exception(e.Message));
             }
         }
     }
