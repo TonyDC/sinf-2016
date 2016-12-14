@@ -149,4 +149,6 @@ INSERT INTO Definicoes VALUES ('cap_max_funcionario', '100'), ('armazem_principa
 
 
 
+
+
 -- TRIGGERS

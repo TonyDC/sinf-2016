@@ -44,7 +44,7 @@ namespace SalesOrderPicking.Lib_Primavera {
         public static Artigo ObterArtigo(string codArtigo) {
 
             if (PriEngine.DBConnString == null)
-                throw new InvalidOperationException("Connexão não inicializada (Connection string is null)");
+                throw new InvalidOperationException("Conexão não inicializada (Connection string is null)");
 
             else if (codArtigo == null)
                 throw new InvalidOperationException("Invalid object code");
@@ -200,7 +200,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                 encomenda.Filial, encomenda.Serie, (int)encomenda.NDoc);
 
             if (unfulfilledLines.Count > 0)
-                throw new InvalidOperationException("Só podem ser geradas guias de remessa através da API caso cada linha da encomenda de cliente esteja totalmente satisfeita");
+                throw new InvalidOperationException("Só podem ser geradas guias de remessa através da API caso cada linha da encomenda de cliente esteja totalmente satisfeita e ainda não tenha sido sujeita a transformação");
             
             if (!PriEngine.IniciaTransaccao())
                 return false;
@@ -225,7 +225,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                 PriEngine.TerminaTransaccao();
 
             } catch (Exception) {
-                PriEngine.TerminaTransaccao();
+                PriEngine.DesfazTransaccao();
                 throw;
             }
 
@@ -258,7 +258,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                 PriEngine.TerminaTransaccao();
 
             } catch (Exception) {
-                PriEngine.TerminaTransaccao();
+                PriEngine.DesfazTransaccao();
                 throw;
             }
 
@@ -385,7 +385,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                 PriEngine.TerminaTransaccao();
 
             } catch (Exception) {
-                PriEngine.TerminaTransaccao();
+                PriEngine.DesfazTransaccao();
                 throw;
             }
 

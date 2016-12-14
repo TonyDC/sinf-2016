@@ -41,8 +41,16 @@ namespace SalesOrderPicking.Lib_Primavera {
         public static bool TerminaTransaccao() {
             if (Engine == null)
                 return false;
-
+            
             Engine.TerminaTransaccao();
+            return true;
+        }
+
+        public static bool DesfazTransaccao() {
+            if (Engine == null)
+                return false;
+            
+            Engine.DesfazTransaccao();
             return true;
         }
 
