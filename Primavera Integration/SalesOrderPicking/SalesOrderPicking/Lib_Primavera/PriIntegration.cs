@@ -426,7 +426,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
 
 
-        #region Testes
+        #region Picking
 
         public static bool RegistarAvisos(List<string> avisos) {
 
@@ -508,13 +508,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             return stock;
              * */
         }
-        /*
-        public static Dictionary<string, int> GetStockActualPorArtigo(string artigo) {
-
-
-        }
-        */
-
+        
 
 
         public static bool GerarPickingOrders(string filial, string serie, List<uint> encomendas) {
@@ -1403,7 +1397,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             return result;
         }
 
-        #endregion Testes
+        #endregion Picking
 
     }
 }
