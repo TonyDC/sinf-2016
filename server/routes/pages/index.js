@@ -6,13 +6,46 @@ const PickingOrder = require('../../models/PickingOrder');
 /**
  * PAGES INITIALIZATION
  */
+function checkLogin(req, res, next) {
+    if(!req.session.userId) {
+        res.redirect('/');
+        return;
+    }
+    next();
+}
+
+function checkAdmin(req, res, next) {
+    if(!req.session.admin) {
+        res.redirect('/');
+        return;
+    }
+    next();
+}
+
+function checkWorker(req, res, next) {
+    if(req.session.admin) {
+        res.redirect('/');
+        return;
+    }
+    next();
+}
+
 router.get('/', function(req, res, next) {
+
+    if(req.session.userId) {
+        if(req.session.admin) {
+            res.redirect('/choice');
+            return;
+        }
+        res.redirect('/worker');
+        return;
+    }
 
     res.render('index');
 
 });
 
-router.get('/choice', function(req, res, next) {
+router.get('/choice', checkLogin, checkAdmin, function(req, res, next) {
 
     const filiais = [{name: "filial1"},{name: "filial2"},{name: "filial2"}];
     const series = [{name: "serie1"},{name: "serie2"},{name: "serie3"}];
@@ -20,7 +53,7 @@ router.get('/choice', function(req, res, next) {
 
 });
 
-router.get('/creation', function(req, res, next) {
+router.get('/creation', checkLogin, checkAdmin, function(req, res, next) {
 
     const required_params = ['serie', 'filial'];
 
@@ -38,12 +71,12 @@ shippingDate:
  });
         */
 
-router.get('/options', function(req, res, next) {
+router.get('/options', checkLogin, checkAdmin, function(req, res, next) {
  const variables = {worker: "100"};
  res.render('options', {variables: variables});
 });
 
-router.get('/status', function(req, res, next) {
+router.get('/status', checkLogin, checkAdmin, function(req, res, next) {
 
      //NOTA: status em percentagem
      const pickingOrders = [{status: "Em progresso", shippingDate: "2016/11/23", worker: "Joaquim"},
@@ -57,7 +90,7 @@ router.get('/status', function(req, res, next) {
     */
 });
 
-router.get('/shipping', function(req, res, next) {
+router.get('/shipping', checkLogin, checkAdmin, function(req, res, next) {
 
      const salesOrders = [{status: "Expedida", shippingDate: "2016/11/23", shippingguide: ""},
      {status: "Parcial", shippingDate: "2015/11/23", shippingGuide: ""},
@@ -70,7 +103,7 @@ router.get('/shipping', function(req, res, next) {
 	*/
 });
 
-router.get('/warnings', function(req, res, next) {
+router.get('/warnings', checkLogin, checkAdmin, function(req, res, next) {
 
     //NOTA: status em percentagem
     const warnings = [{priority: true, message: "O produto CPU, pertencente à sales order #3, não foi expedido a tempo"},
@@ -79,7 +112,7 @@ router.get('/warnings', function(req, res, next) {
     res.render('warnings', {warnings: warnings});
 });
 
-router.get('/users', function(req, res, next) {
+router.get('/users', checkLogin, checkAdmin, function(req, res, next) {
 
     const users = [{code: "001", email: "joaquimalmeida@email.com", name: "Joaquim Almeida", position: "Gerente"},
         {code: "002", email: "marianacorreia@email.com", name: "Mariana Correia", position: "Funcionário"},
@@ -89,7 +122,7 @@ router.get('/users', function(req, res, next) {
 
 });
 
-router.get('/worker', function(req, res, next) {
+router.get('/worker', checkLogin, checkWorker, function(req, res, next) {
 
      const pickingOrder = {steps:
          [
@@ -141,6 +174,25 @@ router.post('/createPickingWave', function(req, res, next) {
     }
     const ids = req.body.selected;
     res.send("Sucesso");
+});
+
+router.post('/login', function(req, res, next) {
+   const email = req.body.email;
+   const pass = req.body.password;
+
+   req.session.loggedIn = true;
+   req.session.admin = true;
+   req.session.userId = email;
+
+   res.redirect('/');
+});
+
+router.post('/logout', function(req, res, next) {
+    if(req.session) {
+        req.session.destroy();
+    }
+
+    res.redirect('/');
 });
 
 module.exports = router;
