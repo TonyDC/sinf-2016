@@ -1037,10 +1037,10 @@ namespace SalesOrderPicking.Lib_Primavera {
                         index++;
                         continue;
                     }
-                    System.Diagnostics.Debug.WriteLine("lafkjlksdhgflkaueoriuwqf");
+                   
                     // Determinar a localização (estratégia: localização com maior quantidade)
                     // O produto deve estar disponível nos pisos de replenishment (pisos 2-9), no armazém primário
-                    List<Dictionary<string, object>> localizacoesRows = dbQuery.performQueryWithTransaction("SELECT * FROM PRIDEMOSINF.dbo.ArtigoArmazem WITH (NOLOCK) WHERE Artigo = @0@ AND Localizacao LIKE '" + ARMAZEM_PRIMARIO + ".[A-Z].[2-9].[0-9][0-9][0-9]' ORDER BY StkActual DESC", artigo);
+                    List<Dictionary<string, object>> localizacoesRows = dbQuery.performQueryWithTransaction("SELECT * FROM PRIDEMOSINF.dbo.ArtigoArmazem WITH (NOLOCK) WHERE Artigo = @0@ AND Localizacao LIKE '" + ARMAZEM_PRIMARIO + ".[A-Z].[2-9].[0-9][0-9][0-9]' AND StkActual > 0 ORDER BY StkActual DESC", artigo);
                     if (localizacoesRows.Count < 1) {
                         if (!notificado) {
                             listaAvisos.Add("O artigo " + artigo + " não está disponível nas áreas de reposição do armazém");

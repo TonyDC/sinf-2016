@@ -145,10 +145,29 @@ INSERT INTO Gerente VALUES(1)
 INSERT INTO Funcionario VALUES(2)
 
 INSERT INTO Definicoes VALUES ('cap_max_funcionario', '100'), ('armazem_principal', 'A1')
+GO
 
+CREATE TRIGGER TR_CapMaxFuncionario ON Definicoes
+INSTEAD OF UPDATE
+AS
+	DECLARE @new_cap INT;
 
+	SELECT @new_cap = CONVERT(INT, u.valor) FROM INSERTED u;
 
+	BEGIN
+		IF(@new_cap < 1)
+		BEGIN
+			RAISERROR('Bad worker capacity', 16, 1);
+			ROLLBACK;
+		END
+		ELSE
+			BEGIN
+			UPDATE Definicoes SET valor = CONVERT(NVARCHAR, @new_cap) WHERE chave = 'cap_max_funcionario';
+			COMMIT;
+			END
+	END
+GO
 
-
+UPDATE Definicoes SET valor = '200' WHERE chave = 'cap_max_funcionario'
 
 -- TRIGGERS
