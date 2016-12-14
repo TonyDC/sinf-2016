@@ -144,6 +144,14 @@ p, body {
   }
 }
 
+button {
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+}
+
 .main-button {
   background-color: $dark;
   font-size: 110%;
@@ -202,6 +210,23 @@ body {
           padding-top:15px;
           padding-bottom:15px;
           color: $dark;
+
+          i {
+            font-size: 130%;
+          }
+
+          &:hover {
+            background-color: lightgray;
+            color: $dark;
+          }
+        }
+
+        form>button {
+          padding-top:15px;
+          padding-bottom:15px;
+          color: $dark;
+          width: 100%;
+          text-align: left;
 
           i {
             font-size: 130%;
@@ -312,4 +337,43 @@ body {
 #error-info {
   display: none;
   padding-top: 50px;
+}
+
+nav>li {
+  position:relative;
+  display:block
+}
+
+.nav>li>form>button {
+  position:relative;
+  display:block;
+  padding:10px 15px
+}
+
+.nav>li>form>button:focus, .nav>li>form>button:hover {
+  text-decoration:none;
+  background-color:#eee
+}
+
+.nav>li.disabled>form>button {
+  color:#777
+}
+
+.nav>li.disabled>form>button:focus, .nav>li.disabled>form>button:hover {
+  color:#777;
+  text-decoration:none;
+  cursor:not-allowed;
+  background-color:transparent
+}
+
+.nav .open>a, .nav .open>a:focus, .nav .open>a:hover {
+  background-color:#eee;
+  border-color:#337ab7
+}
+
+.nav .nav-divider {
+  height:1px;
+  margin:9px 0;
+  overflow:hidden;
+  background-color:#e5e5e5
 }
