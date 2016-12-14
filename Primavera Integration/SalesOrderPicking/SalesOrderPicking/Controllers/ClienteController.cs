@@ -103,6 +103,67 @@ namespace SalesOrderPicking.Controllers {
                 return Ok(encomendas);
         }
 
+        // GET: api/encomenda/{filial}/{serie}
+        [Route("api/encomenda/{filial}/{serie}/order/date/{desc:bool}")]
+        public IHttpActionResult GetEncomendasOrdenadasPorDataMinima(string filial, string serie, bool desc) {
+            List<EncomendaCliente> encomendas = null;
+            try {
+                encomendas = PriIntegration.GetEncomendasClientesPorOrdenacao(filial, serie, true, desc, false, false);
+
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
+
+            } catch (Exception e) {
+                return InternalServerError(e);
+            }
+
+            if (encomendas == null || encomendas.Count < 1)
+                return NotFound();
+            else
+                return Ok(encomendas);
+        }
+
+
+        // GET: api/encomenda/{filial}/{serie}
+        [Route("api/encomenda/{filial}/{serie}/order/cliente/{desc:bool}")]
+        public IHttpActionResult GetEncomendasOrdenadasPorCliente(string filial, string serie, bool desc) {
+            List<EncomendaCliente> encomendas = null;
+            try {
+                encomendas = PriIntegration.GetEncomendasClientesPorOrdenacao(filial, serie, false, false, true, desc);
+
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
+
+            } catch (Exception e) {
+                return InternalServerError(e);
+            }
+
+            if (encomendas == null || encomendas.Count < 1)
+                return NotFound();
+            else
+                return Ok(encomendas);
+        }
+
+        // GET: api/encomenda/{filial}/{serie}
+        [Route("api/encomenda/{filial}/{serie}/order/date/{descDate:bool}/cliente/{descCliente:bool}")]
+        public IHttpActionResult GetEncomendasOrdenadasPorDataECliente(string filial, string serie, bool descDate, bool descCliente) {
+            List<EncomendaCliente> encomendas = null;
+            try {
+                encomendas = PriIntegration.GetEncomendasClientesPorOrdenacao(filial, serie, true, descDate, true, descCliente);
+
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
+
+            } catch (Exception e) {
+                return InternalServerError(e);
+            }
+
+            if (encomendas == null || encomendas.Count < 1)
+                return NotFound();
+            else
+                return Ok(encomendas);
+        }
+
 
         // GET: api/encomenda/{filial}/{serie}/{n}
         [Route("api/encomenda/{filial}/{serie}/{n:int:min(1)}")]

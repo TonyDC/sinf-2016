@@ -76,7 +76,48 @@ namespace SalesOrderPicking.Lib_Primavera {
 
         #region Encomendas
 
-        // Vai buscar as encomendas que não estão satisfeitas na totalidade ou que estão com um processo de picking pendente
+        public static List<EncomendaCliente> GetEncomendasClientesPorOrdenacao(string f, string s, bool porDataMinima, bool dataDesc, bool porCliente, bool clienteDesc) {
+
+            if (f == null || s == null)
+                throw new InvalidOperationException("Bad arguments: 'filial', 'serie'");
+
+            List<EncomendaCliente> listaArtigos = new List<EncomendaCliente>();
+            List<Dictionary<string, object>> listaEncomendas = null;
+
+            string orderQuerySubString = "";
+
+            if (porDataMinima && !porCliente)
+                orderQuerySubString = " ORDER BY DataMinima " + (dataDesc ? "DESC" : "");
+
+            else if (!porDataMinima && porCliente)
+                orderQuerySubString = " ORDER BY Entidade " + (clienteDesc ? "DESC" : "");
+
+            else if (porDataMinima && porCliente)
+                orderQuerySubString = " ORDER BY Entidade " + (clienteDesc ? "DESC" : "") + ", DataMinima " + (dataDesc ? "DESC" : "");
+
+
+             listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE3 + orderQuerySubString, f, s);
+
+            foreach (var item in listaEncomendas) {
+                object encomendaID = item["Id"], filial = item["Filial"], serie = item["Serie"], numDoc = item["NumDoc"], cliente = item["EntidadeFac"];
+
+                List<Dictionary<string, object>> linhasEncomenda = DBQuery.performQuery(PriEngine.DBConnString, "SELECT LinhasDoc.Id, LinhasDoc.Artigo, LinhasDoc.Quantidade AS Quantidade, COALESCE(quant_satisfeita, 0) AS QuantTrans, NumLinha, Armazem, Localizacao, Lote, DataEntrega FROM LinhasDoc WITH (NOLOCK) LEFT JOIN PICKING.dbo.LinhaEncomenda WITH (NOLOCK) ON (LinhaEncomenda.id_linha = LinhasDoc.Id AND sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) = LinhaEncomenda.versao_ult_act) WHERE LinhasDoc.IdCabecDoc = @0@ AND LinhasDoc.Artigo IS NOT NULL", encomendaID);
+
+                List<LinhaEncomendaCliente> artigosEncomenda = new List<LinhaEncomendaCliente>();
+
+                foreach (var linha in linhasEncomenda) {
+                    object linhaID = linha["Id"], artigoID = linha["Artigo"], quantidade = linha["Quantidade"], quantidadeSatisfeita = linha["QuantTrans"], numLinha = linha["NumLinha"], armazem = linha["Armazem"], localizacao = linha["Localizacao"], lote = linha["Lote"], dataEntrega = linha["DataEntrega"];
+
+                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID as string, armazem as string, localizacao as string, lote as string, Convert.ToDouble(quantidade), Convert.ToDouble(quantidadeSatisfeita), Convert.ToUInt32(numLinha), (DateTime)dataEntrega));
+                }
+
+                listaArtigos.Add(new EncomendaCliente(encomendaID.ToString(), Convert.ToUInt32(numDoc), cliente as string, serie as string, filial as string, artigosEncomenda));
+            }
+
+            return listaArtigos;
+        }
+
+        // Vai buscar as encomendas que não estão satisfeitas na totalidade ou que não estão com um processo de picking pendente
         public static List<EncomendaCliente> GetEncomendasClientes(string f, string s, string clienteID = null, int? nDoc = null) {
 
             if (f == null || s == null)
@@ -1331,5 +1372,3 @@ namespace SalesOrderPicking.Lib_Primavera {
 
     }
 }
-
-// TODO try...catch em cada controlador
