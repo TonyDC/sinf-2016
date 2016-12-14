@@ -14,6 +14,7 @@ using ADODB;
 using SalesOrderPicking.Lib_Primavera.Model;
 using SalesOrderPicking.Lib_Primavera;
 using SalesOrderPicking.Lib_Primavera.Model.Requests;
+using System.Runtime.ExceptionServices;
 
 namespace SalesOrderPicking.Lib_Primavera {
 
@@ -540,7 +541,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             try {
                 List<Dictionary<string, object>> linhasEncomendas = dbQuery.performQueryWithTransaction(
-                        "SELECT LinhasDoc.Id, sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) as VersaoUltAct, LinhasDoc.Unidade, LinhasDoc.Artigo, LinhasDoc.Quantidade, LinhasDoc.DataEntrega, CabecDoc.Serie FROM PRIDEMOSINF.dbo.CabecDoc INNER JOIN PRIDEMOSINF.dbo.LinhasDoc ON (CabecDoc.id = LinhasDoc.idCabecDoc) WHERE TipoDoc = 'ECL' AND Quantidade > 0 AND filial = @0@ AND serie = @1@ AND " + conditionQueryString.ToString(),
+                        "SELECT LinhasDoc.Id, sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) as VersaoUltAct, LinhasDoc.Unidade, LinhasDoc.Artigo, LinhasDoc.Quantidade, LinhasDoc.DataEntrega, CabecDoc.Serie, CabecDoc.NumDoc FROM PRIDEMOSINF.dbo.CabecDoc INNER JOIN PRIDEMOSINF.dbo.LinhasDoc ON (CabecDoc.id = LinhasDoc.idCabecDoc) WHERE TipoDoc = 'ECL' AND Quantidade > 0 AND filial = @0@ AND serie = @1@ AND " + conditionQueryString.ToString(),
                         filial, serie);
 
                 if (linhasEncomendas.Count < 1)
@@ -568,7 +569,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
                         string artigo = linha["artigo"] as string;
                         if (!stockActual.ContainsKey(artigo) || stockActual[artigo] <= 0) {
-                            listaAvisos.Add("O armazém principal (" + ARMAZEM_PRIMARIO + ") não tem o artigo '" + artigo + "', presente no documento nº" + tuple["NumDoc"] + " com a série " + serie);
+                            listaAvisos.Add("O armazém principal (" + ARMAZEM_PRIMARIO + ") não tem o artigo " + artigo + ", presente no documento nº" + tuple["NumDoc"] + " com a série " + serie);
                             continue;
 
                         }
@@ -603,7 +604,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                         string artigo = tuple["Artigo"] as string;
 
                         if (!stockActual.ContainsKey(artigo) || stockActual[artigo] <= 0) {
-                            listaAvisos.Add("O armazém principal (" + ARMAZEM_PRIMARIO + ") não tem o artigo '" + artigo + "', presente no documento nº" + tuple["NumDoc"] + " com a série " + serie);
+                            listaAvisos.Add("O armazém principal (" + ARMAZEM_PRIMARIO + ") não tem o artigo " + artigo + ", presente no documento nº" + tuple["NumDoc"] + " com a série " + serie);
                             continue;
 
                         } else if (diferenca > stockActual[artigo]) {
@@ -659,8 +660,9 @@ namespace SalesOrderPicking.Lib_Primavera {
                 // Registar os avisos
                 RegistarAvisos(listaAvisos);
 
-            } catch (Exception) {
+            } catch (Exception e) {
                 dbQuery.Rollback();
+                ExceptionDispatchInfo.Capture(e).Throw();
                 throw;
             }
 
@@ -715,7 +717,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                         line["artigo"].ToString(), ARMAZEM_PRIMARIO + ".[A-Z].1.[0-9][0-9][0-9]");
                     if (localizacoesRows.Count < 1) {
                         if (!notificado) {
-                            listaAvisos.Add("O armazém principal (" + ARMAZEM_PRIMARIO + ") não tem o artigo '" + line["Artigo"].ToString() + "' na zona de picking (piso 1).");
+                            listaAvisos.Add("O armazém principal (" + ARMAZEM_PRIMARIO + ") não tem o artigo " + line["artigo"].ToString() + " na zona de picking (piso 1).");
                             dbQuery.performQueryWithTransaction(
                                 "UPDATE LinhaPicking SET notificado_aviso = 1 WHERE id = @0@", line["id"].ToString());
                         }
@@ -788,8 +790,9 @@ namespace SalesOrderPicking.Lib_Primavera {
                 // Adicionar à picking order
                 return new Wave<PickingLine>(pickingWaveResult.ElementAt(0)["id"].ToString(), Convert.ToInt32(workerRows.ElementAt(0)["id"]), pickingOrderContent);
 
-            } catch (Exception) {
+            } catch (Exception e) {
                 dbQuery.Rollback();
+                ExceptionDispatchInfo.Capture(e).Throw();
                 throw;
             }
         }
@@ -870,7 +873,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
                         if (clientOrderRows.Count > 0) {
                             Dictionary<string, object> linhaClientOrder = clientOrderRows.ElementAt(0);
-                            listaAvisos.Add("Encomenda nº " + (linhaClientOrder["NumDoc"].ToString()) + ", série: " + (linhaClientOrder["Serie"] as string) + ", cliente: " + (linhaClientOrder["Entidade"] as string) + " -> O artigo ''" + pickingLineRow.ElementAt(0)["artigo"].ToString() + "'' vai ser entregue ao cliente fora do prazo de entrega estabelecido");
+                            listaAvisos.Add("Encomenda nº " + (linhaClientOrder["NumDoc"].ToString()) + ", série: " + (linhaClientOrder["Serie"] as string) + ", cliente: " + (linhaClientOrder["Entidade"] as string) + " -> O artigo " + pickingLineRow.ElementAt(0)["artigo"].ToString() + " vai ser entregue ao cliente fora do prazo de entrega estabelecido");
                         }
                     }
                 }
@@ -1040,7 +1043,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                     List<Dictionary<string, object>> localizacoesRows = dbQuery.performQueryWithTransaction("SELECT * FROM PRIDEMOSINF.dbo.ArtigoArmazem WITH (NOLOCK) WHERE Artigo = @0@ AND Localizacao LIKE '" + ARMAZEM_PRIMARIO + ".[A-Z].[2-9].[0-9][0-9][0-9]' ORDER BY StkActual DESC", artigo);
                     if (localizacoesRows.Count < 1) {
                         if (!notificado) {
-                            listaAvisos.Add("O artigo ''" + artigo + "'' não está disponível nas áreas de reposição do armazém");
+                            listaAvisos.Add("O artigo " + artigo + " não está disponível nas áreas de reposição do armazém");
                             dbQuery.performQueryWithTransaction(
                                 "UPDATE LinhaReplenishment SET notificado_aviso = 1 WHERE id = @0@", id);
                         }
