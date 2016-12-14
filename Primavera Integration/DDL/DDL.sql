@@ -1,4 +1,4 @@
-
+-- DDL
 IF db_id('PICKING') IS NULL
 	CREATE DATABASE PICKING
 GO
@@ -138,6 +138,9 @@ CREATE TABLE Definicoes (
 	valor NVARCHAR(300)
 )
 
+-- ---------------------------------------------------------------------------------
+-- DML
+
 -- Username: admin, password: admin
 -- Username: worker, passowrd: worker
 INSERT INTO Utilizador(username, pass) VALUES('admin', '$2a$11$s0GMyuOSBXOUHLD353oHA..cmtYznNePmsIlWMvnIj06qlVkBaPFG'), ('worker', '$2a$11$mAmHgZiA.qyvHpHE0FK45.hWVW9oxRNn2ZXlt6wozDmF.Wq1k4jlC')
@@ -147,13 +150,15 @@ INSERT INTO Funcionario VALUES(2)
 INSERT INTO Definicoes VALUES ('cap_max_funcionario', '100'), ('armazem_principal', 'A1')
 GO
 
+-- ---------------------------------------------------------------------------------
+-- TRIGGERS (DDL)
 CREATE TRIGGER TR_CapMaxFuncionario ON Definicoes
 INSTEAD OF UPDATE
 AS
 	DECLARE @new_cap INT;
 
-	SELECT @new_cap = CONVERT(INT, u.valor) FROM INSERTED u;
-
+	SELECT @new_cap = CAST(u.valor AS INT) FROM INSERTED u;
+	PRINT @new_cap;
 	BEGIN
 		IF(@new_cap < 1)
 		BEGIN
@@ -162,12 +167,9 @@ AS
 		END
 		ELSE
 			BEGIN
-			UPDATE Definicoes SET valor = CONVERT(NVARCHAR, @new_cap) WHERE chave = 'cap_max_funcionario';
-			COMMIT;
+			BEGIN TRANSACTION;
+			UPDATE Definicoes SET valor = CAST(@new_cap AS varchar(300)) WHERE chave = 'cap_max_funcionario';
+			COMMIT TRANSACTION;			-- Antes de um commit, há que iniciar a transacção
 			END
 	END
 GO
-
-UPDATE Definicoes SET valor = '200' WHERE chave = 'cap_max_funcionario'
-
--- TRIGGERS

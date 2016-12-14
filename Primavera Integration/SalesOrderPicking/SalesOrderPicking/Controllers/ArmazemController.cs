@@ -7,6 +7,7 @@ using System.Web.Http;
 
 using SalesOrderPicking.Lib_Primavera;
 using SalesOrderPicking.Lib_Primavera.Model;
+using SalesOrderPicking.Lib_Primavera.Model.Requests;
 using SalesOrderPicking.Auth;
 
 namespace SalesOrderPicking.Controllers {

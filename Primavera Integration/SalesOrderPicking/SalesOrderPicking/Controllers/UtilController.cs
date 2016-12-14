@@ -4,8 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+
 using SalesOrderPicking.Lib_Primavera;
 using SalesOrderPicking.Lib_Primavera.Model;
+using SalesOrderPicking.Lib_Primavera.Model.Requests;
 
 namespace SalesOrderPicking.Controllers {
 
