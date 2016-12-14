@@ -121,7 +121,7 @@ namespace SalesOrderPicking.Controllers {
                 return InternalServerError();
             }
 
-            
+
             if (result == null)
                 return InternalServerError();
 
@@ -160,6 +160,50 @@ namespace SalesOrderPicking.Controllers {
 
 
             return Ok();
+        }
+
+
+        [Route("api/avisos/existe")]
+        public IHttpActionResult GetQuantidadeAvisos() {
+            int result = -1;
+            try {
+                result = PriIntegration.GetNumeroAvisosPorLer();
+
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
+
+            if (result < 0)
+                return InternalServerError();
+
+            Dictionary<string, int> resultBody = new Dictionary<string, int>();
+            resultBody.Add("quantidade", result);
+
+            return Ok(resultBody);
+        }
+
+
+        [Route("api/avisos")]
+        public IHttpActionResult GetAvisos() {
+            List<string> result = null;
+            try {
+                result = PriIntegration.GetAvisosPorLer();
+
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
+
+            } catch (Exception) {
+                return InternalServerError();
+            }
+
+            if (result == null)
+                return InternalServerError();
+
+            else
+                return Ok(result);
         }
 
     }

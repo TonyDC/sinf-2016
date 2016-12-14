@@ -1382,6 +1382,27 @@ namespace SalesOrderPicking.Lib_Primavera {
             PriIntegration.MAX_CAP_FUNCIONARIO = GetCapacidadeMaximaFuncionario();
         }
 
+
+        public static int GetNumeroAvisosPorLer() {
+            List<Dictionary<string, object>> avisosRows = DBQuery.performQuery(PriEngine.PickingDBConnString, "SELECT * FROM Avisos WHERE visto = 0");
+            return avisosRows.Count;
+        }
+
+        public static List<string> GetAvisosPorLer() {
+            List<Dictionary<string, object>> avisosRows = DBQuery.performQuery(PriEngine.PickingDBConnString, "SELECT * FROM Avisos WHERE visto = 0");
+
+            if(avisosRows.Count > 0)
+                DBQuery.performQuery(PriEngine.PickingDBConnString, "UPDATE Avisos SET visto = 1 WHERE visto = 0");
+
+            List<string> result = new List<string>();
+
+            foreach (var item in avisosRows) {
+                result.Add(item["mensagem"] as string);
+            }
+
+            return result;
+        }
+
         #endregion Testes
 
     }
