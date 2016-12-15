@@ -97,7 +97,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                 orderQuerySubString = " ORDER BY Entidade " + (clienteDesc ? "DESC" : "") + ", DataMinima " + (dataDesc ? "DESC" : "");
 
 
-            listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE3 + orderQuerySubString, f, s);
+            listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_ENCOMENDAS_ORDENADAS + orderQuerySubString, f, s);
 
             foreach (var item in listaEncomendas) {
                 object encomendaID = item["Id"], filial = item["Filial"], serie = item["Serie"], numDoc = item["NumDoc"], cliente = item["EntidadeFac"];
@@ -130,14 +130,14 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             if (clienteID == null)
                 if (nDoc == null)
-                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " ORDER BY CabecDoc.NumDoc", f, s);
+                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_ENCOMENDAS_PARA_PICKING + " ORDER BY CabecDoc.NumDoc", f, s);
                 else
-                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " AND CabecDoc.NumDoc = @2@", f, s, nDoc);
+                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_ENCOMENDAS_PARA_PICKING + " AND CabecDoc.NumDoc = @2@", f, s, nDoc);
             else
                 if (nDoc == null)
-                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " AND EntidadeFac = @2@ ORDER BY CabecDoc.NumDoc", f, s, clienteID);
+                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_ENCOMENDAS_PARA_PICKING + " AND EntidadeFac = @2@ ORDER BY CabecDoc.NumDoc", f, s, clienteID);
                 else
-                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE1 + " AND EntidadeFac = @2@ AND CabecDoc.NumDoc = @3@ ORDER BY CabecDoc.NumDoc", f, s, clienteID, nDoc);
+                    listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_ENCOMENDAS_PARA_PICKING + " AND EntidadeFac = @2@ AND CabecDoc.NumDoc = @3@ ORDER BY CabecDoc.NumDoc", f, s, clienteID, nDoc);
 
 
             foreach (var item in listaEncomendas) {
@@ -167,7 +167,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
 
             List<EncomendaCliente> listaArtigos = new List<EncomendaCliente>();
-            List<Dictionary<string, object>> listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_TESTE2, f, s);
+            List<Dictionary<string, object>> listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_ENCOMENDAS_PARA_GUIA_REMESSA, f, s);
 
             foreach (var item in listaEncomendas) {
                 object encomendaID = item["Id"], filial = item["Filial"], serie = item["Serie"], numDoc = item["NumDoc"], cliente = item["EntidadeFac"];
