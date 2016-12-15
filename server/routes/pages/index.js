@@ -57,14 +57,13 @@ router.get('/choice', checkLogin, checkAdmin, function(req, res, next) {
 });
 
 router.get('/creation', checkLogin, checkAdmin, function(req, res, next) {
-
     const required_params = ['serie', 'filial'];
 	const serie = req.query.serie;
 	const filial = req.query.filial;
 	
-    console.log("Serie: " + req.query.serie);
-    console.log("Filial: " + req.query.filial);
 	SalesOrder.getAll(serie, filial).then(function(salesOrders) {
+		req.session.serie = serie;
+		req.session.filial = filial;
 		res.render('creation', {salesOrders: salesOrders});
 	});
 });
@@ -169,7 +168,7 @@ router.get('/worker', checkLogin, checkWorker, function(req, res, next) {
 router.get('/partials/salesOrder/:id', function(req, res, next) {
    const id = req.params.id;
 
-   SalesOrder.getItems(id).then(function (salesOrder) {
+   SalesOrder.getItems(req.session.serie, req.session.filial, id).then(function (salesOrder) {
        res.render('partials/product-modal', {salesOrder:salesOrder, layout: false});
    })
 });

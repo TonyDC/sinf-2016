@@ -1,8 +1,12 @@
-const db = require('../config/db');
+const request = require('request');
+const primavera = require('../config/primavera');
 
 module.exports.get = function (id) {
     return new Promise(function(fulfill, reject) {
-		request('http://localhost:52313/api/artigo/' + id, function (error, response, body) {
+		request({url: primavera.url + '/api/artigo/' + id,
+			headers: {
+				'Authorization': primavera.auth
+			}}, function (error, response, body) {
 			if(error){
 				console.log('Error:', error);
 				reject();

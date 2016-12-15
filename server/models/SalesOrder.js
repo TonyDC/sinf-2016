@@ -27,7 +27,7 @@ module.exports.getAll = function (serie, filial) {
 					}
 					return false;
 				}).map(function(order) {
-					return {id: order.NumeroDocumento, shippingDate: order.Artigos[0].DataEntrega, client: order.Cliente};
+					return {id: order.NumeroDocumento, filial: order.Filial, serie: order.Serie, shippingDate: order.DataMinimaEncomenda, client: order.Cliente};
 				});
 
 				fulfill(salesOrders);
@@ -36,9 +36,13 @@ module.exports.getAll = function (serie, filial) {
 	});
 }
 
-module.exports.getItems = function (id) {
+module.exports.getItems = function (serie, filial, id) {
     return new Promise(function (fulfill, reject) {
-		request('http://localhost:52313/api/encomenda/000/2016/' + id, function (error, response, body) {
+		request({
+			url: primavera.url + '/api/encomenda/' + filial + '/' + serie + '/' + id,
+			headers: {
+				'Authorization': primavera.auth
+			}}, function (error, response, body) {
 			if(error){
 				console.log('Error:', error);
 				reject();
@@ -52,7 +56,10 @@ module.exports.getItems = function (id) {
 
 			itemInfoPromises = salesOrderRaw.Artigos.map(function(item) {
 				return new Promise(function(fulfill, reject) {
-					request('http://localhost:52313/api/artigo/' + item.ArtigoID, function (error, response, body) {
+					request({url: primavera.url + '/api/artigo/' + item.ArtigoID,
+			headers: {
+				'Authorization': primavera.auth
+			}}, function (error, response, body) {
 							if(error){
 							console.log('Error:', error);
 							reject();
