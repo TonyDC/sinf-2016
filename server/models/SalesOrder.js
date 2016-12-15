@@ -1,35 +1,40 @@
-const db = require('../config/db');
+const primavera = require('../config/primavera');
 const request = require('request');
 const Product = require('./Product');
 
 
-module.exports.getAll = function () {
+module.exports.getAll = function (serie, filial) {
     return new Promise(function (fulfill, reject) {
-	request('http://localhost:52313/api/encomenda/000/2016', function (error, response, body) {
-    		if(error){
-        		return console.log('Error:', error);
-    		}
-		if(response.statusCode !== 200){
-        		return console.log('Invalid Status Code Returned:', response.statusCode);
-	    	}
-
-		salesOrdersRaw = JSON.parse(body);
-		salesOrders = salesOrdersRaw.filter(function(order) {
-			for(let i = 0; i < order.Artigos.length; ++i) {
-				const item = order.Artigos[0];
-				if (item.Quantidade - item.QuantidadeSatisfeita > 0) {
-					return true;
+		request({
+			url: primavera.url + '/api/encomenda/' + filial + '/' + serie,
+			headers: {
+				'Authorization': primavera.auth
+			}}, function (error, response, body) {
+				if(error){
+					return console.log('Error:', error);
 				}
-			}
-			return false;
-		}).map(function(order) {
-			return {id: order.NumeroDocumento, shippingDate: order.Artigos[0].DataEntrega, client: order.Cliente};
-		});
+				if(response.statusCode !== 200){
+					return console.log('Invalid Status Code Returned:', response.statusCode);
+				}
 
-		fulfill(salesOrders);
+				salesOrdersRaw = JSON.parse(body);
+				salesOrders = salesOrdersRaw.filter(function(order) {
+					for(let i = 0; i < order.Artigos.length; ++i) {
+						const item = order.Artigos[0];
+						if (item.Quantidade - item.QuantidadeSatisfeita > 0) {
+							return true;
+						}
+					}
+					return false;
+				}).map(function(order) {
+					return {id: order.NumeroDocumento, shippingDate: order.Artigos[0].DataEntrega, client: order.Cliente};
+				});
+
+				fulfill(salesOrders);
+			}
+		);
 	});
-    });
-};
+}
 
 module.exports.getItems = function (id) {
     return new Promise(function (fulfill, reject) {

@@ -57,13 +57,14 @@ router.get('/choice', checkLogin, checkAdmin, function(req, res, next) {
 router.get('/creation', checkLogin, checkAdmin, function(req, res, next) {
 
     const required_params = ['serie', 'filial'];
-
+	const serie = req.query.serie;
+	const filial = req.query.filial;
+	
     console.log("Serie: " + req.query.serie);
     console.log("Filial: " + req.query.filial);
-    const salesOrders = [{id: "1", shippingDate: "2016/11/23", client: "Joaquim Almeida"},
-        {id: "2", shippingDate: "2015/11/23", client: "Alberto Almeida"},
-        {id: "3", shippingDate: "2013/11/23", client: "Joaquim Martins"}];
-    res.render('creation', {salesOrders: salesOrders});
+	SalesOrder.getAll(serie, filial).then(function(salesOrders) {
+		res.render('creation', {salesOrders: salesOrders});
+	});
 });
 /*
 shippingDate:
