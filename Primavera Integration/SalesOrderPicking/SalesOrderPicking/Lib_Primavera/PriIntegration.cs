@@ -829,7 +829,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             try {
                 // Marcar a quantidade satisfeita na linha
                 foreach (var linha in linhas) {
-                    // TODO pode ser optimizado
+                    
                     List<Dictionary<string, object>> pickingLineRow = dbQuery.performQueryWithTransaction(
                        "SELECT LinhaPicking.artigo, quant_a_satisfazer, LinhaEncomenda.data_entrega, LinhaPicking.id_linha_encomenda FROM LinhaPicking INNER JOIN PickingWave ON (LinhaPicking.id_picking = PickingWave.id) INNER JOIN LinhaEncomenda ON (LinhaPicking.id_linha_encomenda = LinhaEncomenda.id) WHERE LinhaPicking.id = @0@ AND LinhaPicking.id_picking = @1@ AND em_progresso = 1",
                        linha.First, pickingWaveID);
@@ -983,16 +983,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
 
 
-
-
-
-
-
-
-
-
-
-        // TODO: reservar o stock
+        
         public static Wave<ReplenishmentLine> GetProximaReplenishmentOrder(int funcionarioID) {
 
             // Verificar se o funcionário existe no sistema

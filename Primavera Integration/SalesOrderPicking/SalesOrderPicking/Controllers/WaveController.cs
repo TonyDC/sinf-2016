@@ -81,11 +81,11 @@ namespace SalesOrderPicking.Controllers {
         /*
          * {
          *      "funcionario": uint,
-         *      "wave": string,             // Wave ID
+         *      "wave": string,                 // Wave ID
          *      "linhas": [
          *          {   
-         *              "id": string,       // Wave line ID
-         *              "quantidade": uint    // Quantidade satisfeita
+         *              "id": string,           // Wave line ID
+         *              "quantidade": uint      // Quantidade satisfeita
          *          }
          *      ]
          * }
