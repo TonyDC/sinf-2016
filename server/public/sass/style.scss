@@ -55,9 +55,11 @@ p, body {
 .spinner {
   width: 75px;
 }
+
 .spinner input {
   text-align: right;
 }
+
 .input-group-btn-vertical {
   position: relative;
   white-space: nowrap;
@@ -65,6 +67,7 @@ p, body {
   vertical-align: middle;
   display: table-cell;
 }
+
 .input-group-btn-vertical > .btn {
   display: block;
   float: none;
@@ -75,13 +78,16 @@ p, body {
   position: relative;
   border-radius: 0;
 }
+
 .input-group-btn-vertical > .btn:first-child {
   border-top-right-radius: 4px;
 }
+
 .input-group-btn-vertical > .btn:last-child {
   margin-top: -2px;
   border-bottom-right-radius: 4px;
 }
+
 .input-group-btn-vertical i{
   position: absolute;
   top: 0;
@@ -96,14 +102,26 @@ p, body {
   color: white;
 }
 
+
+.worker-sec ~ .worker-sec {
+  padding: 2px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
 .worker-sec {
   display: none;
   padding: 2px;
+  padding-top: 7px;
   margin:0;
   margin-left: 20px;
   background-color: $dark;
   color: white;
   width: calc(100% - 20px);
+  -webkit-box-shadow: inset 2px 135px 46px -125px rgba(0,0,0,0.25);
+  -moz-box-shadow: inset 2px 135px 46px -125px rgba(0,0,0,0.25);
+  box-shadow: inset 2px 135px 46px -125px rgba(0,0,0,0.25);
 }
 
 .location-caret {
@@ -374,4 +392,41 @@ nav>li {
 .item-check {
   color: $lightest;
   cursor: pointer;
+}
+
+.submit-worker {
+  z-index: 999;
+  font-size: 2em;
+  margin-top: 15px;
+  margin-right: 5px;
+  margin-bottom: 15px;
+  background-color: $lightest;
+  color: $medium;
+  border-radius: 100%;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+
+  &:hover {
+    background-color: $medium;
+    color: $lightest;
+  }
+}
+
+.submit-worker.disabled {
+  color: grey;
+  background-color: lightgray;
+  cursor: not-allowed;
+}
+
+.signal-check {
+  color: $medium;
+}
+
+.signal-check.fa-minus-square-o {
+  color: $light;
+}
+
+.signal-check.fa-check-square-o {
+  color: $lightest;
 }
