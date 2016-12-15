@@ -13,20 +13,22 @@ namespace SalesOrderPicking.Auth {
         private const string GERENTE_STR = "Gerente";
         private const int SALT_ROUNDS = 11;
 
-        public static bool LoginWorker(string username, string password) {
+        public static int LoginWorker(string username, string password) {
 
-            Pair<string, string> credentials = RetrieveCredentials(username, FUNCIONARIO_STR);
-            if (credentials == null)
-                return false;
-            return BCrypt.Net.BCrypt.Verify(password, credentials.Second);
+            Triple<string, string, int> credentials = RetrieveCredentials(username, FUNCIONARIO_STR);
+            if (credentials == null || !BCrypt.Net.BCrypt.Verify(password, credentials.Second))
+                return -1;
+
+            return credentials.Third;
         }
 
-        public static bool LoginManager(string username, string password) {
+        public static int LoginManager(string username, string password) {
 
-            Pair<string, string> credentials = RetrieveCredentials(username, GERENTE_STR);
-            if (credentials == null)
-                return false;
-            return BCrypt.Net.BCrypt.Verify(password, credentials.Second);
+            Triple<string, string, int> credentials = RetrieveCredentials(username, GERENTE_STR);
+            if (credentials == null || !BCrypt.Net.BCrypt.Verify(password, credentials.Second))
+                return -1;
+
+            return credentials.Third;
         }
 
 
@@ -81,14 +83,14 @@ namespace SalesOrderPicking.Auth {
 
 
 
-        private static Pair<string, string> RetrieveCredentials(string username, string type) {
+        private static Triple<string, string, int> RetrieveCredentials(string username, string type) {
 
             if ((String.Compare(type, FUNCIONARIO_STR) == 0 && String.Compare(type, GERENTE_STR) == 0) || (String.Compare(type, FUNCIONARIO_STR) != 0 && String.Compare(type, GERENTE_STR) != 0))
                 throw new InvalidOperationException("Bad user type");
             System.Diagnostics.Debug.WriteLine(type);
             System.Diagnostics.Debug.WriteLine(username);
             List<Dictionary<string, object>> rows = DBQuery.performQuery(PriEngine.PickingDBConnString,
-                "SELECT Utilizador.username, Utilizador.pass FROM " + type + " INNER JOIN Utilizador ON (" + type + ".id = Utilizador.id) WHERE Utilizador.username = @0@",
+                "SELECT Utilizador.id, Utilizador.username, Utilizador.pass FROM " + type + " INNER JOIN Utilizador ON (" + type + ".id = Utilizador.id) WHERE Utilizador.username = @0@",
                 username);
             System.Diagnostics.Debug.WriteLine(rows.Count);
             if (rows.Count < 1)
@@ -98,7 +100,7 @@ namespace SalesOrderPicking.Auth {
             if (!row.ContainsKey("username") || !row.ContainsKey("pass"))
                 return null;
 
-            return new Pair<string, string> { First = rows.ElementAt(0)["username"] as string, Second = rows.ElementAt(0)["pass"] as string };
+            return new Triple<string, string, int> { First = rows.ElementAt(0)["username"] as string, Second = rows.ElementAt(0)["pass"] as string, Third = (int)rows.ElementAt(0)["id"] };
         }
          
     }

@@ -79,15 +79,24 @@ namespace SalesOrderPicking.Controllers {
          *  }
          * 
          */
-        [Route("api/auth/login/worker")]
-        public IHttpActionResult LoginWorker(Dictionary<string, string> body) {
+        [Route("api/auth/login")]
+        public IHttpActionResult PostLoginUser(Dictionary<string, string> body) {
 
             if (!body.ContainsKey("username") || !body.ContainsKey("password"))
                 return BadRequest("In order to register a user, one must provide 'username' and 'password");
 
-            bool loggedIn = false;
+            int userID = -1;
+            bool isManager = false;
+
             try {
-                loggedIn = SalesOrderPicking.Auth.Auth.LoginWorker(body["username"], body["password"]);
+                userID = SalesOrderPicking.Auth.Auth.LoginManager(body["username"], body["password"]);
+
+                if (userID > -1)
+                    isManager = true;
+
+                else
+                    userID = SalesOrderPicking.Auth.Auth.LoginWorker(body["username"], body["password"]);
+ 
 
             } catch (InvalidOperationException e) {
                 return BadRequest(e.Message);
@@ -96,41 +105,14 @@ namespace SalesOrderPicking.Controllers {
                 return InternalServerError(e);
             }
 
-            if (!loggedIn)
+            if (userID < 0)
                 return BadRequest();
-            else
-                return Ok();
-        }
 
-        /*
-         * Body:
-         *  {
-         *      "username": string,
-         *      "password": string
-         *  }
-         * 
-         */
-        [Route("api/auth/login/manager")]
-        public IHttpActionResult LoginManager(Dictionary<string, string> body) {
+            Dictionary<string, object> response = new Dictionary<string, object>();
+            response.Add("user", userID);
+            response.Add("is_admin", isManager);
 
-            if (!body.ContainsKey("username") || !body.ContainsKey("password"))
-                return BadRequest("In order to register a user, one must provide 'username' and 'password");
-
-            bool loggedIn = false;
-            try {
-                loggedIn = SalesOrderPicking.Auth.Auth.LoginManager(body["username"], body["password"]);
-
-            } catch (InvalidOperationException e) {
-                return BadRequest(e.Message);
-
-            } catch (Exception e) {
-                return InternalServerError(e);
-            }
-
-            if (!loggedIn)
-                return BadRequest();
-            else
-                return Ok();
+            return Ok(response);
         }
 
     }
