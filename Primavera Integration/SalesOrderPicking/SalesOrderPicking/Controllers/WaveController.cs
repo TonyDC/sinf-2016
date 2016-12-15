@@ -135,5 +135,46 @@ namespace SalesOrderPicking.Controllers {
             return Ok();
         }
 
+
+        [Route("api/wave/status/picking/{offset:int:min(1)=5}")]
+        public IHttpActionResult GetPendingPicking(int offset) {
+            List<WaveStatus> result = null;
+            try {
+                result = PriIntegration.GetPendingPickingWave(offset);
+
+            } catch (InvalidOperationException invalidOperation) {
+                return BadRequest(invalidOperation.Message);
+
+            } catch (Exception e) {
+                return InternalServerError(e);
+            }
+
+            if(result == null)
+                return StatusCode(HttpStatusCode.NoContent);
+
+            else
+                return Ok(result);
+        }
+
+        [Route("api/wave/status/replenishment/{offset:int:min(1)=5}")]
+        public IHttpActionResult GetPendingReplenishment(int offset) {
+            List<WaveStatus> result = null;
+            try {
+                result = PriIntegration.GetPendingReplenishmentWave(offset);
+
+            } catch (InvalidOperationException invalidOperation) {
+                return BadRequest(invalidOperation.Message);
+
+            } catch (Exception e) {
+                return InternalServerError(e);
+            }
+
+            if (result == null)
+                return StatusCode(HttpStatusCode.NoContent);
+
+            else
+                return Ok(result);
+        }
+
     }
 }

@@ -86,7 +86,8 @@ CREATE TABLE PickingWave (
 	id_funcionario INT NOT NULL REFERENCES Funcionario(id),
 	data_inicio DATETIME NOT NULL DEFAULT GETDATE(),
 	data_conclusao DATETIME,
-	CONSTRAINT CNT_picking_wave_date CHECK(data_conclusao IS NULL OR data_conclusao >= data_inicio)
+	CONSTRAINT CNT_picking_wave_date CHECK(data_conclusao IS NULL OR data_conclusao >= data_inicio),
+	CONSTRAINT CNT_PW_progresso_data_conclusao CHECK((em_progresso = 1 AND data_conclusao IS NULL) OR (em_progresso = 0 AND data_conclusao IS NOT NULL))
 )
 
 CREATE TABLE ReplenishmentWave (
@@ -95,7 +96,8 @@ CREATE TABLE ReplenishmentWave (
 	id_funcionario INT NOT NULL REFERENCES Funcionario(id),
 	data_inicio DATETIME NOT NULL DEFAULT GETDATE(),
 	data_conclusao DATETIME,
-	CONSTRAINT CNT_replenishment_wave_date CHECK(data_conclusao IS NULL OR data_conclusao >= data_inicio)
+	CONSTRAINT CNT_replenishment_wave_date CHECK(data_conclusao IS NULL OR data_conclusao >= data_inicio),
+	CONSTRAINT CNT_RW_progresso_data_conclusao CHECK((em_progresso = 1 AND data_conclusao IS NULL) OR (em_progresso = 0 AND data_conclusao IS NOT NULL))
 )
 
 CREATE TABLE LinhaReplenishment (
@@ -111,6 +113,7 @@ CREATE TABLE LinhaReplenishment (
 	notificado_aviso BIT NOT NULL DEFAULT 0,			-- para evitar nova geração de avisos
 	CONSTRAINT CTR_recolhida_satisfeita_replenish CHECK(quant_recolhida <= quant_a_satisfazer),
 	CONSTRAINT CHK_LR_recolhida_aSatisfazer CHECK(quant_recolhida >= 0 AND quant_a_satisfazer > 0)
+	--CONSTRAINT CNT_LR_wave_loc_destino CHECK((localizacao_origem IS NULL AND id_replenishment IS NULL) OR (localizacao_origem IS NOT NULL AND id_replenishment IS NOT NULL))
 )
 
 CREATE TABLE LinhaPicking (
@@ -124,6 +127,7 @@ CREATE TABLE LinhaPicking (
 	notificado_aviso BIT NOT NULL DEFAULT 0,		-- para evitar nova geração de avisos
 	CONSTRAINT CTR_recolhida_satisfeita_picking CHECK(quant_recolhida <= quant_a_satisfazer),
 	CONSTRAINT CHK_LP_recolhida_aSatisfazer CHECK(quant_recolhida >= 0 AND quant_a_satisfazer > 0)
+	--CONSTRAINT CNT_LP_wave_loc_destino CHECK((localizacao IS NULL AND id_picking IS NULL) OR (localizacao IS NOT NULL AND id_picking IS NOT NULL))
 )
 
 CREATE TABLE Avisos (

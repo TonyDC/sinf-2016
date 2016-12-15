@@ -1397,6 +1397,57 @@ namespace SalesOrderPicking.Lib_Primavera {
             return result;
         }
 
+
+        public static List<WaveStatus> GetPendingPickingWave(int offsetPickingDone) {
+
+            if (offsetPickingDone < 1)
+                throw new InvalidOperationException("Bad offset");
+
+            List<Dictionary<string, object>> pickingRows = DBQuery.performQuery(PriEngine.PickingDBConnString,
+                "SELECT PickingWave.*, Utilizador.username FROM PickingWave INNER JOIN Utilizador ON (PickingWave.id_funcionario = Utilizador.id) WHERE em_progresso = 1" +
+                " UNION " +
+                "SELECT TOP " + offsetPickingDone + " PickingWave.*, Utilizador.username FROM PickingWave INNER JOIN Utilizador ON (PickingWave.id_funcionario = Utilizador.id) WHERE em_progresso = 0 ORDER BY em_progresso DESC, data_conclusao DESC, data_inicio DESC");
+
+            if (pickingRows.Count < 1)
+                return null;
+
+            List<WaveStatus> result = new List<WaveStatus>();
+
+            foreach (var item in pickingRows) {
+
+                result.Add(new WaveStatus { 
+                    ID = item["id"].ToString(),
+                    DataInicio = (DateTime)item["data_inicio"],
+                    DataFim = item["data_conclusao"].GetType() == typeof(DBNull) ? (DateTime?)null : (DateTime)item["data_conclusao"], 
+                    Funcionario = item["username"].ToString(), 
+                    Finalizada = !((bool)item["em_progresso"]) });
+            }
+
+            return result;
+        }
+
+        public static List<WaveStatus> GetPendingReplenishmentWave(int offsetReplenishmentDone) {
+
+            if (offsetReplenishmentDone < 1)
+                throw new InvalidOperationException("Bad offset");
+
+            List<Dictionary<string, object>> replenishmentRows = DBQuery.performQuery(PriEngine.PickingDBConnString,
+                "SELECT ReplenishmentWave.*, Utilizador.username FROM ReplenishmentWave INNER JOIN Utilizador ON (ReplenishmentWave.id_funcionario = Utilizador.id) WHERE em_progresso = 1" +
+                " UNION " +
+                "SELECT TOP " + offsetReplenishmentDone + " ReplenishmentWave.*, Utilizador.username FROM ReplenishmentWave INNER JOIN Utilizador ON (ReplenishmentWave.id_funcionario = Utilizador.id) WHERE em_progresso = 0 ORDER BY em_progresso DESC, data_conclusao DESC, data_inicio DESC");
+
+            if (replenishmentRows.Count < 1)
+                return null;
+
+            List<WaveStatus> result = new List<WaveStatus>();
+
+            foreach (var item in replenishmentRows) {
+                result.Add(new WaveStatus { ID = item["id"].ToString(), DataInicio = (DateTime)item["data_inicio"], DataFim = item["data_conclusao"].GetType() == typeof(DBNull) ? (DateTime?)null : (DateTime)item["data_conclusao"], Funcionario = item["username"].ToString(), Finalizada = !((bool)item["em_progresso"]) });
+            }
+
+            return result;
+        }
+
         #endregion Picking
 
     }
