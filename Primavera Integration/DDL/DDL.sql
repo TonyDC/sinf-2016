@@ -143,7 +143,7 @@ CREATE TABLE Definicoes (
 	chave NVARCHAR(300) PRIMARY KEY,
 	valor NVARCHAR(300)
 )
-
+GO
 -- ---------------------------------------------------------------------------------
 -- DML
 
