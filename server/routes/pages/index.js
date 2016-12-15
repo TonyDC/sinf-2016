@@ -72,7 +72,7 @@ shippingDate:
         */
 
 router.get('/options', checkLogin, checkAdmin, function(req, res, next) {
- const variables = {worker: "100"};
+ const variables = {worker: "100", warehouses:[{name: "warehouse1"}, {name: "warehouse2"}, {name: "warehouse3"}]};
  res.render('options', {variables: variables});
 });
 
