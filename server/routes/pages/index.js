@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const SalesOrder = require('../../models/SalesOrder');
-const PickingOrder = require('../../models/PickingOrder');
+const PickingWave = require('../../models/PickingWave');
 const Util = require('../../models/Util');
+const User = require('../../models/User');
+const Armazem = require('../../models/Armazem');
 
 /**
  * PAGES INITIALIZATION
@@ -74,8 +76,15 @@ shippingDate:
         */
 
 router.get('/options', checkLogin, checkAdmin, function(req, res, next) {
- const variables = {worker: "100", warehouses:[{name: "warehouse1"}, {name: "warehouse2"}, {name: "warehouse3"}]};
- res.render('options', {variables: variables});
+	Util.getCapacidade().then(function(capacidade) {
+		Util.getArmazemPrincipal().then(function(armazemPrincipal) {
+			Armazem.getAll().then(function(armazens) {
+				console.log(require('util').inspect(armazens));
+				const variables = {capacidade: capacidade, armazens: armazens};
+				res.render('options', variables);
+			});
+		});
+	});
 });
 
 router.get('/status', checkLogin, checkAdmin, function(req, res, next) {
@@ -182,11 +191,12 @@ router.post('/login', function(req, res, next) {
    const email = req.body.email;
    const pass = req.body.password;
 
-   req.session.loggedIn = true;
-   req.session.admin = true;
-   req.session.userId = email;
+   User.login(email, pass).then(function(userData) {		   
+	   req.session.admin = userData.is_admin;
+	   req.session.userId = userData.user;
 
-   res.redirect('/');
+	   res.redirect('/');
+   });
 });
 
 router.post('/logout', function(req, res, next) {

@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const primavera = require('../config/primavera');
 const Product = require('./Product');
 
 module.exports.getAll = function () {

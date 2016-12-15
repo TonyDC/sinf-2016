@@ -3,7 +3,6 @@ const router = express.Router();
 const Client = require('../../models/Client')
 const SalesOrder = require('../../models/SalesOrder');
 const Product = require('../../models/Product');
-const PickingOrder = require('../../models/PickingOrder');
 
 
 router.use(function (req, res, next) {
