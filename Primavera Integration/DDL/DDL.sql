@@ -149,7 +149,7 @@ CREATE TABLE Definicoes (
 
 -- Username: admin, password: admin
 -- Username: worker, passowrd: worker
-INSERT INTO Utilizador(username, pass) VALUES('admin@org.com', 'Administrador', '$2a$11$s0GMyuOSBXOUHLD353oHA..cmtYznNePmsIlWMvnIj06qlVkBaPFG'), ('worker@org.com', 'Worker', '$2a$11$mAmHgZiA.qyvHpHE0FK45.hWVW9oxRNn2ZXlt6wozDmF.Wq1k4jlC')
+INSERT INTO Utilizador(username, name, pass) VALUES('admin@org.com', 'Administrador', '$2a$11$s0GMyuOSBXOUHLD353oHA..cmtYznNePmsIlWMvnIj06qlVkBaPFG'), ('worker@org.com', 'Worker', '$2a$11$mAmHgZiA.qyvHpHE0FK45.hWVW9oxRNn2ZXlt6wozDmF.Wq1k4jlC')
 INSERT INTO Gerente VALUES(1)
 INSERT INTO Funcionario VALUES(2)
 
