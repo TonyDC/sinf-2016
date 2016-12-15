@@ -67,6 +67,7 @@ CREATE TABLE LinhaEncomenda (
 CREATE TABLE Utilizador (
 	id INT PRIMARY KEY IDENTITY,
 	username NVARCHAR(100) COLLATE Latin1_General_CS_AS NOT NULL,
+	name NVARCHAR(100) NOT NULL,
 	pass NVARCHAR(60) NOT NULL,
 	CONSTRAINT UN_Username UNIQUE (username) 
 )
@@ -133,7 +134,8 @@ CREATE TABLE LinhaPicking (
 CREATE TABLE Avisos (
 	id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
 	mensagem VARCHAR(500) NOT NULL,
-	visto BIT NOT NULL DEFAULT 0
+	visto BIT NOT NULL DEFAULT 0,
+	data_registo DATETIME NOT NULL DEFAULT GETDATE()
 	-- quem_viu INT REFERENCES Gerente(id)
 )
 
@@ -147,7 +149,7 @@ CREATE TABLE Definicoes (
 
 -- Username: admin, password: admin
 -- Username: worker, passowrd: worker
-INSERT INTO Utilizador(username, pass) VALUES('admin', '$2a$11$s0GMyuOSBXOUHLD353oHA..cmtYznNePmsIlWMvnIj06qlVkBaPFG'), ('worker', '$2a$11$mAmHgZiA.qyvHpHE0FK45.hWVW9oxRNn2ZXlt6wozDmF.Wq1k4jlC')
+INSERT INTO Utilizador(username, name, pass) VALUES('admin', 'Administrador', '$2a$11$s0GMyuOSBXOUHLD353oHA..cmtYznNePmsIlWMvnIj06qlVkBaPFG'), ('worker', 'Worker', '$2a$11$mAmHgZiA.qyvHpHE0FK45.hWVW9oxRNn2ZXlt6wozDmF.Wq1k4jlC')
 INSERT INTO Gerente VALUES(1)
 INSERT INTO Funcionario VALUES(2)
 

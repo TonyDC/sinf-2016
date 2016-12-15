@@ -4,11 +4,12 @@ using System.Linq;
 using System.Web;
 
 using SalesOrderPicking.Lib_Primavera;
+using SalesOrderPicking.Lib_Primavera.Model;
 
 namespace SalesOrderPicking.Auth {
 
     public class Auth {
-        
+
         private const string FUNCIONARIO_STR = "Funcionario";
         private const string GERENTE_STR = "Gerente";
         private const int SALT_ROUNDS = 11;
@@ -34,14 +35,14 @@ namespace SalesOrderPicking.Auth {
 
 
 
-        public static int RegisterWorker(string username, string password) {
-            int userID = RegisterUser(username, password, FUNCIONARIO_STR);
+        public static int RegisterWorker(string username, string password, string name) {
+            int userID = RegisterUser(username, password, name, FUNCIONARIO_STR);
             password = null;
             return userID;
         }
 
-        public static int RegisterManager(string username, string password) {
-            int userID = RegisterUser(username, password, GERENTE_STR);
+        public static int RegisterManager(string username, string password, string name) {
+            int userID = RegisterUser(username, password, name, GERENTE_STR);
             password = null;
             return userID;
         }
@@ -49,7 +50,7 @@ namespace SalesOrderPicking.Auth {
 
 
 
-        private static int RegisterUser(string username, string password, string type) {
+        private static int RegisterUser(string username, string password, string name, string type) {
 
             if ((String.Compare(type, FUNCIONARIO_STR) == 0 && String.Compare(type, GERENTE_STR) == 0) || (String.Compare(type, FUNCIONARIO_STR) != 0 && String.Compare(type, GERENTE_STR) != 0))
                 throw new InvalidOperationException("Bad user type");
@@ -59,12 +60,12 @@ namespace SalesOrderPicking.Auth {
             password = null;
 
             // Check if the username already exists
-            if (RetrieveCredentials(username, type) != null)
+            if (IsRegistered(username))                           
                 throw new InvalidOperationException("The username already exists");
 
             List<Dictionary<string, object>> insertedUser = DBQuery.performQuery(PriEngine.PickingDBConnString,
-                "INSERT INTO Utilizador(username, pass) OUTPUT INSERTED.id VALUES(@0@, @1@)",
-                username, hashedPassword);
+                "INSERT INTO Utilizador(username, pass, name) OUTPUT INSERTED.id VALUES(@0@, @1@, @2@)",
+                username, hashedPassword, name);
 
             hashedPassword = null;
             int userID = Convert.ToInt32(insertedUser.ElementAt(0)["id"]);
@@ -87,8 +88,7 @@ namespace SalesOrderPicking.Auth {
 
             if ((String.Compare(type, FUNCIONARIO_STR) == 0 && String.Compare(type, GERENTE_STR) == 0) || (String.Compare(type, FUNCIONARIO_STR) != 0 && String.Compare(type, GERENTE_STR) != 0))
                 throw new InvalidOperationException("Bad user type");
-            System.Diagnostics.Debug.WriteLine(type);
-            System.Diagnostics.Debug.WriteLine(username);
+
             List<Dictionary<string, object>> rows = DBQuery.performQuery(PriEngine.PickingDBConnString,
                 "SELECT Utilizador.id, Utilizador.username, Utilizador.pass FROM " + type + " INNER JOIN Utilizador ON (" + type + ".id = Utilizador.id) WHERE Utilizador.username = @0@",
                 username);
@@ -102,7 +102,38 @@ namespace SalesOrderPicking.Auth {
 
             return new Triple<string, string, int> { First = rows.ElementAt(0)["username"] as string, Second = rows.ElementAt(0)["pass"] as string, Third = (int)rows.ElementAt(0)["id"] };
         }
-         
+
+
+        public static List<UserLine> GetRegisteredUsers() {
+
+            List<Dictionary<string, object>> rows = DBQuery.performQuery(PriEngine.PickingDBConnString,
+                "SELECT Gerente.id AS gerenteID, Utilizador.id, Utilizador.username, Utilizador.name, Funcionario.id AS funcionarioID FROM Gerente RIGHT JOIN Utilizador ON (Gerente.id = Utilizador.id) LEFT JOIN Funcionario ON (Funcionario.id = Utilizador.id)");
+
+            List<UserLine> result = new List<UserLine>();
+
+            foreach (var item in rows) {
+
+                byte type = 0;
+
+                if (item["gerenteID"].GetType() == typeof(DBNull) && item["funcionarioID"].GetType() != typeof(DBNull))
+                    type = 2;
+
+                else if (item["gerenteID"].GetType() != typeof(DBNull) && item["funcionarioID"].GetType() == typeof(DBNull))
+                    type = 1;
+
+                result.Add(new UserLine { ID = (int)item["id"], Name = item["name"].ToString(), Username = item["username"].ToString(), Type = type });
+            }
+
+            return result;
+        }
+
+
+        private static bool IsRegistered(string username) {
+            List<Dictionary<string, object>> rows = DBQuery.performQuery(PriEngine.PickingDBConnString,
+               "SELECT * FROM Utilizador WHERE username = @0@", username);
+
+            return rows.Count > 0;
+        }
     }
 
 }

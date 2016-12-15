@@ -307,6 +307,7 @@
     <Compile Include="Lib_Primavera\Model\ReplenishmentLine.cs" />
     <Compile Include="Lib_Primavera\Model\Requests\GenerateWavesRequest.cs" />
     <Compile Include="Lib_Primavera\Model\Requests\WaveCompletion.cs" />
+    <Compile Include="Lib_Primavera\Model\UserLine.cs" />
     <Compile Include="Lib_Primavera\Model\Wave.cs" />
     <Compile Include="Lib_Primavera\Model\Resposta.cs" />
     <Compile Include="Lib_Primavera\Model\StockArtigo.cs" />

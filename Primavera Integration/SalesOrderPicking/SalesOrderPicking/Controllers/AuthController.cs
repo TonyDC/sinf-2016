@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SalesOrderPicking.Lib_Primavera.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -13,19 +14,20 @@ namespace SalesOrderPicking.Controllers {
          * Body:
          *  {
          *      "username": string,
-         *      "password": string
+         *      "password": string,
+         *      "name": string
          *  }
          * 
          */
         [Route("api/auth/register/worker")]
         public IHttpActionResult PostNewWorker(Dictionary<string, string> body) {
 
-            if (!body.ContainsKey("username") || !body.ContainsKey("password"))
-                return BadRequest("In order to register a user, one must provide 'username' and 'password");
+            if (!body.ContainsKey("username") || !body.ContainsKey("password") || !body.ContainsKey("name"))
+                return BadRequest("In order to register a user, one must provide 'username', 'password' and 'name'");
 
             int userID;
             try {
-                userID = SalesOrderPicking.Auth.Auth.RegisterWorker(body["username"], body["password"]);
+                userID = SalesOrderPicking.Auth.Auth.RegisterWorker(body["username"], body["password"], body["name"]);
 
             } catch (InvalidOperationException e) {
                 return BadRequest(e.Message);
@@ -44,19 +46,20 @@ namespace SalesOrderPicking.Controllers {
          * Body:
          *  {
          *      "username": string,
-         *      "password": string
+         *      "password": string,
+         *      "name": string
          *  }
          * 
          */
         [Route("api/auth/register/manager")]
         public IHttpActionResult PostNewManager(Dictionary<string, string> body) {
 
-            if (!body.ContainsKey("username") || !body.ContainsKey("password"))
-                return BadRequest("In order to register a user, one must provide 'username' and 'password");
+            if (!body.ContainsKey("username") || !body.ContainsKey("password") || !body.ContainsKey("name"))
+                return BadRequest("In order to register a user, one must provide 'username', 'password' and 'name'");
 
             int userID;
             try {
-                userID = SalesOrderPicking.Auth.Auth.RegisterManager(body["username"], body["password"]);
+                userID = SalesOrderPicking.Auth.Auth.RegisterManager(body["username"], body["password"], body["name"]);
 
             } catch (InvalidOperationException e) {
                 return BadRequest(e.Message);
@@ -111,6 +114,28 @@ namespace SalesOrderPicking.Controllers {
             Dictionary<string, object> response = new Dictionary<string, object>();
             response.Add("user", userID);
             response.Add("is_admin", isManager);
+
+            return Ok(response);
+        }
+
+
+        [Route("api/auth/users")]
+        public IHttpActionResult GetUsers() {
+
+            List<UserLine> response = null;
+
+            try {
+                response = SalesOrderPicking.Auth.Auth.GetRegisteredUsers();
+                
+            } catch (InvalidOperationException e) {
+                return BadRequest(e.Message);
+
+            } catch (Exception e) {
+                return InternalServerError(e);
+            }
+
+            if (response == null)
+                return BadRequest();
 
             return Ok(response);
         }
