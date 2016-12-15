@@ -114,12 +114,12 @@ router.get('/shipping', checkLogin, checkAdmin, function(req, res, next) {
 });
 
 router.get('/warnings', checkLogin, checkAdmin, function(req, res, next) {
-
-    //NOTA: status em percentagem
     const warnings = [{priority: true, message: "O produto CPU, pertencente à sales order #3, não foi expedido a tempo"},
         {priority: true, message: "Apenas foram recolhidas 3 de 5 unidades pedidas do produto Motherboard"},
         {priority: false, message: "Ontem foram expedidas 23 picking orders"}];
-    res.render('warnings', {warnings: warnings});
+	Util.getAvisos().then(function(avisos) {
+		res.render('warnings', {warnings: avisos});
+	});
 });
 
 router.get('/users', checkLogin, checkAdmin, function(req, res, next) {
@@ -128,7 +128,9 @@ router.get('/users', checkLogin, checkAdmin, function(req, res, next) {
         {code: "002", email: "marianacorreia@email.com", name: "Mariana Correia", position: "Funcionário"},
         {code: "003", email: "ricardosantos@email.com", name: "Ricardo Santos", position: "Funcionário"},
         {code: "004", email: "joanaferreira@email.com", name: "Joana Ferreira", position: "Funcionário"}];
-    res.render('users', {users: users});
+	User.getAll().then(function(users) {
+		res.render('users', {users: users});
+	});
 
 });
 

@@ -88,3 +88,25 @@ module.exports.getArmazemPrincipal = function() {
 		});
 	});
 }
+
+module.exports.getAvisos = function() {
+	return new Promise(function (fulfill, reject) {
+		request({
+			url: primavera.url + '/api/avisos',
+			headers: {
+				'Authorization': primavera.auth
+			}
+		}, function (error, response, body) {
+			if(error){
+        		reject('Error:' + error);
+				return;
+    		}
+			if(response.statusCode !== 200){
+        		reject('Invalid Status Code Returned:' + response.statusCode);
+				return;
+	    	}
+			avisos = JSON.parse(body);
+			fulfill(avisos);
+		});
+	});
+}
