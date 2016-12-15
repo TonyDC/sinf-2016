@@ -42,7 +42,7 @@ p, body {
 
 /* line 55, ../sass/style.scss */
 .spinner {
-  width: 100px;
+  width: 75px;
 }
 
 /* line 58, ../sass/style.scss */
@@ -387,15 +387,13 @@ nav > li {
 }
 
 /* line 369, ../sass/style.scss */
-.nav .open > a, .nav .open > a:focus, .nav .open > a:hover {
+.nav .open > form > button, .nav .open > form > button:focus, .nav .open > form > button:hover {
   background-color: #eee;
   border-color: #337ab7;
 }
 
 /* line 374, ../sass/style.scss */
-.nav .nav-divider {
-  height: 1px;
-  margin: 9px 0;
-  overflow: hidden;
-  background-color: #e5e5e5;
+.item-check {
+  color: #fedc97;
+  cursor: pointer;
 }

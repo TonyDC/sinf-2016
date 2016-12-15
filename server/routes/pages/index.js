@@ -181,7 +181,7 @@ router.post('/login', function(req, res, next) {
    const pass = req.body.password;
 
    req.session.loggedIn = true;
-   req.session.admin = true;
+   req.session.admin = false;
    req.session.userId = email;
 
    res.redirect('/');

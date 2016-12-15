@@ -57,7 +57,9 @@
                             <a href="#" class="active"><i class="fa fa-list-alt fa-fw"></i> Picking order ativa</a>
                         </li>
                         <li>
-                            <a href="#"><i class="fa fa-sign-out fa-fw"></i> Terminar sessão</a>
+                            <form action="/logout" method="post">
+                                <button type="submit"><i class="fa fa-sign-out fa-fw"></i> Terminar sessão</button>
+                            </form>
                         </li>
                     </ul>
                 </div>
@@ -85,15 +87,11 @@
                     {{#each items}}
                     <div class="col-xs-12 worker-sec">
                         <div class="col-xs-10">
-                            <h4>({{quantity}} un.) {{name}}</h4>
+                            <h4><i class="fa fa-square-o fa-fw location-check item-check"></i> ({{quantity}} un.) {{name}}</h4>
                         </div>
                         <div class="col-xs-2">
                             <div class="input-group spinner on-the-right" align="right">
-                                <input type="text" class="form-control" value="0">
-                                <div class="input-group-btn-vertical">
-                                    <button class="btn btn-default" type="button"><i class="fa fa-caret-up"></i></button>
-                                    <button class="btn btn-default" type="button"><i class="fa fa-caret-down"></i></button>
-                                </div>
+                                <input type="number" class="form-control" value="{{quantity}}" min="0" max="{{quantity}}" required>
                             </div>
                         </div>
                     </div>
@@ -146,14 +144,6 @@
             $(this).parent().find('.location-caret').toggleClass('fa-caret-down');
             $(this).parent().find('.location-caret').toggleClass('fa-caret-up');
         });
-        (function ($) {
-            $('.spinner .btn:first-of-type').on('click', function() {
-                $(this).parent().siblings('input').val( parseInt($(this).parent().siblings('input').val(), 10) + 1);
-            });
-            $('.spinner .btn:last-of-type').on('click', function() {
-                $(this).parent().siblings('input').val( parseInt($(this).parent().siblings('input').val(), 10) - 1);
-            });
-        })(jQuery);
     </script>
 
 </body>
