@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const SalesOrder = require('../../models/SalesOrder');
 const PickingOrder = require('../../models/PickingOrder');
+const Util = require('../../models/Util');
 
 /**
  * PAGES INITIALIZATION
@@ -46,11 +47,11 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/choice', checkLogin, checkAdmin, function(req, res, next) {
-
-    const filiais = [{name: "filial1"},{name: "filial2"},{name: "filial2"}];
-    const series = [{name: "serie1"},{name: "serie2"},{name: "serie3"}];
-    res.render('choice', {filiais: filiais, series: series});
-
+	Util.getSeries().then(function(series) {
+		Util.getFiliais().then(function(filiais) {
+			res.render('choice', {filiais: filiais, series: series});
+		});
+	});
 });
 
 router.get('/creation', checkLogin, checkAdmin, function(req, res, next) {
@@ -181,7 +182,7 @@ router.post('/login', function(req, res, next) {
    const pass = req.body.password;
 
    req.session.loggedIn = true;
-   req.session.admin = false;
+   req.session.admin = true;
    req.session.userId = email;
 
    res.redirect('/');
