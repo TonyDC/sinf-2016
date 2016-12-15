@@ -54,7 +54,7 @@
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
                         <li>
-                            <a href="#" class="active"><i class="fa fa-list-alt fa-fw"></i> Picking order ativa</a>
+                            <a href="#" class="active"><i class="fa fa-list-alt fa-fw"></i> Picking wave ativa</a>
                         </li>
                         <li>
                             <form action="/logout" method="post">
@@ -71,9 +71,11 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-xs-12">
-                    <h1 class="page-header">Picking order ativa</h1>
+                    <h1 class="page-header">Picking wave ativa</h1>
                 </div>
             </div>
+
+            {{#if pickingOrder.steps}}
                 {{#each pickingOrder.steps}}
                 <div class="col-xs-12 location-system">
                     <div class="col-xs-12 worker-main pointer-cursor clickable-pad">
@@ -99,8 +101,11 @@
                 </div>
             {{/each}}
             <form>
-                <button type="submit" class="submit-worker on-the-right disabled" disabled><i class="fa fa-check"></i></button>
+                <button type="submit" class="submit-worker on-the-right" disabled><i class="fa fa-check"></i></button>
             </form>
+            {{else}}
+                <p><i class="fa fa-warning fa-fw"></i> Neste momento não tem nenhuma picking wave ativa. Por favor, espere um pouco e de seguida atualize a página.</p>
+            {{/if}}
             </div>
         </div>
         <!-- /#page-wrapper -->
@@ -140,6 +145,10 @@
             var not = 0;
             var yes = 0;
             var target = $(this).closest('.worker-sec').siblings('.worker-main').find('.signal-check')[0];
+
+            /**
+             * --------------- change location check sign according to its items ---------------
+             */
 
             $(this).closest('.worker-sec').siblings('.worker-sec').each (function () {
                 if($(this).find('.location-check')[0].classList.contains('fa-square-o')) {
@@ -189,6 +198,44 @@
                     $(target).removeClass('fa-square-o');
                 }
             }
+
+            /**
+             * --------------- enable/disable submit button ---------------
+             */
+
+            var locationsDone = 0;
+            var locationsNotDone = 0;
+            var submitButton = $(this).closest('#page-wrapper').find('.submit-worker')[0];
+
+            $(this).closest('.location-system').siblings('.location-system').each (function () {
+                if($(this).find('.signal-check')[0].classList.contains('fa-check-square-o')) {
+                    locationsDone++;
+                }
+                else {
+                    locationsNotDone++;
+                }
+            });
+
+            if($(this).closest('.location-system').find('.signal-check')[0].classList.contains('fa-check-square-o')) {
+                locationsDone++;
+            }
+            else {
+                locationsNotDone++;
+            }
+
+            //all are done
+            if (locationsNotDone == 0) {
+                if(submitButton.hasAttribute('disabled')) {
+                    $(submitButton).removeAttr('disabled');
+                }
+            }
+
+            else {
+                if(!submitButton.hasAttribute('disabled')) {
+                    $(submitButton).attr('disabled','');
+                }
+            }
+
         });
         $('.clickable-pad').click(function() {
             $(this).siblings('.worker-sec').slideToggle();

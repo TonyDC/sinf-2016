@@ -431,7 +431,7 @@ nav > li {
 }
 
 /* line 416, ../sass/style.scss */
-.submit-worker.disabled {
+.submit-worker[disabled] {
   color: grey;
   background-color: lightgray;
   cursor: not-allowed;

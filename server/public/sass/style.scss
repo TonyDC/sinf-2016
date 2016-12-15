@@ -413,7 +413,7 @@ nav>li {
   }
 }
 
-.submit-worker.disabled {
+.submit-worker[disabled] {
   color: grey;
   background-color: lightgray;
   cursor: not-allowed;
