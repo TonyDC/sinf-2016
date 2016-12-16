@@ -158,6 +158,7 @@ GO
 
 -- ---------------------------------------------------------------------------------
 -- TRIGGERS (DDL)
+/*
 CREATE TRIGGER TR_CapMaxFuncionario ON Definicoes
 INSTEAD OF UPDATE
 AS
@@ -179,3 +180,4 @@ AS
 			END
 	END
 GO
+*/
