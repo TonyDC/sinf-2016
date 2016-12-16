@@ -91,18 +91,17 @@
                     <form role="form">
                         <div class="form-group">
                             <label>Capacidade de transporte de um funcionário</label>
-                            <input class="form-control" value="{{capacidade.capacidade}}">
+                            <input class="form-control" name="capacidade" value="{{capacidade.capacidade}}">
                         </div>
                         <div class="form-group">
                             <label>Armazém principal</label>
-                            <select class="form-control" name="filial">
+                            <select class="form-control" name="armazem">
                                 {{#each armazens}}
-                                    <option>{{this.Descricao}}</option>
+                                    <option value={{this.ID}}>{{this.Descricao}}</option>
                                 {{/each}}
                             </select>
                         </div>
                         <button type="submit" class="btn main-button">Alterar</button>
-                        <button type="reset" class="btn btn-default">Repor valores originais</button>
                     </form>
                 </div>
                 <!-- /.col-lg-12 -->

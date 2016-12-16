@@ -209,4 +209,11 @@ router.post('/logout', function(req, res, next) {
     res.redirect('/');
 });
 
+router.post('/definitions', function(req, res, next) {
+	const capacidade = req.body.capacidade;
+	const armazem = req.body.armazem;
+	
+	
+});
+
 module.exports = router;

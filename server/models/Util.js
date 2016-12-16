@@ -67,6 +67,30 @@ module.exports.getCapacidade = function() {
 	});
 }
 
+module.exports.setCapacidade = function(capacidade) {
+	return new Promise(function (fulfill, reject) {
+		request({
+			url: primavera.url + '/api/definitions/capacidade',
+			headers: {
+				'Authorization': primavera.auth,
+				'Content-type': 'application/json'
+			},
+			method: 'post',
+			body: JSON.stringify({capacidade: capacidade})
+		}, function (error, response, body) {
+			if(error){
+        		reject('Error:' + error);
+				return;
+    		}
+			if(response.statusCode !== 200){
+        		reject('Invalid Status Code Returned:' + response.statusCode);
+				return;
+	    	}
+			fulfill();
+		});
+	});
+}
+
 module.exports.getArmazemPrincipal = function() {
 	return new Promise(function (fulfill, reject) {
 		request({
@@ -85,6 +109,32 @@ module.exports.getArmazemPrincipal = function() {
 	    	}
 			armazem = JSON.parse(body);
 			fulfill(armazem);
+		});
+	});
+}
+
+// erro 500
+module.exports.setArmazemPrincipal = function(armazem) {
+	return Promise.resolve();
+	return new Promise(function (fulfill, reject) {
+		request({
+			url: primavera.url + '/api/definitions/armazem-principal',
+			headers: {
+				'Authorization': primavera.auth,
+				'Content-type': 'application/json'
+			},
+			method: 'post',
+			body: JSON.stringify({armazem: armazem})
+		}, function (error, response, body) {
+			if(error){
+        		reject('Error:' + error);
+				return;
+    		}
+			if(response.statusCode !== 200){
+        		reject('Invalid Status Code Returned:' + response.statusCode);
+				return;
+	    	}
+			fulfill();
 		});
 	});
 }
