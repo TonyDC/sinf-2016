@@ -155,7 +155,7 @@ INSERT INTO Funcionario VALUES(2)
 
 INSERT INTO Definicoes VALUES ('cap_max_funcionario', '100'), ('armazem_principal', 'A1')
 GO
-
+/*
 -- ---------------------------------------------------------------------------------
 -- TRIGGERS (DDL)
 CREATE TRIGGER TR_CapMaxFuncionario ON Definicoes
@@ -179,3 +179,4 @@ AS
 			END
 	END
 GO
+*/
