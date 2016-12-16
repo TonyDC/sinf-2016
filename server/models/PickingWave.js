@@ -1,4 +1,5 @@
 const primavera = require('../config/primavera');
+const request = require('request');
 const Product = require('./Product');
 
 module.exports.getAll = function () {
@@ -39,11 +40,31 @@ module.exports.getAssignedToEmployee = function (employeeId) {
     });
 };
 
-module.exports.generate = function(selection) {
+module.exports.generate = function(serie, filial, selection) {
     return new Promise(function (fulfill, reject) {
-        const pickingOrders = ['3', '4', '5'];
-
-        fulfill(pickingOrders);
+        request({
+			url: primavera.url + '/api/wave/generate',
+			headers: {
+				'Authorization': primavera.auth,
+				'Content-Type': 'application/json'
+			},
+			method: 'post',
+			body: JSON.stringify({
+				filial: filial,
+				serie: serie,
+				encomendas: selection
+			})
+		}, function (error, response, body) {
+			if(error){
+        		reject('Error:' + error);
+				return;
+    		}
+			if(response.statusCode !== 200){
+        		reject('Invalid Status Code Returned:' + response.statusCode);
+				return;
+	    	}
+			fulfill();
+		});
     });
 };
 

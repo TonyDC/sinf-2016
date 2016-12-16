@@ -54,3 +54,55 @@ module.exports.getAll = function() {
 		});
 	});
 }
+
+module.exports.createAdmin = function() {
+	return new Promise(function (fulfill, reject) {
+		request({
+			url: primavera.url + '/api/auth/users',
+			headers: {
+				'Authorization': primavera.auth
+			}
+		}, function (error, response, body) {
+			if(error){
+        		reject('Error:' + error);
+				return;
+    		}
+			if(response.statusCode !== 200){
+        		reject('Invalid Status Code Returned:' + response.statusCode);
+				return;
+	    	}
+			usersRaw = JSON.parse(body);
+			users = usersRaw.map(function(user) {
+				user.type = (user.type == 1 ? 'Gerente' : 'Funcionário');
+				return user;
+			});
+			fulfill(users);
+		});
+	});
+}
+
+module.exports.createWorker = function() {
+	return new Promise(function (fulfill, reject) {
+		request({
+			url: primavera.url + '/api/auth/users',
+			headers: {
+				'Authorization': primavera.auth
+			}
+		}, function (error, response, body) {
+			if(error){
+        		reject('Error:' + error);
+				return;
+    		}
+			if(response.statusCode !== 200){
+        		reject('Invalid Status Code Returned:' + response.statusCode);
+				return;
+	    	}
+			usersRaw = JSON.parse(body);
+			users = usersRaw.map(function(user) {
+				user.type = (user.type == 1 ? 'Gerente' : 'Funcionário');
+				return user;
+			});
+			fulfill(users);
+		});
+	});
+}

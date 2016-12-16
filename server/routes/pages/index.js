@@ -185,6 +185,7 @@ router.post('/createPickingWave', function(req, res, next) {
         return;
     }
     const ids = req.body.selected;
+	console.log(ids);
     res.send("Sucesso");
 });
 

@@ -26,8 +26,6 @@ module.exports.getAll = function (serie, filial) {
 						}
 					}
 					return false;
-				}).map(function(order) {
-					return {id: order.NumeroDocumento, filial: order.Filial, serie: order.Serie, shippingDate: order.DataMinimaEncomenda, client: order.Cliente};
 				});
 
 				fulfill(salesOrders);
@@ -71,7 +69,7 @@ module.exports.getItems = function (serie, filial, id) {
 						
 						itemRaw = JSON.parse(body);
 						
-						fulfill({name:itemRaw.DescArtigo, quantity:item.Quantidade - item.QuantidadeSatisfeita});
+						fulfill({id: itemRaw.CodArtigo, units: itemRaw.UnidadeVenda, name:itemRaw.DescArtigo, quantity:item.Quantidade, satisfied: item.QuantidadeSatisfeita});
 					});
 				});
 			});
