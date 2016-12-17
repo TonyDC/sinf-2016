@@ -102,14 +102,14 @@ namespace SalesOrderPicking.Lib_Primavera {
             foreach (var item in listaEncomendas) {
                 object encomendaID = item["Id"], filial = item["Filial"], serie = item["Serie"], numDoc = item["NumDoc"], cliente = item["EntidadeFac"];
 
-                List<Dictionary<string, object>> linhasEncomenda = DBQuery.performQuery(PriEngine.DBConnString, "SELECT LinhasDoc.Id, LinhasDoc.Artigo, LinhasDoc.Quantidade AS Quantidade, COALESCE(quant_satisfeita, 0) AS QuantTrans, NumLinha, Armazem, Localizacao, Lote, DataEntrega FROM LinhasDoc WITH (NOLOCK) LEFT JOIN PICKING.dbo.LinhaEncomenda WITH (NOLOCK) ON (LinhaEncomenda.id_linha = LinhasDoc.Id AND sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) = LinhaEncomenda.versao_ult_act) WHERE LinhasDoc.IdCabecDoc = @0@ AND LinhasDoc.Artigo IS NOT NULL", encomendaID);
+                List<Dictionary<string, object>> linhasEncomenda = DBQuery.performQuery(PriEngine.DBConnString, "SELECT LinhasDoc.Id, LinhasDoc.Artigo, LinhasDoc.Quantidade AS Quantidade, COALESCE(quant_satisfeita, 0) AS QuantTrans, NumLinha, Armazem, Localizacao, Lote, DataEntrega, Artigo.Descricao FROM LinhasDoc WITH (NOLOCK) INNER JOIN Artigo WITH (NOLOCK) ON (LinhasDoc.Artigo = Artigo.Artigo) LEFT JOIN PICKING.dbo.LinhaEncomenda WITH (NOLOCK) ON (LinhaEncomenda.id_linha = LinhasDoc.Id AND sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) = LinhaEncomenda.versao_ult_act) WHERE LinhasDoc.IdCabecDoc = @0@ AND LinhasDoc.Artigo IS NOT NULL", encomendaID);
 
                 List<LinhaEncomendaCliente> artigosEncomenda = new List<LinhaEncomendaCliente>();
 
                 foreach (var linha in linhasEncomenda) {
-                    object linhaID = linha["Id"], artigoID = linha["Artigo"], quantidade = linha["Quantidade"], quantidadeSatisfeita = linha["QuantTrans"], numLinha = linha["NumLinha"], armazem = linha["Armazem"], localizacao = linha["Localizacao"], lote = linha["Lote"], dataEntrega = linha["DataEntrega"];
+                    object linhaID = linha["Id"], artigoID = linha["Artigo"], quantidade = linha["Quantidade"], quantidadeSatisfeita = linha["QuantTrans"], numLinha = linha["NumLinha"], armazem = linha["Armazem"], localizacao = linha["Localizacao"], lote = linha["Lote"], dataEntrega = linha["DataEntrega"], descricao = linha["Descricao"];
 
-                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID as string, armazem as string, localizacao as string, lote as string, Convert.ToDouble(quantidade), Convert.ToDouble(quantidadeSatisfeita), Convert.ToUInt32(numLinha), (DateTime)dataEntrega));
+                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID as string, descricao as string, armazem as string, localizacao as string, lote as string, Convert.ToDouble(quantidade), Convert.ToDouble(quantidadeSatisfeita), Convert.ToUInt32(numLinha), (DateTime)dataEntrega));
                 }
 
                 listaArtigos.Add(new EncomendaCliente(encomendaID.ToString(), Convert.ToUInt32(numDoc), cliente as string, serie as string, filial as string, artigosEncomenda));
@@ -143,14 +143,14 @@ namespace SalesOrderPicking.Lib_Primavera {
             foreach (var item in listaEncomendas) {
                 object encomendaID = item["Id"], filial = item["Filial"], serie = item["Serie"], numDoc = item["NumDoc"], cliente = item["EntidadeFac"];
 
-                List<Dictionary<string, object>> linhasEncomenda = DBQuery.performQuery(PriEngine.DBConnString, "SELECT LinhasDoc.Id, LinhasDoc.Artigo, LinhasDoc.Quantidade AS Quantidade, COALESCE(quant_satisfeita, 0) AS QuantTrans, NumLinha, Armazem, Localizacao, Lote, DataEntrega FROM LinhasDoc WITH (NOLOCK) LEFT JOIN PICKING.dbo.LinhaEncomenda WITH (NOLOCK) ON (LinhaEncomenda.id_linha = LinhasDoc.Id AND sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) = LinhaEncomenda.versao_ult_act) WHERE LinhasDoc.IdCabecDoc = @0@ AND LinhasDoc.Artigo IS NOT NULL", encomendaID);
+                List<Dictionary<string, object>> linhasEncomenda = DBQuery.performQuery(PriEngine.DBConnString, "SELECT LinhasDoc.Id, LinhasDoc.Artigo, LinhasDoc.Quantidade AS Quantidade, COALESCE(quant_satisfeita, 0) AS QuantTrans, NumLinha, Armazem, Localizacao, Lote, DataEntrega, Artigo.Descricao FROM LinhasDoc WITH (NOLOCK) INNER JOIN Artigo WITH (NOLOCK) ON (LinhasDoc.Artigo = Artigo.Artigo) LEFT JOIN PICKING.dbo.LinhaEncomenda WITH (NOLOCK) ON (LinhaEncomenda.id_linha = LinhasDoc.Id AND sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) = LinhaEncomenda.versao_ult_act) WHERE LinhasDoc.IdCabecDoc = @0@ AND LinhasDoc.Artigo IS NOT NULL", encomendaID);
 
                 List<LinhaEncomendaCliente> artigosEncomenda = new List<LinhaEncomendaCliente>();
 
                 foreach (var linha in linhasEncomenda) {
-                    object linhaID = linha["Id"], artigoID = linha["Artigo"], quantidade = linha["Quantidade"], quantidadeSatisfeita = linha["QuantTrans"], numLinha = linha["NumLinha"], armazem = linha["Armazem"], localizacao = linha["Localizacao"], lote = linha["Lote"], dataEntrega = linha["DataEntrega"];
+                    object linhaID = linha["Id"], artigoID = linha["Artigo"], quantidade = linha["Quantidade"], quantidadeSatisfeita = linha["QuantTrans"], numLinha = linha["NumLinha"], armazem = linha["Armazem"], localizacao = linha["Localizacao"], lote = linha["Lote"], dataEntrega = linha["DataEntrega"], descricao = linha["Descricao"];
 
-                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID as string, armazem as string, localizacao as string, lote as string, Convert.ToDouble(quantidade), Convert.ToDouble(quantidadeSatisfeita), Convert.ToUInt32(numLinha), (DateTime)dataEntrega));
+                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID as string, descricao as string, armazem as string, localizacao as string, lote as string, Convert.ToDouble(quantidade), Convert.ToDouble(quantidadeSatisfeita), Convert.ToUInt32(numLinha), (DateTime)dataEntrega));
                 }
 
                 listaArtigos.Add(new EncomendaCliente(encomendaID.ToString(), Convert.ToUInt32(numDoc), cliente as string, serie as string, filial as string, artigosEncomenda));
@@ -172,14 +172,14 @@ namespace SalesOrderPicking.Lib_Primavera {
             foreach (var item in listaEncomendas) {
                 object encomendaID = item["Id"], filial = item["Filial"], serie = item["Serie"], numDoc = item["NumDoc"], cliente = item["EntidadeFac"];
 
-                List<Dictionary<string, object>> linhasEncomenda = DBQuery.performQuery(PriEngine.DBConnString, "SELECT LinhasDoc.Id, LinhasDoc.Artigo, LinhasDoc.Quantidade AS Quantidade, COALESCE(quant_satisfeita, 0) AS QuantTrans, NumLinha, Armazem, Localizacao, Lote, DataEntrega FROM LinhasDoc WITH (NOLOCK) LEFT JOIN PICKING.dbo.LinhaEncomenda WITH (NOLOCK) ON (LinhaEncomenda.id_linha = LinhasDoc.Id AND sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) = LinhaEncomenda.versao_ult_act) WHERE LinhasDoc.IdCabecDoc = @0@ AND LinhasDoc.Artigo IS NOT NULL", encomendaID);
+                List<Dictionary<string, object>> linhasEncomenda = DBQuery.performQuery(PriEngine.DBConnString, "SELECT LinhasDoc.Id, LinhasDoc.Artigo, LinhasDoc.Quantidade AS Quantidade, COALESCE(quant_satisfeita, 0) AS QuantTrans, NumLinha, Armazem, Localizacao, Lote, DataEntrega, Artigo.Descricao FROM LinhasDoc WITH (NOLOCK) INNER JOIN Artigo ON (LinhasDoc.Artigo = Artigo.Artigo) LEFT JOIN PICKING.dbo.LinhaEncomenda WITH (NOLOCK) ON (LinhaEncomenda.id_linha = LinhasDoc.Id AND sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) = LinhaEncomenda.versao_ult_act) WHERE LinhasDoc.IdCabecDoc = @0@ AND LinhasDoc.Artigo IS NOT NULL", encomendaID);
 
                 List<LinhaEncomendaCliente> artigosEncomenda = new List<LinhaEncomendaCliente>();
 
                 foreach (var linha in linhasEncomenda) {
-                    object linhaID = linha["Id"], artigoID = linha["Artigo"], quantidade = linha["Quantidade"], quantidadeSatisfeita = linha["QuantTrans"], numLinha = linha["NumLinha"], armazem = linha["Armazem"], localizacao = linha["Localizacao"], lote = linha["Lote"], dataEntrega = linha["DataEntrega"];
+                    object linhaID = linha["Id"], artigoID = linha["Artigo"], quantidade = linha["Quantidade"], quantidadeSatisfeita = linha["QuantTrans"], numLinha = linha["NumLinha"], armazem = linha["Armazem"], localizacao = linha["Localizacao"], lote = linha["Lote"], dataEntrega = linha["DataEntrega"], descricao = linha["Descricao"];
 
-                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID as string, armazem as string, localizacao as string, lote as string, Convert.ToDouble(quantidade), Convert.ToDouble(quantidadeSatisfeita), Convert.ToUInt32(numLinha), (DateTime)dataEntrega));
+                    artigosEncomenda.Add(new LinhaEncomendaCliente(linhaID.ToString(), artigoID as string, descricao as string, armazem as string, localizacao as string, lote as string, Convert.ToDouble(quantidade), Convert.ToDouble(quantidadeSatisfeita), Convert.ToUInt32(numLinha), (DateTime)dataEntrega));
                 }
 
                 listaArtigos.Add(new EncomendaCliente(encomendaID.ToString(), Convert.ToUInt32(numDoc), cliente as string, serie as string, filial as string, artigosEncomenda));
@@ -204,7 +204,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             
             if (!PriEngine.IniciaTransaccao())
                 return false;
-
+            /*
             GcpBEDocumentoVenda objEncomenda = null;
             try {
                 // Carregar encomenda de cliente
@@ -233,9 +233,9 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             if (objEncomenda == null || !PriEngine.IniciaTransaccao())
                 return false;
-
+            */
             try {
-                objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, (int)encomenda.NDoc);
+                GcpBEDocumentoVenda objEncomenda = PriEngine.Engine.Comercial.Vendas.Edita(encomenda.Filial, GeneralConstants.ENCOMENDA_CLIENTE_DOCUMENTO, encomenda.Serie, (int)encomenda.NDoc);
                 if (objEncomenda == null) {
                     PriEngine.TerminaTransaccao();
                     throw new InvalidOperationException("Não existe uma encomenda de cliente com os dados fornecidos.");
@@ -535,11 +535,11 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             try {
                 List<Dictionary<string, object>> linhasEncomendas = dbQuery.performQueryWithTransaction(
-                        "SELECT LinhasDoc.Id, sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) as VersaoUltAct, LinhasDoc.Unidade, LinhasDoc.Artigo, LinhasDoc.Quantidade, LinhasDoc.DataEntrega, CabecDoc.Serie, CabecDoc.NumDoc FROM PRIDEMOSINF.dbo.CabecDoc INNER JOIN PRIDEMOSINF.dbo.LinhasDoc ON (CabecDoc.id = LinhasDoc.idCabecDoc) WHERE TipoDoc = 'ECL' AND Quantidade > 0 AND filial = @0@ AND serie = @1@ AND " + conditionQueryString.ToString(),
+                        "SELECT LinhasDoc.Id, sys.fn_varbintohexstr(LinhasDoc.VersaoUltAct) as VersaoUltAct, LinhasDoc.Unidade, LinhasDoc.Artigo, LinhasDoc.Quantidade, LinhasDoc.DataEntrega, CabecDoc.Serie, CabecDoc.NumDoc FROM PRIDEMOSINF.dbo.CabecDoc INNER JOIN PRIDEMOSINF.dbo.LinhasDoc ON (CabecDoc.id = LinhasDoc.idCabecDoc) WHERE TipoDoc = 'ECL' AND Quantidade > 0 AND filial = @0@ AND serie = @1@ AND " + conditionQueryString.ToString() + " AND NumDoc NOT IN (SELECT DISTINCT NumDoc FROM PRIDEMOSINF.dbo.CabecDoc INNER JOIN PRIDEMOSINF.dbo.LinhasDoc ON (CabecDoc.id = LinhasDoc.IdCabecDoc) WHERE (LinhasDoc.Armazem != 'EXPED' or LinhasDoc.Localizacao != 'EXPED') AND Filial = @0@ AND Serie = @1@) ",
                         filial, serie);
 
                 if (linhasEncomendas.Count < 1)
-                    throw new InvalidOperationException("Não foi possível encontrar as encomendas indicadas");
+                    throw new InvalidOperationException("Não foi possível encontrar as encomendas indicadas. Note-se que as encomendas devem indicar como armazém e localização 'EXPED'");
 
 
                 foreach (var tuple in linhasEncomendas) {

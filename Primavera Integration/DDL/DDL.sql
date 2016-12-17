@@ -43,7 +43,7 @@ CREATE TABLE QuantidadeReserva (
 	id INT PRIMARY KEY IDENTITY,
 	artigo NVARCHAR(48) NOT NULL UNIQUE,					-- external database reference
 	armazem NVARCHAR(5) NOT NULL,							-- external database reference
-	--localizacao VARCHAR(30) NOT NULL,					-- external database reference
+	--localizacao VARCHAR(30) NOT NULL,						-- external database reference
 	quant_reservada REAL NOT NULL DEFAULT 0,
 	CONSTRAINT CHK_QR_quantidade_nao_negativa CHECK(quant_reservada >= 0)
 	--CONSTRAINT UN_Artigo_Localizacao UNIQUE (artigo, localizacao)
@@ -52,7 +52,7 @@ CREATE TABLE QuantidadeReserva (
 CREATE TABLE LinhaEncomenda (
 	id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
 	id_linha UNIQUEIDENTIFIER NOT NULL,				-- external database reference
-	versao_ult_act CHAR(30) NOT NULL,				
+	versao_ult_act CHAR(30) NOT NULL,				-- PROBLEMA: ao modificar para o armazém de expedição, a versão muda. SOLUÇÃO: Ao criar a ECL, deve ser especificado o armazém e localização como EXPED
 	artigo NVARCHAR(48) NOT NULL,					-- external database reference
 	quant_pedida REAL NOT NULL,						
 	quant_satisfeita REAL NOT NULL DEFAULT 0,
@@ -155,29 +155,35 @@ INSERT INTO Funcionario VALUES(2)
 
 INSERT INTO Definicoes VALUES ('cap_max_funcionario', '100'), ('armazem_principal', 'A1')
 GO
-/*
+
 -- ---------------------------------------------------------------------------------
 -- TRIGGERS (DDL)
-/*
+
 CREATE TRIGGER TR_CapMaxFuncionario ON Definicoes
 INSTEAD OF UPDATE
 AS
-	DECLARE @new_cap INT;
+	DECLARE @chave NVARCHAR(300);
+	DECLARE @valor NVARCHAR(300);
 
-	SELECT @new_cap = CAST(u.valor AS INT) FROM INSERTED u;
-	PRINT @new_cap;
+	SELECT @chave = u.chave, @valor = u.valor FROM INSERTED u;
+
 	BEGIN
-		IF(@new_cap < 1)
-		BEGIN
-			RAISERROR('Bad worker capacity', 16, 1);
-			ROLLBACK;
-		END
-		ELSE
+		IF (@chave = 'cap_max_funcionario' AND CAST(@valor AS INT) < 1)
 			BEGIN
-			BEGIN TRANSACTION;
-			UPDATE Definicoes SET valor = CAST(@new_cap AS varchar(300)) WHERE chave = 'cap_max_funcionario';
-			COMMIT TRANSACTION;			-- Antes de um commit, há que iniciar a transacção
-			END
-	END
+				RAISERROR('Bad worker capacity', 16, 1);
+				ROLLBACK;
+			END;
+		
+		ELSE IF (@chave = 'armazem_principal' AND NOT EXISTS(SELECT * FROM PRIDEMOSINF.dbo.Armazens WHERE Armazem = @valor))
+			BEGIN
+				RAISERROR('Bad warehouse', 16, 1);
+				ROLLBACK;
+			END;
+
+		ELSE 
+			BEGIN
+				UPDATE Definicoes SET valor = @valor WHERE chave = @chave;
+			END;
+	END;
 GO
-*/
+
