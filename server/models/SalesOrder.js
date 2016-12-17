@@ -2,7 +2,6 @@ const primavera = require('../config/primavera');
 const request = require('request');
 const Product = require('./Product');
 
-
 module.exports.getAll = function (serie, filial) {
     return new Promise(function (fulfill, reject) {
 		request({
@@ -11,16 +10,22 @@ module.exports.getAll = function (serie, filial) {
 				'Authorization': primavera.auth
 			}}, function (error, response, body) {
 				if(error){
-					return console.log('Error:', error);
+					reject('Error:', error);
+					return;
+				}
+				if(response.statusCode == 204) {
+					fulfill([]);
+					return;
 				}
 				if(response.statusCode !== 200){
-					return console.log('Invalid Status Code Returned:', response.statusCode);
+					reject('Invalid Status Code Returned:', response.statusCode);
+					return;
 				}
 
 				salesOrdersRaw = JSON.parse(body);
 				salesOrders = salesOrdersRaw.filter(function(order) {
 					for(let i = 0; i < order.Artigos.length; ++i) {
-						const item = order.Artigos[0];
+						const item = order.Artigos[i];
 						if (item.Quantidade - item.QuantidadeSatisfeita > 0) {
 							return true;
 						}
@@ -81,18 +86,64 @@ module.exports.getItems = function (serie, filial, id) {
     });
 };
 
-module.exports.ship = function(id) {
-  return new Promise(function (fulfill, reject) {
-      const document = 'shippingOrder123e.pdf';
-
-      fulfill(document);
-  });
-};
-
-module.exports.getAllToShip = function() {
-	return new Promise(function(fulfill, reject) {
-		module.exports.getAll().then(function(salesOrders) {
-			fulfill(salesOrders.map(function(order) { return {status: 'Não pronto', shippingDate: order.shippingDate, shippingGuide: 'Não emitido'};}));
-		});
+module.exports.getAllToShip = function(serie, filial) {
+	return new Promise(function (fulfill, reject) {
+		request({
+			url: primavera.url + '/api/encomenda-pronto/' + filial + '/' + serie,
+			headers: {
+				'Authorization': primavera.auth
+			}}, function (error, response, body) {
+				if(error){
+					return console.log('Error:', error);
+				}if(response.statusCode == 204) {
+					fulfill([]);
+					return;
+				}
+				if(response.statusCode !== 200){
+					return console.log('Invalid Status Code Returned:', response.statusCode);
+				}
+				salesOrdersRaw = JSON.parse(body);
+				salesOrders = salesOrdersRaw.map(function(order) {
+					for(let i = 0; i < order.Artigos.length; ++i) {
+						const item = order.Artigos[i];
+						if (item.Quantidade - item.QuantidadeSatisfeita > 0) {
+							order.ready = false;
+							return order;
+						}
+					}
+					order.ready = true;
+					return order;
+				});
+				fulfill(salesOrders);
+			}
+		);
 	});
+}
+
+module.exports.ship = function(serie, filial, id) {
+	return new Promise(function (fulfill, reject) {
+        request({
+			url: primavera.url + '/api/encomenda',
+			headers: {
+				'Authorization': primavera.auth,
+				'Content-Type': 'application/json'
+			},
+			method: 'post',
+			body: JSON.stringify({
+				filial: filial,
+				serie: serie,
+				nDoc: id
+			})
+		}, function (error, response, body) {
+			if(error){
+        		reject('Error:' + error);
+				return;
+    		}
+			if(response.statusCode !== 200){
+        		reject('Invalid Status Code Returned:' + response.statusCode);
+				return;
+	    	}
+			fulfill();
+		});
+    });
 }

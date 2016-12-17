@@ -55,13 +55,20 @@ module.exports.getAll = function() {
 	});
 }
 
-module.exports.createAdmin = function() {
+module.exports.create = function(cargo, name, username, password) {
 	return new Promise(function (fulfill, reject) {
-		request({
-			url: primavera.url + '/api/auth/users',
+        request({
+			url: primavera.url + '/api/auth/register/' + cargo,
 			headers: {
-				'Authorization': primavera.auth
-			}
+				'Authorization': primavera.auth,
+				'Content-Type': 'application/json'
+			},
+			method: 'post',
+			body: JSON.stringify({
+				username: username,
+				password: password,
+				name: name
+			})
 		}, function (error, response, body) {
 			if(error){
         		reject('Error:' + error);
@@ -71,38 +78,7 @@ module.exports.createAdmin = function() {
         		reject('Invalid Status Code Returned:' + response.statusCode);
 				return;
 	    	}
-			usersRaw = JSON.parse(body);
-			users = usersRaw.map(function(user) {
-				user.type = (user.type == 1 ? 'Gerente' : 'Funcionário');
-				return user;
-			});
-			fulfill(users);
+			fulfill();
 		});
-	});
-}
-
-module.exports.createWorker = function() {
-	return new Promise(function (fulfill, reject) {
-		request({
-			url: primavera.url + '/api/auth/users',
-			headers: {
-				'Authorization': primavera.auth
-			}
-		}, function (error, response, body) {
-			if(error){
-        		reject('Error:' + error);
-				return;
-    		}
-			if(response.statusCode !== 200){
-        		reject('Invalid Status Code Returned:' + response.statusCode);
-				return;
-	    	}
-			usersRaw = JSON.parse(body);
-			users = usersRaw.map(function(user) {
-				user.type = (user.type == 1 ? 'Gerente' : 'Funcionário');
-				return user;
-			});
-			fulfill(users);
-		});
-	});
+    });
 }

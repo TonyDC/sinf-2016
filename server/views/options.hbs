@@ -58,14 +58,17 @@
                         <li>
                             <a href="/status"><i class="fa fa-clipboard fa-fw"></i> Estado das picking orders</a>
                         </li>
+						<li>
+                            <a href="/status-rep"><i class="fa fa-repeat fa-fw"></i> Estado das replenishment orders</a>
+                        </li>
                         <li>
                             <a href="/shipping"><i class="fa fa-file-text fa-fw"></i> Guias de remessa</a>
                         </li>
                         <li>
                             <a href="/users"><i class="fa fa-users fa-fw"></i> Gestão de utilizadores</a>
                         </li>
-                        <li>
-                            <a href="/warnings"><i class="fa fa-warning fa-fw"></i> Notificações</a>
+                       <li>
+                            <a href="/warnings" {{#if numWarnings}} class="blink" {{/if}}><i class="fa fa-warning fa-fw"></i> Notificações {{#if numWarnings}}<span class="badge">{{numWarnings}}</span>{{/if}}</a>
                         </li>
                         <li>
                             <a href="#" class="active"><i class="fa fa-gear fa-fw"></i> Definições</a>
@@ -88,7 +91,7 @@
                     <h1 class="page-header">Definições</h1>
                 </div>
                 <div class="col-md-12">
-                    <form role="form">
+                    <form role="form" method="post" action="/definitions">
                         <div class="form-group">
                             <label>Capacidade de transporte de um funcionário</label>
                             <input class="form-control" name="capacidade" value="{{capacidade.capacidade}}">
@@ -97,7 +100,7 @@
                             <label>Armazém principal</label>
                             <select class="form-control" name="armazem">
                                 {{#each armazens}}
-                                    <option value={{this.ID}}>{{this.Descricao}}</option>
+                                    <option value={{this.ID}} {{#if this.selected}}selected="selected"{{/if}}>{{this.Descricao}}</option>
                                 {{/each}}
                             </select>
                         </div>

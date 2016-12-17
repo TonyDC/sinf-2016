@@ -113,9 +113,7 @@ module.exports.getArmazemPrincipal = function() {
 	});
 }
 
-// erro 500
 module.exports.setArmazemPrincipal = function(armazem) {
-	return Promise.resolve();
 	return new Promise(function (fulfill, reject) {
 		request({
 			url: primavera.url + '/api/definitions/armazem-principal',
@@ -143,6 +141,28 @@ module.exports.getAvisos = function() {
 	return new Promise(function (fulfill, reject) {
 		request({
 			url: primavera.url + '/api/avisos',
+			headers: {
+				'Authorization': primavera.auth
+			}
+		}, function (error, response, body) {
+			if(error){
+        		reject('Error:' + error);
+				return;
+    		}
+			if(response.statusCode !== 200){
+        		reject('Invalid Status Code Returned:' + response.statusCode);
+				return;
+	    	}
+			avisos = JSON.parse(body);
+			fulfill(avisos);
+		});
+	});
+}
+
+module.exports.getNumAvisos = function() {
+	return new Promise(function (fulfill, reject) {
+		request({
+			url: primavera.url + '/api/avisos/existe',
 			headers: {
 				'Authorization': primavera.auth
 			}

@@ -22,6 +22,8 @@
     <!-- Custom Fonts -->
     <link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto:300" rel="stylesheet">
+	
+	
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -64,13 +66,16 @@
                             <a href="/status"><i class="fa fa-clipboard fa-fw"></i> Estado das picking orders</a>
                         </li>
                         <li>
+                            <a href="/status-rep"><i class="fa fa-repeat fa-fw"></i> Estado das replenishment orders</a>
+                        </li>
+                        <li>
                             <a href="/shipping"><i class="fa fa-file-text fa-fw"></i> Guias de remessa</a>
                         </li>
                         <li>
                             <a href="/users"><i class="fa fa-users fa-fw"></i> Gestão de utilizadores</a>
                         </li>
                         <li>
-                            <a href="/warnings"><i class="fa fa-warning fa-fw"></i> Notificações</a>
+                            <a href="/warnings" {{#if numWarnings}} class="blink" {{/if}}><i class="fa fa-warning fa-fw"></i> Notificações {{#if numWarnings}}<span class="badge">{{numWarnings}}</span>{{/if}}</a>
                         </li>
                         <li>
                             <a href="/options"><i class="fa fa-gear fa-fw"></i> Definições</a>
@@ -91,6 +96,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">Criar picking orders</h1>
+					<h2>Série: {{serie}}, Filial: {{filial}}</h2>
                 </div>
                 <div class="col-md-12">
                         <div class="panel panel-default">
@@ -99,6 +105,7 @@
                                     <thead class="sortable-header">
                                     <tr>
                                         <th align="center">Selecionar</th>
+										<th align="center">Documento</th>
                                         <th align="center">Data</th>
                                         <th align="center">Cliente</th>
                                     </tr>
@@ -106,7 +113,8 @@
                                     <tbody>
                                     {{#each salesOrders}}
                                         <tr class="odd gradeX">
-                                            <td align="center" class="table-icon"><i class="fa fa-square-o checkbox" data-id={{NumeroDocumento}}></i></td>
+                                            <td align="center" class="table-icon"><i class="fa fa-square-o checkbox" data-id={{NumeroDocumento}} onclick="changeCheck(this)"></i></td>
+                                            <td align="center" class="pointer-cursor" data-toggle="modal" data-target="#myModal" data-id={{NumeroDocumento}}>{{NumeroDocumento}}</td>
                                             <td align="center" class="pointer-cursor" data-toggle="modal" data-target="#myModal" data-id={{NumeroDocumento}}>{{DataMinimaEncomenda}}</td>
                                             <td align="center" class="pointer-cursor" data-toggle="modal" data-target="#myModal" data-id={{NumeroDocumento}}>{{Cliente}}</td>
                                         </tr>
@@ -130,7 +138,7 @@
 
     <!-- jQuery -->
     <script src="/vendor/jquery/jquery.min.js"></script>
-
+	
     <!-- Bootstrap Core JavaScript -->
     <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
 
@@ -153,13 +161,21 @@
     <!-- Page-Level Demo Scripts - Tables - Use for reference -->
     <script>
         $(document).ready(function() {
+			selected = [];
+			changeCheck = function(elem) {
+					$(elem).toggleClass('selected');
+					$(elem).toggleClass('fa-square-o');
+					$(elem).toggleClass('fa-check-square');
+					var id = $(elem).data('id');
+					if (selected.indexOf(id)>=0) {
+						selected.splice(selected.indexOf(id), 1);
+					} else {
+						selected.push(id);
+					}
+				};
+		
             $('#dataTables-example').DataTable({
                 responsive: true
-            });
-            $('.checkbox').click(function() {
-                $(this).toggleClass('selected');
-                $(this).toggleClass('fa-square-o');
-                $(this).toggleClass('fa-check-square');
             });
             $('#myModal').on('show.bs.modal', function(e) {
 
@@ -178,31 +194,19 @@
                 alert('Erro ao gerar picking wave: ' + err);
             {{/if}}
             $('#gerar-picking').click(function() {
-                var selected = [];
-                $("#page-wrapper .checkbox.fa-check-square").each(function() {
-                    selected.push($(this).data('id'));
-                });
-                console.log(selected);
-
                 $.ajax({
                     url:'/createPickingWave',
                     type:"POST",
                     contentType:"application/json; charset=utf-8",
                     data:JSON.stringify({selected:selected}),
                     success: function(){
-                        alert('Sucesso!');
+                        alert('Picking wave criada com sucesso!');
+						window.location.reload(true);
                     },
-                    fail: function(){
+                    fail: function(err){
                         alert('Erro: ' + err.responseText);
                     }
                 });
-/*
-                $.post('/createPickingWave', function() {
-                    console.log("sucesso");
-                }).fail(function(err) {
-                    alert('Erro: ' + err.responseText);
-                });
-*/
             });
         });
     </script>

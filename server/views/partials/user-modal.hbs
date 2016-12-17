@@ -5,31 +5,31 @@
             <h2 class="modal-title" id="myModalLabel">Criar novo utilizador</h2>
         </div>
         <div class="modal-body col-xs-12">
-            <form role="form" method="post">
+            <form role="form" method="post" action="/createUser">
                 <div class="form-group col-xs-12">
                     <h5>Nome</h5>
-                    <input type="text" />
+                    <input name="name" type="text" />
                 </div>
                 <div class="form-group col-xs-12">
                     <h5>E-mail</h5>
-                    <input type="email" />
+                    <input name="username" type="email" />
                 </div>
                 <div class="form-group col-xs-12">
                     <h5>Cargo</h5>
                     <select class="form-control" name="cargo">
-                        <option>Gerente</option>
-                        <option>Funcionário</option>
+                        <option value="manager">Gerente</option>
+                        <option value="worker">Funcionário</option>
                     </select>
                 </div>
                 <div class="form-group col-xs-12">
                     <h5>Password</h5>
-                    <input type="password" />
+                    <input name="password" type="password" />
                 </div>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn main-button">Confirmar</button>
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn main-button">Confirmar</button>
         </div>
     </div>
 </div>

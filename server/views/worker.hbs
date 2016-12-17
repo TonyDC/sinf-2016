@@ -54,7 +54,7 @@
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
                         <li>
-                            <a href="#" class="active"><i class="fa fa-list-alt fa-fw"></i> Picking wave ativa</a>
+                            <a href="#" class="active"><i class="fa fa-list-alt fa-fw"></i> Atividade em progresso</a>
                         </li>
                         <li>
                             <form action="/logout" method="post">
@@ -69,42 +69,79 @@
         </nav>
 
         <div id="page-wrapper">
-            <div class="row">
+            {{#if pickingOrder}}
+			<div class="row">
                 <div class="col-xs-12">
                     <h1 class="page-header">Picking wave ativa</h1>
                 </div>
             </div>
-
-            {{#if pickingOrder.steps}}
-                {{#each pickingOrder.steps}}
+                {{#each pickingOrder.linhas}}
                 <div class="col-xs-12 location-system">
                     <div class="col-xs-12 worker-main pointer-cursor clickable-pad">
                         <div class="col-xs-10">
-                            <h3><i class="fa fa-caret-down fa-fw location-caret"></i><i class="fa fa-map-marker fa-fw"></i> {{location}}</h3>
+                            <h3><i class="fa fa-caret-down fa-fw location-caret"></i><i class="fa fa-map-marker fa-fw"></i>{{@key}}</h3>
                         </div>
                         <div class="col-xs-2 on-the-right automatic-check">
-                            <h3><i class="fa fa-square-o fa-fw signal-check"></i></h3>
+                            <h3><i class="fa fa-fw signal-check"></i></h3>
                         </div>
                     </div>
-                    {{#each items}}
+                    {{#each this}}
                     <div class="col-xs-12 worker-sec">
                         <div class="col-xs-10">
-                            <h4><i class="fa fa-square-o fa-fw location-check item-check"></i> ({{quantity}} un.) {{name}}</h4>
+                            <h4><i class="fa fa-square-o fa-fw location-check item-check"></i> ({{quantidade}} {{unidade}}) {{artigo}} {{descricao_artigo}}</h4>
                         </div>
                         <div class="col-xs-2">
                             <div class="input-group spinner on-the-right" align="right">
-                                <input type="number" class="form-control" value="{{quantity}}" min="0" max="{{quantity}}" required>
+                                <input type="number" name="quantidade" class="form-control" data-linha="{{id}}" value="{{quantidade}}" min="0" max="{{quantidade}}" required>
                             </div>
                         </div>
                     </div>
                     {{/each}}
                 </div>
-            {{/each}}
+				{{/each}}
+            <form>
+                <button type="submit" class="submit-worker on-the-right" disabled><i class="fa fa-check"></i></button>
+            </form>
+			{{else if replenishmentOrder}}
+			<div class="row">
+                <div class="col-xs-12">
+                    <h1 class="page-header">Replenishment wave ativa</h1>
+                </div>
+            </div>
+			    {{#each replenishmentOrder.linhas}}
+                <div class="col-xs-12 location-system">
+                    <div class="col-xs-12 worker-main pointer-cursor clickable-pad">
+                        <div class="col-xs-10">
+                            <h3><i class="fa fa-caret-down fa-fw location-caret"></i><i class="fa fa-map-marker fa-fw"></i>{{@key}}</h3>
+                        </div>
+                        <div class="col-xs-2 on-the-right automatic-check">
+                            <h3><i class="fa fa-fw signal-check"></i></h3>
+                        </div>
+                    </div>
+                    {{#each this}}
+                    <div class="col-xs-12 worker-sec">
+                        <div class="col-xs-10">
+                            <h4><i class="fa fa-square-o fa-fw location-check item-check"></i> ({{quantidade}} {{unidade}}) <strong>{{artigo}}: {{descricao_artigo}}</strong> » {{destino}}</h4>
+                        </div>
+                        <div class="col-xs-2">
+                            <div class="input-group spinner on-the-right" align="right">
+                                <input type="number" name="quantidade" class="form-control" data-linha="{{id}}" value="{{quantidade}}" min="0" max="{{quantidade}}" required>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+				{{/each}}
             <form>
                 <button type="submit" class="submit-worker on-the-right" disabled><i class="fa fa-check"></i></button>
             </form>
             {{else}}
-                <p><i class="fa fa-warning fa-fw"></i> Neste momento não tem nenhuma picking wave ativa. Por favor, espere um pouco e de seguida atualize a página.</p>
+			<div class="row">
+                <div class="col-xs-12">
+                    <h1 class="page-header">Sem tarefas</h1>
+                </div>
+            </div>
+                <p><i class="fa fa-warning fa-fw"></i> Neste momento não tem nenhuma tarefa em espera. Por favor, espere um pouco e de seguida atualize a página.</p>
             {{/if}}
             </div>
         </div>
@@ -179,7 +216,6 @@
 
             //none is done
             else if (yes == 0) {
-                $(target).addClass('fa-square-o');
                 if(target.classList.contains('fa-check-square-o')) {
                     $(target).removeClass('fa-check-square-o');
                 }
@@ -242,6 +278,27 @@
             $(this).find('.location-caret').toggleClass('fa-caret-down');
             $(this).find('.location-caret').toggleClass('fa-caret-up');
         });
+		
+		$('.submit-worker').click(function() {
+			var linhas = $('.worker-sec input[name="quantidade"]').map(function() {
+				return {id: $(this).data('linha'), quantidade: $(this).val()};
+			}).get();
+			
+			$.ajax({
+                    url:'/finishTask',
+                    type:"POST",
+                    contentType:"application/json; charset=utf-8",
+                    data:JSON.stringify({linhas:linhas}),
+                    success: function(){
+                        location.reload();
+                    },
+                    fail: function(){
+                        alert('Erro: ' + err.responseText);
+                    }
+                });
+			
+			return false;
+		});
     </script>
 
 </body>

@@ -2,42 +2,82 @@ const primavera = require('../config/primavera');
 const request = require('request');
 const Product = require('./Product');
 
-module.exports.getAll = function () {
-    return new Promise(function (fulfill, reject) {
-		db.pool.query('SELECT picking_order.id, nome, terminado, data_expedicao FROM picking_order JOIN utilizador ON picking_order.id_funcionario = utilizador.id;', function(err, rows) {
-			const pickingOrders = (rows.map(function(row) {
-				return {id: row.id, status: 10, shippingDate: row.data_expedicao, worker: row.nome  };}));
-			fulfill(pickingOrders);
+module.exports.getAllPicking = function (completed) {
+     return new Promise(function (fulfill, reject) {
+		request({
+			url: primavera.url + '/api/wave/status/picking/' ,
+			headers: {
+				'Authorization': primavera.auth
+			}
+		}, function (error, response, body) {
+			if(error){
+        		reject('Error:' + error);
+				return;
+    		}
+			if (response.statusCode == 204) {
+				fulfill([]);
+				return;
+			}
+			if(response.statusCode !== 200){
+        		reject('Invalid Status Code Returned:' + response.statusCode);
+				return;
+	    	}
+			waves = JSON.parse(body);
+			fulfill(waves);
 		});
-    });
+	});
 };
 
-module.exports.get = function (id) {
-    return new Promise(function (fulfill, reject) {
-		db.pool.query('SELECT id, id_localizacao FROM picking_order_step WHERE id_picking_order = ?', [id], function(err, rows) {	
-			stepPromises = rows.map(function(row) {
-				return new Promise(function(fulfill, reject) {
-					db.pool.query('SELECT id_artigo, quantidade_pedida FROM picking_order_item WHERE id_picking_order_step = ?', [row.id], function(err, rows) {
-						console.log(JSON.stringify(rows));
-						items = rows.map(function(row) { return {quantity: row.quantidade_pedida, name: row.id_artigo}; });
-						fulfill({id: row.id, location: row.id_localizacao, items: items});
-					});
-				});
-			});
-			
-			Promise.all(stepPromises).then(function(steps) {
-				fulfill({id: id, steps: steps});
-			});
+module.exports.getAllReplenishment = function (completed) {
+     return new Promise(function (fulfill, reject) {
+		request({
+			url: primavera.url + '/api/wave/status/replenishment/' ,
+			headers: {
+				'Authorization': primavera.auth
+			}
+		}, function (error, response, body) {
+			if(error){
+        		reject('Error:' + error);
+				return;
+    		}
+			if (response.statusCode == 204) {
+				fulfill([]);
+				return;
+			}
+			if(response.statusCode !== 200){
+        		reject('Invalid Status Code Returned:' + response.statusCode);
+				return;
+	    	}
+			waves = JSON.parse(body);
+			fulfill(waves);
 		});
-    });
+	});
 };
 
 module.exports.getAssignedToEmployee = function (employeeId) {
     return new Promise(function (fulfill, reject) {
-       const assignedOrders = ['1', '3'];
-
-       fulfill(assignedOrders);
-    });
+		request({
+			url: primavera.url + '/api/wave/assign?funcionario=' + employeeId,
+			headers: {
+				'Authorization': primavera.auth
+			}
+		}, function (error, response, body) {
+			if(error){
+        		reject('Error:' + error);
+				return;
+    		}
+			if(response.statusCode == 204) {
+				fulfill();
+				return;
+			}
+			if(response.statusCode !== 200){
+        		reject('Invalid Status Code Returned:' + response.statusCode);
+				return;
+	    	}
+			task = JSON.parse(body);
+			fulfill(task);
+		});
+	});
 };
 
 module.exports.generate = function(serie, filial, selection) {
@@ -68,14 +108,58 @@ module.exports.generate = function(serie, filial, selection) {
     });
 };
 
-module.exports.pick = function(id, item, quantity) {
+module.exports.finishPicking = function(funcionario, wave, linhas) {
     return new Promise(function (fulfill, reject) {
-        fulfill();
-    })
+        request({
+			url: primavera.url + '/api/wave/terminate/picking',
+			headers: {
+				'Authorization': primavera.auth,
+				'Content-Type': 'application/json'
+			},
+			method: 'post',
+			body: JSON.stringify({
+				funcionario: funcionario,
+				wave: wave,
+				linhas: linhas
+			})
+		}, function (error, response, body) {
+			if(error){
+        		reject('Error:' + error);
+				return;
+    		}
+			if(response.statusCode !== 200){
+        		reject('Invalid Status Code Returned:' + response.statusCode);
+				return;
+	    	}
+			fulfill();
+		});
+    });
 };
 
-module.exports.finish = function(id) {
-    return new Promise(function(fulfill, reject){
-        fulfill();
-    })
+module.exports.finishReplenishment = function(funcionario, wave, linhas) {
+    return new Promise(function (fulfill, reject) {
+        request({
+			url: primavera.url + '/api/wave/terminate/replenishment',
+			headers: {
+				'Authorization': primavera.auth,
+				'Content-Type': 'application/json'
+			},
+			method: 'post',
+			body: JSON.stringify({
+				funcionario: funcionario,
+				wave: wave,
+				linhas: linhas
+			})
+		}, function (error, response, body) {
+			if(error){
+        		reject('Error:' + error);
+				return;
+    		}
+			if(response.statusCode !== 200){
+        		reject('Invalid Status Code Returned:' + response.statusCode);
+				return;
+	    	}
+			fulfill();
+		});
+    });
 };

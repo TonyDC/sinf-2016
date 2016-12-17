@@ -33,7 +33,6 @@
 </head>
 
 <body>
-
     <div id="wrapper">
 
         <!-- Navigation -->
@@ -57,13 +56,13 @@
                             <a href="/choice"><i class="fa fa-plus-square fa-fw"></i> Criar picking orders</a>
                         </li>
                         <li>
-                            <a href="#" class="active"><i class="fa fa-clipboard fa-fw"></i> Estado das picking orders</a>
+                            <a href="/status"><i class="fa fa-clipboard fa-fw"></i> Estado das picking orders</a>
                         </li>
 						<li>
                             <a href="/status-rep"><i class="fa fa-repeat fa-fw"></i> Estado das replenishment orders</a>
                         </li>
                         <li>
-                            <a href="/shipping"><i class="fa fa-file-text fa-fw"></i> Guias de remessa</a>
+                            <a href="#" class="active"><i class="fa fa-file-text fa-fw"></i> Guias de remessa</a>
                         </li>
                         <li>
                             <a href="/users"><i class="fa fa-users fa-fw"></i> Gestão de utilizadores</a>
@@ -89,72 +88,30 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Estado das picking orders</h1>
+                    <h1 class="page-header">Guias de Remessa</h1>
                 </div>
-            </div>
-            <!-- /.row -->
-            <!--
-            <div class="row">
-                <div class="col-lg-3 col-md-6">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <i class="fa fa-clock-o fa-5x"></i>
-                                </div>
-                                <div class="col-xs-9 text-right">
-                                    <div class="huge">1</div>
-                                    <div>Por terminar</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="panel panel-green">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <i class="fa fa-group fa-5x"></i>
-                                </div>
-                                <div class="col-xs-9 text-right">
-                                    <div class="huge">2</div>
-                                    <div>Funcionários em serviço</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            -->
                 <div class="col-md-12">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
-                                    <thead class="sortable-header">
-                                    <tr>
-                                        <th align="center">Estado</th>
-                                        <th align="center">Data de Início</th>
-										<th align="center">Data de Conclusão</th>
-                                        <th align="center">Funcionário</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {{#each pickingOrders}}
-                                        <tr class="odd gradeX">
-                                            <td align="center">{{#if Finalizada}} Finalizada {{else}} Em Progresso {{/if}}</td>
-                                            <td align="center">{{DataInicio}}</td>
-											<td align="center">{{#if DataFim}}{{DataFim}}{{else}}-----{{/if}}</td>
-                                            <td align="center">{{Funcionario}}</td>
-                                        </tr>
-                                    {{/each}}
-                                    </tbody>
-                                </table>
-                                <!-- /.table-responsive -->
-                            </div>
-                            <!-- /.panel-body -->
+                    <form role="form" method="get" action="shipping-guide">
+                        <div class="form-group col-md-3">
+                            <label>Série</label>
+                            <select class="form-control" name="serie">
+                                {{#each series}}
+                                <option>{{this}}</option>
+                                {{/each}}
+                            </select>
                         </div>
-                    <!-- /.panel -->
+                        <div class="form-group col-md-3 col-md-offset-1">
+                            <label>Filial</label>
+                            <select class="form-control" name="filial">
+                                {{#each filiais}}
+                                <option>{{this}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <button type="submit" class="btn main-button">Aceitar</button>
+                        </div>
+                    </form>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -185,15 +142,6 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="/dist/js/sb-admin-2.js"></script>
-
-    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
-    <script>
-        $(document).ready(function() {
-            $('#dataTables-example').DataTable({
-                responsive: true
-            });
-        });
-    </script>
 
 </body>
 
