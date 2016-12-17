@@ -73,7 +73,7 @@ p, body {
   box-shadow: none; }
 
 .worker-sec {
-  display: none;
+  display: inline;
   padding: 2px;
   padding-top: 7px;
   margin: 0;
