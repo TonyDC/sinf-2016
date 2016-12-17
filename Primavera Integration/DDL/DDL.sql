@@ -143,7 +143,7 @@ CREATE TABLE Definicoes (
 	chave NVARCHAR(300) PRIMARY KEY,
 	valor NVARCHAR(300)
 )
-
+GO
 -- ---------------------------------------------------------------------------------
 -- DML
 
@@ -155,7 +155,7 @@ INSERT INTO Funcionario VALUES(2)
 
 INSERT INTO Definicoes VALUES ('cap_max_funcionario', '100'), ('armazem_principal', 'A1')
 GO
-
+/*
 -- ---------------------------------------------------------------------------------
 -- TRIGGERS (DDL)
 /*
