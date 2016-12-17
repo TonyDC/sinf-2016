@@ -14,6 +14,7 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
         private string localizacaoOrigem;
         private string localizacaoDestino;
         private string unidades;
+        private string descricao;
 
         [JsonProperty("id")]
         public string IDLinha { get { return this.id; } }
@@ -27,14 +28,17 @@ namespace SalesOrderPicking.Lib_Primavera.Model {
         public string LocalizacaoDestino { get { return this.localizacaoDestino; } }
         [JsonProperty("unidade")]
         public string Unidades { get { return this.unidades; } }
+        [JsonProperty("descricao_artigo")]
+        public string Descricao { get { return this.descricao; } }
 
-        public ReplenishmentLine(string id, string artigo, int quantATransferir, string unidades, string localizacaoOrigem, string localizacaoDestino) {
+        public ReplenishmentLine(string id, string artigo, string descricao, int quantATransferir, string unidades, string localizacaoOrigem, string localizacaoDestino) {
             this.id = id;
             this.artigo = artigo;
             this.quantATransferir = quantATransferir;
             this.unidades = unidades;
             this.localizacaoOrigem = localizacaoOrigem;
             this.localizacaoDestino = localizacaoDestino;
+            this.descricao = descricao;
         }
 
     }

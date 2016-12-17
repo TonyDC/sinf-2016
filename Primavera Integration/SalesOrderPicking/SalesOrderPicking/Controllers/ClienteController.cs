@@ -27,7 +27,7 @@ namespace SalesOrderPicking.Controllers {
             }
 
             if (clientes == null)
-                return NotFound();
+                return StatusCode(HttpStatusCode.NoContent);
             else
                 return Ok(clientes);
         }
@@ -66,7 +66,7 @@ namespace SalesOrderPicking.Controllers {
             }
 
             if (encomendasCliente == null || encomendasCliente.Count < 1)
-                return NotFound();
+                return StatusCode(HttpStatusCode.NoContent);
             else
                 return Ok(encomendasCliente);
         }
@@ -86,7 +86,7 @@ namespace SalesOrderPicking.Controllers {
             }
 
             if (encomendas == null || encomendas.Count < 1)
-                return NotFound();
+                return StatusCode(HttpStatusCode.NoContent);
             else
                 return Ok(encomendas);
         }
@@ -106,7 +106,7 @@ namespace SalesOrderPicking.Controllers {
             }
 
             if (encomendas == null || encomendas.Count < 1)
-                return NotFound();
+                return StatusCode(HttpStatusCode.NoContent);
             else
                 return Ok(encomendas);
         }
@@ -126,7 +126,7 @@ namespace SalesOrderPicking.Controllers {
             }
 
             if (encomendas == null || encomendas.Count < 1)
-                return NotFound();
+                return StatusCode(HttpStatusCode.NoContent);
             else
                 return Ok(encomendas);
         }
@@ -147,7 +147,7 @@ namespace SalesOrderPicking.Controllers {
             }
 
             if (encomendas == null || encomendas.Count < 1)
-                return NotFound();
+                return StatusCode(HttpStatusCode.NoContent);
             else
                 return Ok(encomendas);
         }
@@ -167,7 +167,7 @@ namespace SalesOrderPicking.Controllers {
             }
 
             if (encomendas == null || encomendas.Count < 1)
-                return NotFound();
+                return StatusCode(HttpStatusCode.NoContent);
             else
                 return Ok(encomendas);
         }
@@ -188,7 +188,7 @@ namespace SalesOrderPicking.Controllers {
             }
 
             if (encomendas == null || encomendas.Count < 1)
-                return NotFound();
+                return StatusCode(HttpStatusCode.NoContent);
             else
                 return Ok(encomendas);
         }
@@ -207,7 +207,7 @@ namespace SalesOrderPicking.Controllers {
             }
 
             if (encomendas == null || encomendas.Count < 1)
-                return NotFound();
+                return StatusCode(HttpStatusCode.NoContent);
             else
                 return Ok(encomendas);
         }

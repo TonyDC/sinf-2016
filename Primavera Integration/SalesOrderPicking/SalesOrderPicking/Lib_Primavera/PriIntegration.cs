@@ -762,7 +762,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
                 // Estabelecer a rota: Ordenação alfabética das localizações (S-shape heuristic)
                 List<Dictionary<string, object>> pickingLinesRows = dbQuery.performQueryWithTransaction(
-                        "SELECT LinhaPicking.id, localizacao, LinhaEncomenda.artigo, quant_a_satisfazer, unidade FROM LinhaPicking INNER JOIN LinhaEncomenda ON(LinhaPicking.id_linha_encomenda = LinhaEncomenda.id) WHERE " + queryString.ToString() + " ORDER BY localizacao");
+                        "SELECT LinhaPicking.id, localizacao, LinhaEncomenda.artigo, quant_a_satisfazer, unidade, Artigo.Descricao FROM LinhaPicking INNER JOIN LinhaEncomenda ON(LinhaPicking.id_linha_encomenda = LinhaEncomenda.id) INNER JOIN PRIDEMOSINF.dbo.Artigo ON (LinhaEncomenda.artigo = Artigo.Artigo) WHERE " + queryString.ToString() + " ORDER BY localizacao");
 
                 // Agrupar as linhas por localizacao
                 Dictionary<string, List<PickingLine>> pickingOrderContent = new Dictionary<string, List<PickingLine>>();
@@ -772,11 +772,11 @@ namespace SalesOrderPicking.Lib_Primavera {
                     string location = line["localizacao"] as string;
                     if (!pickingOrderContent.TryGetValue(location, out pl)) {
                         pl = new List<PickingLine>();
-                        pl.Add(new PickingLine(line["id"].ToString(), line["artigo"] as string, Convert.ToInt32(line["quant_a_satisfazer"]), line["unidade"] as string));
+                        pl.Add(new PickingLine(line["id"].ToString(), line["artigo"] as string, line["Descricao"] as string, Convert.ToInt32(line["quant_a_satisfazer"]), line["unidade"] as string));
                         pickingOrderContent.Add(location, pl);
 
                     } else
-                        pl.Add(new PickingLine(line["id"].ToString(), line["artigo"] as string, Convert.ToInt32(line["quant_a_satisfazer"]), line["unidade"] as string));
+                        pl.Add(new PickingLine(line["id"].ToString(), line["artigo"] as string, line["Descricao"] as string, Convert.ToInt32(line["quant_a_satisfazer"]), line["unidade"] as string));
                 }
 
                 dbQuery.Commit();
@@ -1080,7 +1080,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                 // Estabelecer a rota: Ordenação alfabética das localizações
                 // TODO Pressupõe-se que a localização de reposição e a posição final apenas variam em piso
                 List<Dictionary<string, object>> replenishmentLinesRows = dbQuery.performQueryWithTransaction(
-                        "SELECT * FROM LinhaReplenishment WHERE " + queryString.ToString() + " ORDER BY localizacao_destino");                                   // Assim, o piso é fixado, sendo, por conseguinte, como uma picking wave
+                        "SELECT LinhaReplenishment.*, Artigo.Descricao FROM LinhaReplenishment INNER JOIN PRIDEMOSINF.dbo.Artigo ON (LinhaReplenishment.artigo = Artigo.Artigo) WHERE " + queryString.ToString() + " ORDER BY localizacao_destino");                                   // Assim, o piso é fixado, sendo, por conseguinte, como uma picking wave
 
 
                 Dictionary<string, List<ReplenishmentLine>> replenishmentWaveContent = new Dictionary<string, List<ReplenishmentLine>>();
@@ -1093,16 +1093,17 @@ namespace SalesOrderPicking.Lib_Primavera {
                     int quantidade = Convert.ToInt32(line["quant_a_satisfazer"]);
                     string unidade = line["unidade"] as string;
                     string destino = line["localizacao_destino"] as string;
+                    string descricao = line["Descricao"] as string;
 
                     if (!replenishmentWaveContent.TryGetValue(location, out pl)) {
                         pl = new List<ReplenishmentLine>();
                         //pl.Add(new ReplenishmentLine(line["artigo"] as string, Convert.ToInt32(line["quant_a_satisfazer"]), line["unidade"] as string, location, line["localizacao_destino"] as string));
-                        pl.Add(new ReplenishmentLine(id, artigo, quantidade, unidade, location, destino));
+                        pl.Add(new ReplenishmentLine(id, artigo, descricao, quantidade, unidade, location, destino));
                         replenishmentWaveContent.Add(location, pl);
 
                     } else
                         //pl.Add(new ReplenishmentLine(line["artigo"] as string, Convert.ToInt32(line["quant_a_satisfazer"]), line["unidade"] as string, location, line["localizacao_destino"] as string));
-                        pl.Add(new ReplenishmentLine(id, artigo, quantidade, unidade, location, destino));
+                        pl.Add(new ReplenishmentLine(id, artigo, descricao, quantidade, unidade, location, destino));
                 }
 
                 dbQuery.Commit();
@@ -1251,7 +1252,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             string replenishmentWaveID = replenishmentWaveIDRows.ElementAt(0)["id"].ToString();
 
             List<Dictionary<string, object>> replenishmentLinesRows = DBQuery.performQuery(PriEngine.PickingDBConnString,
-                    "SELECT * FROM LinhaReplenishment WHERE id_replenishment = @0@ ORDER BY localizacao_destino",
+                    "SELECT LinhaReplenishment.*, Artigo.Descricao FROM LinhaReplenishment INNER JOIN PRIDEMOSINF.dbo.Artigo ON (LinhaReplenishment.artigo = Artigo.Artigo) WHERE id_replenishment = @0@ ORDER BY localizacao_destino",
                     replenishmentWaveID);
 
             Dictionary<string, List<ReplenishmentLine>> replenishmentWaveContent = new Dictionary<string, List<ReplenishmentLine>>();
@@ -1264,14 +1265,15 @@ namespace SalesOrderPicking.Lib_Primavera {
                 int quantidade = Convert.ToInt32(line["quant_a_satisfazer"]);
                 string unidade = line["unidade"] as string;
                 string destino = line["localizacao_destino"] as string;
+                string descricao = line["Descricao"] as string;
 
                 if (!replenishmentWaveContent.TryGetValue(location, out pl)) {
                     pl = new List<ReplenishmentLine>();
-                    pl.Add(new ReplenishmentLine(id, artigo, quantidade, unidade, location, destino));
+                    pl.Add(new ReplenishmentLine(id, artigo, descricao, quantidade, unidade, location, destino));
                     replenishmentWaveContent.Add(location, pl);
 
                 } else
-                    pl.Add(new ReplenishmentLine(id, artigo, quantidade, unidade, location, destino));
+                    pl.Add(new ReplenishmentLine(id, artigo, descricao, quantidade, unidade, location, destino));
             }
 
             return new Wave<ReplenishmentLine>(replenishmentWaveID, funcionarioID, replenishmentWaveContent);
@@ -1294,7 +1296,7 @@ namespace SalesOrderPicking.Lib_Primavera {
 
             // Estabelecer a rota: Ordenação alfabética das localizações (S-shape heuristic)
             List<Dictionary<string, object>> pickingLinesRows = DBQuery.performQuery(PriEngine.PickingDBConnString,
-                    "SELECT LinhaPicking.id, localizacao, LinhaEncomenda.artigo, quant_a_satisfazer, unidade FROM LinhaPicking INNER JOIN LinhaEncomenda ON(LinhaPicking.id_linha_encomenda = LinhaEncomenda.id) WHERE id_picking = @0@ ORDER BY localizacao",
+                    "SELECT LinhaPicking.id, localizacao, LinhaEncomenda.artigo, quant_a_satisfazer, unidade, Artigo.Descricao FROM LinhaPicking INNER JOIN LinhaEncomenda ON(LinhaPicking.id_linha_encomenda = LinhaEncomenda.id) INNER JOIN PRIDEMOSINF.dbo.Artigo ON (LinhaEncomenda.artigo = Artigo.Artigo) WHERE id_picking = @0@ ORDER BY localizacao",
                     pickingWaveID);
 
             // Agrupar as linhas por localizacao
@@ -1305,11 +1307,11 @@ namespace SalesOrderPicking.Lib_Primavera {
                 string location = line["localizacao"] as string;
                 if (!pickingOrderContent.TryGetValue(location, out pl)) {
                     pl = new List<PickingLine>();
-                    pl.Add(new PickingLine(line["id"].ToString(), line["artigo"] as string, Convert.ToInt32(line["quant_a_satisfazer"]), line["unidade"] as string));
+                    pl.Add(new PickingLine(line["id"].ToString(), line["artigo"] as string, line["Descricao"] as string, Convert.ToInt32(line["quant_a_satisfazer"]), line["unidade"] as string));
                     pickingOrderContent.Add(location, pl);
 
                 } else
-                    pl.Add(new PickingLine(line["id"].ToString(), line["artigo"] as string, Convert.ToInt32(line["quant_a_satisfazer"]), line["unidade"] as string));
+                    pl.Add(new PickingLine(line["id"].ToString(), line["artigo"] as string, line["Descricao"] as string, Convert.ToInt32(line["quant_a_satisfazer"]), line["unidade"] as string));
             }
 
             return new Wave<PickingLine>(pickingWaveID, funcionarioID, pickingOrderContent);
@@ -1395,9 +1397,9 @@ namespace SalesOrderPicking.Lib_Primavera {
                 throw new InvalidOperationException("Bad offset");
 
             List<Dictionary<string, object>> pickingRows = DBQuery.performQuery(PriEngine.PickingDBConnString,
-                "SELECT PickingWave.*, Utilizador.username FROM PickingWave INNER JOIN Utilizador ON (PickingWave.id_funcionario = Utilizador.id) WHERE em_progresso = 1" +
+                "SELECT PickingWave.*, Utilizador.name FROM PickingWave INNER JOIN Utilizador ON (PickingWave.id_funcionario = Utilizador.id) WHERE em_progresso = 1" +
                 " UNION " +
-                "SELECT TOP " + offsetPickingDone + " PickingWave.*, Utilizador.username FROM PickingWave INNER JOIN Utilizador ON (PickingWave.id_funcionario = Utilizador.id) WHERE em_progresso = 0 ORDER BY em_progresso DESC, data_conclusao DESC, data_inicio DESC");
+                "SELECT TOP " + offsetPickingDone + " PickingWave.*, Utilizador.name FROM PickingWave INNER JOIN Utilizador ON (PickingWave.id_funcionario = Utilizador.id) WHERE em_progresso = 0 ORDER BY em_progresso DESC, data_conclusao DESC, data_inicio DESC");
 
             if (pickingRows.Count < 1)
                 return null;
@@ -1410,7 +1412,7 @@ namespace SalesOrderPicking.Lib_Primavera {
                     ID = item["id"].ToString(),
                     DataInicio = (DateTime)item["data_inicio"],
                     DataFim = item["data_conclusao"].GetType() == typeof(DBNull) ? (DateTime?)null : (DateTime)item["data_conclusao"], 
-                    Funcionario = item["username"].ToString(), 
+                    Funcionario = item["name"].ToString(), 
                     Finalizada = !((bool)item["em_progresso"]) });
             }
 
@@ -1423,9 +1425,9 @@ namespace SalesOrderPicking.Lib_Primavera {
                 throw new InvalidOperationException("Bad offset");
 
             List<Dictionary<string, object>> replenishmentRows = DBQuery.performQuery(PriEngine.PickingDBConnString,
-                "SELECT ReplenishmentWave.*, Utilizador.username FROM ReplenishmentWave INNER JOIN Utilizador ON (ReplenishmentWave.id_funcionario = Utilizador.id) WHERE em_progresso = 1" +
+                "SELECT ReplenishmentWave.*, Utilizador.name FROM ReplenishmentWave INNER JOIN Utilizador ON (ReplenishmentWave.id_funcionario = Utilizador.id) WHERE em_progresso = 1" +
                 " UNION " +
-                "SELECT TOP " + offsetReplenishmentDone + " ReplenishmentWave.*, Utilizador.username FROM ReplenishmentWave INNER JOIN Utilizador ON (ReplenishmentWave.id_funcionario = Utilizador.id) WHERE em_progresso = 0 ORDER BY em_progresso DESC, data_conclusao DESC, data_inicio DESC");
+                "SELECT TOP " + offsetReplenishmentDone + " ReplenishmentWave.*, Utilizador.name FROM ReplenishmentWave INNER JOIN Utilizador ON (ReplenishmentWave.id_funcionario = Utilizador.id) WHERE em_progresso = 0 ORDER BY em_progresso DESC, data_conclusao DESC, data_inicio DESC");
 
             if (replenishmentRows.Count < 1)
                 return null;
@@ -1433,7 +1435,7 @@ namespace SalesOrderPicking.Lib_Primavera {
             List<WaveStatus> result = new List<WaveStatus>();
 
             foreach (var item in replenishmentRows) {
-                result.Add(new WaveStatus { ID = item["id"].ToString(), DataInicio = (DateTime)item["data_inicio"], DataFim = item["data_conclusao"].GetType() == typeof(DBNull) ? (DateTime?)null : (DateTime)item["data_conclusao"], Funcionario = item["username"].ToString(), Finalizada = !((bool)item["em_progresso"]) });
+                result.Add(new WaveStatus { ID = item["id"].ToString(), DataInicio = (DateTime)item["data_inicio"], DataFim = item["data_conclusao"].GetType() == typeof(DBNull) ? (DateTime?)null : (DateTime)item["data_conclusao"], Funcionario = item["name"].ToString(), Finalizada = !((bool)item["em_progresso"]) });
             }
 
             return result;
