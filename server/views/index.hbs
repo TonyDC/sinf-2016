@@ -86,6 +86,14 @@
     <!-- Custom Theme JavaScript -->
     <script src="/dist/js/sb-admin-2.js"></script>
 
+	{{#if loginError}}
+	<script>
+		$(document).ready(function() {
+			alert('{{loginError}}');
+		});
+	</script>
+	{{/if}}
+	
 </body>
 
 </html>

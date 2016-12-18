@@ -40,7 +40,6 @@ function checkWarnings(req, res, next) {
 	});
 }
 
-//Done
 router.get('/', function(req, res, next) {
 
     if(req.session.userId) {
@@ -52,11 +51,12 @@ router.get('/', function(req, res, next) {
         return;
     }
 
-    res.render('index');
-
+	const error = req.session.loginError;
+	req.session.loginError = null;
+	console.log(error);
+    res.render('index', {loginError: error});
 });
 
-//Done
 router.get('/choice', checkLogin, checkAdmin, checkWarnings, function(req, res, next) {
 	Util.getSeries().then(function(series) {
 		Util.getFiliais().then(function(filiais) {
@@ -65,7 +65,6 @@ router.get('/choice', checkLogin, checkAdmin, checkWarnings, function(req, res, 
 	});
 });
 
-//Done
 router.get('/creation', checkLogin, checkAdmin, checkWarnings, function(req, res, next) {
     const required_params = ['serie', 'filial'];
 	const serie = req.query.serie;
@@ -78,14 +77,12 @@ router.get('/creation', checkLogin, checkAdmin, checkWarnings, function(req, res
 	});
 });
 
-// Done
 router.get('/status', checkLogin, checkAdmin, checkWarnings, function(req, res, next) {
 	PickingWave.getAllPicking().then(function(waves) {
 		res.render('status', {pickingOrders: waves, numWarnings: req.session.numWarnings});
 	});
 });
 
-// Done
 router.get('/status-rep', checkLogin, checkAdmin, checkWarnings, function(req, res, next) {
 	 
 	PickingWave.getAllReplenishment().then(function(waves) {
@@ -93,7 +90,6 @@ router.get('/status-rep', checkLogin, checkAdmin, checkWarnings, function(req, r
 	});
 });
 
-// Done
 router.get('/shipping', checkLogin, checkAdmin, checkWarnings, function(req, res, next) {
 	Util.getSeries().then(function(series) {
 		Util.getFiliais().then(function(filiais) {
@@ -114,21 +110,18 @@ router.get('/shipping-guide', checkLogin, checkAdmin, checkWarnings, function(re
 	});
 });
 
-//Done
 router.get('/warnings', checkLogin, checkAdmin, function(req, res, next) {
 	Util.getAvisos().then(function(avisos) {
 		res.render('warnings', {warnings: avisos});
 	});
 });
 
-//Done
 router.get('/users', checkLogin, checkAdmin, checkWarnings, function(req, res, next) {
    	User.getAll().then(function(users) {
 		res.render('users', {users: users, numWarnings: req.session.numWarnings});
 	});
 });
 
-//Done
 router.get('/options', checkLogin, checkAdmin, checkWarnings, function(req, res, next) {
 	Util.getCapacidade().then(function(capacidade) {
 		Util.getArmazemPrincipal().then(function(armazemPrincipal) {
@@ -167,7 +160,6 @@ router.get('/worker', checkLogin, checkWorker, function(req, res, next) {
  * REQUESTS
  */
 
- //Done
 router.get('/partials/salesOrder/:id', function(req, res, next) {
    const id = req.params.id;
 
@@ -184,12 +176,10 @@ router.get('/partials/salesOrderToShip/:id', function(req, res, next) {
    })
 });
 
-//Done
 router.get('/partials/newUser', function(req, res, next) {
     res.render('partials/user-modal');
 });
 
-//Done
 router.post('/createPickingWave', function(req, res, next) {
     if (!req.body.selected) {
         res.status(400).send('Tem de selecionar pelo menos uma sales order');
@@ -203,7 +193,6 @@ router.post('/createPickingWave', function(req, res, next) {
 	});
 });
 
-//Done
 router.post('/finishTask', checkLogin, checkWorker, function(req, res, next) {
 	if (!req.body.linhas) {
 		res.status(400).send('Nenhuma linha selecionada');
@@ -241,7 +230,6 @@ router.post('/createShipping', checkLogin, checkAdmin, function(req, res, next) 
 	});
 });
 
-// Done
 router.post('/login', function(req, res, next) {
    const email = req.body.email;
    const pass = req.body.password;
@@ -251,10 +239,12 @@ router.post('/login', function(req, res, next) {
 	   req.session.userId = userData.user;
 
 	   res.redirect('/');
+   }).catch( function() {
+		req.session.loginError = "Credenciais erradas";
+		res.redirect('/');
    });
 });
 
-// Done
 router.post('/logout', function(req, res, next) {
     if(req.session) {
         req.session.destroy();
