@@ -24,9 +24,9 @@ module.exports.getAllPicking = function (completed) {
 	    	}
 			wavesRaw = JSON.parse(body);
 			waves = wavesRaw.map(function(wave) {
-				wave.DataInicio = wave.DataInicio.substr(0,10) + ' ' + wave.DataInicio.substr(11, 16);
+				wave.DataInicio = wave.DataInicio.substr(0,10) + ' ' + wave.DataInicio.substr(11, 5);
 				if (wave.DataFim) {
-					wave.DataFim = wave.DataFim.substr(0,10) + ' ' + wave.DataFim.substr(11, 16);
+					wave.DataFim = wave.DataFim.substr(0,10) + ' ' + wave.DataFim.substr(11, 5);
 				}
 				return wave;
 			});
@@ -57,9 +57,9 @@ module.exports.getAllReplenishment = function (completed) {
 	    	}
 			wavesRaw = JSON.parse(body);
 			waves = wavesRaw.map(function(wave) {
-				wave.DataInicio = wave.DataInicio.substr(0,10) + ' ' + wave.DataInicio.substr(11, 16);
+				wave.DataInicio = wave.DataInicio.substr(0,10) + ' ' + wave.DataInicio.substr(11, 5);
 				if (wave.DataFim) {
-					wave.DataFim = wave.DataFim.substr(0,10) + ' ' + wave.DataFim.substr(11, 16);
+					wave.DataFim = wave.DataFim.substr(0,10) + ' ' + wave.DataFim.substr(11, 5);
 				}
 				return wave;
 			});
