@@ -180,7 +180,7 @@ router.get('/partials/salesOrder/:id', function(req, res, next) {
 router.get('/partials/salesOrderToShip/:id', function(req, res, next) {
    const id = req.params.id;
 
-   SalesOrder.getItems(req.session.serieShipping, req.session.filialShipping, id).then(function (salesOrder) {
+   SalesOrder.getItemsToShip(req.session.serieShipping, req.session.filialShipping, id).then(function (salesOrder) {
        res.render('partials/product-modal', {salesOrder:salesOrder, layout: false});
    })
 });

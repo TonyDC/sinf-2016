@@ -31,6 +31,9 @@ module.exports.getAll = function (serie, filial) {
 						}
 					}
 					return false;
+				}).map(function(order) {
+					order.DataMinimaEncomenda = order.DataMinimaEncomenda.substr(0,10);
+					return order;
 				});
 
 				fulfill(salesOrders);
@@ -111,6 +114,7 @@ module.exports.getAllToShip = function(serie, filial) {
 							return order;
 						}
 					}
+					order.DataMinimaEncomenda = order.DataMinimaEncomenda.substr(0,10);
 					order.ready = true;
 					return order;
 				});
@@ -119,6 +123,53 @@ module.exports.getAllToShip = function(serie, filial) {
 		);
 	});
 }
+
+module.exports.getItemsToShip = function (serie, filial, id) {
+    return new Promise(function (fulfill, reject) {
+		request({
+			url: primavera.url + '/api/encomenda-pronto/' + filial + '/' + serie + '/' + id,
+			headers: {
+				'Authorization': primavera.auth
+			}}, function (error, response, body) {
+			if(error){
+				console.log('Error:', error);
+				reject();
+			}
+			if(response.statusCode !== 200){
+				console.log('Invalid Status Code Returned:', response.statusCode);
+				reject();
+			}
+
+			salesOrderRaw = JSON.parse(body)[0];
+
+			itemInfoPromises = salesOrderRaw.Artigos.map(function(item) {
+				return new Promise(function(fulfill, reject) {
+					request({url: primavera.url + '/api/artigo/' + item.ArtigoID,
+			headers: {
+				'Authorization': primavera.auth
+			}}, function (error, response, body) {
+							if(error){
+							console.log('Error:', error);
+							reject();
+							}
+						if(response.statusCode !== 200){
+							console.log('Invalid Status Code Returned:', response.statusCode);
+							reject();
+							}				
+						
+						itemRaw = JSON.parse(body);
+						
+						fulfill({id: itemRaw.CodArtigo, units: itemRaw.UnidadeVenda, name:itemRaw.DescArtigo, quantity:item.Quantidade, satisfied: item.QuantidadeSatisfeita});
+					});
+				});
+			});
+			
+			Promise.all(itemInfoPromises).then(function(items) {
+				fulfill({id: id, client:salesOrderRaw.Cliente, items: items});
+			});
+		});
+    });
+};
 
 module.exports.ship = function(serie, filial, id) {
 	return new Promise(function (fulfill, reject) {

@@ -22,7 +22,14 @@ module.exports.getAllPicking = function (completed) {
         		reject('Invalid Status Code Returned:' + response.statusCode);
 				return;
 	    	}
-			waves = JSON.parse(body);
+			wavesRaw = JSON.parse(body);
+			waves = wavesRaw.map(function(wave) {
+				wave.DataInicio = wave.DataInicio.substr(0,10) + ' ' + wave.DataInicio.substr(11, 16);
+				if (wave.DataFim) {
+					wave.DataFim = wave.DataFim.substr(0,10) + ' ' + wave.DataFim.substr(11, 16);
+				}
+				return wave;
+			});
 			fulfill(waves);
 		});
 	});
@@ -48,7 +55,14 @@ module.exports.getAllReplenishment = function (completed) {
         		reject('Invalid Status Code Returned:' + response.statusCode);
 				return;
 	    	}
-			waves = JSON.parse(body);
+			wavesRaw = JSON.parse(body);
+			waves = wavesRaw.map(function(wave) {
+				wave.DataInicio = wave.DataInicio.substr(0,10) + ' ' + wave.DataInicio.substr(11, 16);
+				if (wave.DataFim) {
+					wave.DataFim = wave.DataFim.substr(0,10) + ' ' + wave.DataFim.substr(11, 16);
+				}
+				return wave;
+			});
 			fulfill(waves);
 		});
 	});
