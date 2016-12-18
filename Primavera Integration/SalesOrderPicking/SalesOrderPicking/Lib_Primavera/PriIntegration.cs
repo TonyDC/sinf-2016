@@ -160,14 +160,18 @@ namespace SalesOrderPicking.Lib_Primavera {
         }
 
 
-        public static List<EncomendaCliente> GetEncomendasPassiveisDeTransformacao(string f, string s) {
+        public static List<EncomendaCliente> GetEncomendasPassiveisDeTransformacao(string f, string s, int? nDoc) {
 
             if (f == null || s == null)
                 throw new InvalidOperationException("Bad arguments: 'filial', 'serie'");
 
 
             List<EncomendaCliente> listaArtigos = new List<EncomendaCliente>();
-            List<Dictionary<string, object>> listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_ENCOMENDAS_PARA_GUIA_REMESSA, f, s);
+            List<Dictionary<string, object>> listaEncomendas = null;
+            if(nDoc == null)
+                listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_ENCOMENDAS_PARA_GUIA_REMESSA, f, s);
+            else
+                listaEncomendas = DBQuery.performQuery(PriEngine.PickingDBConnString, GeneralConstants.QUERY_ENCOMENDAS_PARA_GUIA_REMESSA + " AND CabecDoc.NumDoc = @2@", f, s, nDoc);
 
             foreach (var item in listaEncomendas) {
                 object encomendaID = item["Id"], filial = item["Filial"], serie = item["Serie"], numDoc = item["NumDoc"], cliente = item["EntidadeFac"];
