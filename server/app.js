@@ -7,7 +7,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 
 const pages = require('./routes/pages');
-const api = require('./routes/api');
 
 const app = express();
 
@@ -30,7 +29,6 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', pages);
-app.use('/api', api);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
