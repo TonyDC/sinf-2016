@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="4MIEIC02-AD">
+
+    <title>Sales Order Picking</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+    <link href="/dist/css/sb-admin-2.css" rel="stylesheet">
+    <link href="/vendor/morrisjs/morris.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto:300" rel="stylesheet">
+	
+	
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    </div>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <img id="nav-logo" src="/img/logo.png" />
+                <a id="nav-text" href="#">Sales Order Picking</a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li>
+                            <a href="/choice" class="active"><i class="fa fa-plus-square fa-fw"></i> Criar picking waves</a>
+                        </li>
+                        <li>
+                            <a href="/status"><i class="fa fa-clipboard fa-fw"></i> Estado das picking waves</a>
+                        </li>
+                        <li>
+                            <a href="/status-rep"><i class="fa fa-repeat fa-fw"></i> Estado das replenishment waves</a>
+                        </li>
+                        <li>
+                            <a href="/shipping"><i class="fa fa-file-text fa-fw"></i> Guias de remessa</a>
+                        </li>
+                        <li>
+                            <a href="/users"><i class="fa fa-users fa-fw"></i> Gestão de utilizadores</a>
+                        </li>
+                        <li>
+                            <a href="/warnings" {{#if numWarnings}} class="blink" {{/if}}><i class="fa fa-warning fa-fw"></i> Notificações {{#if numWarnings}}<span class="badge">{{numWarnings}}</span>{{/if}}</a>
+                        </li>
+                        <li>
+                            <a href="/options"><i class="fa fa-gear fa-fw"></i> Definições</a>
+                        </li>
+                        <li>
+                            <form action="/logout" method="post">
+                                <button type="submit"><i class="fa fa-sign-out fa-fw"></i> Terminar sessão</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Criar picking orders</h1>
+					<h2>Série: {{serie}}, Filial: {{filial}}</h2>
+                </div>
+                <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead class="sortable-header">
+                                    <tr>
+                                        <th align="center">Selecionar</th>
+										<th align="center">Documento</th>
+                                        <th align="center">Data</th>
+                                        <th align="center">Cliente</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{#each salesOrders}}
+                                        <tr class="odd gradeX">
+                                            <td align="center" class="table-icon"><i class="fa fa-square-o checkbox" data-id={{NumeroDocumento}} onclick="changeCheck(this)"></i></td>
+                                            <td align="center" class="pointer-cursor" data-toggle="modal" data-target="#myModal" data-id={{NumeroDocumento}}>{{NumeroDocumento}}</td>
+                                            <td align="center" class="pointer-cursor" data-toggle="modal" data-target="#myModal" data-id={{NumeroDocumento}}>{{DataMinimaEncomenda}}</td>
+                                            <td align="center" class="pointer-cursor" data-toggle="modal" data-target="#myModal" data-id={{NumeroDocumento}}>{{Cliente}}</td>
+                                        </tr>
+                                    {{/each}}
+                                    </tbody>
+                                </table>
+                                <!-- /.table-responsive -->
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <span class="btn-lg main-button" id="gerar-picking">Gerar picking waves</span>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+	
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="/vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="/vendor/raphael/raphael.min.js"></script>
+    <script src="/vendor/morrisjs/morris.min.js"></script>
+    <script src="/data/morris-data.js"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="/vendor/datatables-responsive/dataTables.responsive.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="/dist/js/sb-admin-2.js"></script>
+
+    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+    <script>
+        $(document).ready(function() {
+			selected = [];
+			changeCheck = function(elem) {
+					$(elem).toggleClass('selected');
+					$(elem).toggleClass('fa-square-o');
+					$(elem).toggleClass('fa-check-square');
+					var id = $(elem).data('id');
+					if (selected.indexOf(id)>=0) {
+						selected.splice(selected.indexOf(id), 1);
+					} else {
+						selected.push(id);
+					}
+				};
+		
+            $('#dataTables-example').DataTable({
+                responsive: true
+            });
+            $('#myModal').on('show.bs.modal', function(e) {
+
+                //get data-id attribute of the clicked element
+                var id = $(e.relatedTarget).data('id');
+
+                $.get('/partials/salesOrder/' + id, function(data){
+                    $('#myModal').html(data);
+                }).fail(function() {
+                    alert('Houve um erro a pedir informações sobre o produto'); // or whatever
+                });
+                //populate the textbox
+                $(e.currentTarget).find('input[name="id"]').val(id);
+            });
+            {{#if err}}
+                alert('Erro ao gerar picking wave: ' + err);
+            {{/if}}
+            $('#gerar-picking').click(function() {
+                $.ajax({
+                    url:'/createPickingWave',
+                    type:"POST",
+                    contentType:"application/json; charset=utf-8",
+                    data:JSON.stringify({selected:selected}),
+                    success: function(){
+                        alert('Picking wave criada com sucesso!');
+						window.location.reload(true);
+                    },
+                    fail: function(err){
+                        alert('Erro: ' + err.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>
