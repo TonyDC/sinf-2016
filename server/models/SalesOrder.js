@@ -107,6 +107,7 @@ module.exports.getAllToShip = function(serie, filial) {
 				}
 				salesOrdersRaw = JSON.parse(body);
 				salesOrders = salesOrdersRaw.map(function(order) {
+					order.DataMinimaEncomenda = order.DataMinimaEncomenda.substr(0,10);
 					for(let i = 0; i < order.Artigos.length; ++i) {
 						const item = order.Artigos[i];
 						if (item.Quantidade - item.QuantidadeSatisfeita > 0) {
@@ -114,7 +115,6 @@ module.exports.getAllToShip = function(serie, filial) {
 							return order;
 						}
 					}
-					order.DataMinimaEncomenda = order.DataMinimaEncomenda.substr(0,10);
 					order.ready = true;
 					return order;
 				});

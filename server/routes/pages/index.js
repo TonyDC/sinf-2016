@@ -110,7 +110,6 @@ router.get('/shipping-guide', checkLogin, checkAdmin, checkWarnings, function(re
 	SalesOrder.getAllToShip(serie, filial).then(function(salesOrders) {
 		req.session.serieShipping = serie;
 		req.session.filialShipping = filial;
-		console.log(JSON.stringify(salesOrders));
 		res.render('shipping', {serie: serie, filial: filial, salesOrders: salesOrders, numWarnings: req.session.numWarnings});
 	});
 });
